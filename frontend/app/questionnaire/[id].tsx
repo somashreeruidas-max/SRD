@@ -95,41 +95,42 @@ export default function QuestionnaireDetailScreen() {
   const handleDeleteQuestion = (questionId: string, clauseNo: string, subclauseIndex: number) => {
     if (!questionnaire) return;
 
-    const confirmDelete = Platform.OS === 'web'
-      ? window.confirm('Are you sure you want to delete this question?')
-      : true;
+    console.log('Delete question called:', { questionId, clauseNo, subclauseIndex });
 
-    if (confirmDelete) {
-      if (Platform.OS === 'web') {
-        const updatedQuestionnaire = { ...questionnaire };
-        const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
-        if (clause) {
-          const subclause = clause.subclauses[subclauseIndex];
+    const performDelete = () => {
+      const updatedQuestionnaire = { ...questionnaire };
+      const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
+      console.log('Found clause:', clause?.clause_no);
+      
+      if (clause) {
+        const subclause = clause.subclauses[subclauseIndex];
+        console.log('Found subclause:', subclause?.clause_no, 'Questions before:', subclause?.questions.length);
+        
+        if (subclause) {
           subclause.questions = subclause.questions.filter(q => q.id !== questionId);
+          console.log('Questions after delete:', subclause.questions.length);
+          setQuestionnaire(updatedQuestionnaire);
         }
-        setQuestionnaire(updatedQuestionnaire);
-      } else {
-        Alert.alert(
-          'Delete Question',
-          'Are you sure you want to delete this question?',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Delete',
-              style: 'destructive',
-              onPress: () => {
-                const updatedQuestionnaire = { ...questionnaire };
-                const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
-                if (clause) {
-                  const subclause = clause.subclauses[subclauseIndex];
-                  subclause.questions = subclause.questions.filter(q => q.id !== questionId);
-                }
-                setQuestionnaire(updatedQuestionnaire);
-              },
-            },
-          ]
-        );
       }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm('Are you sure you want to delete this question?')) {
+        performDelete();
+      }
+    } else {
+      Alert.alert(
+        'Delete Question',
+        'Are you sure you want to delete this question?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: performDelete,
+          },
+        ]
+      );
     }
   };
 
