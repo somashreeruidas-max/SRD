@@ -303,6 +303,21 @@ frontend:
       - working: true
         agent: "main"
         comment: "Fixed bug in handleEditQuestion, handleDeleteQuestion, and handleAddQuestion where incorrect clause numbers were being passed. Now correctly passing clause.clause_no as the clauseNo parameter instead of subclause.clause_no. This ensures the functions can properly find and update the correct clause."
+  
+  - task: "Audit Report - Complete Text Report Download"
+    implemented: true
+    working: true
+    file: "frontend/app/audit/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User disappointed with audit summary download sheet. Requested text-based complete audit report."
+      - working: true
+        agent: "main"
+        comment: "Implemented comprehensive text-based audit report (handleDownloadTextReport). Report includes: header with audit info, statistics (completion rate, conformance summary), detailed clause-by-clause results with all questions/observations/evidence, and non-conformances summary section. Downloads as .txt file. Added green download button in audit header alongside existing PDF options."
 
 metadata:
   created_by: "testing_agent"
