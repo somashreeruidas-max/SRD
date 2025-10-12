@@ -49,8 +49,8 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text style={styles.title}>ISO 45001:2018</Text>
-            <Text style={styles.subtitle}>Internal Audit App</Text>
+            <Text style={styles.title}>GO AUDIT</Text>
+            <Text style={styles.subtitle}>Your Complete Audit Solution</Text>
           </View>
 
           <View style={styles.form}>
