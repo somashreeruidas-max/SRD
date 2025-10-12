@@ -643,7 +643,7 @@ export default function AuditScreen() {
       clause.subclauses.forEach((subclause) => {
         subclause.questions.forEach((question) => {
           const response = responses.get(question.id);
-          if (response && (response.conformance === 'Mi' || response.conformance === 'C')) {
+          if (response && (response.conformance === 'Mi' || response.conformance === 'MA' || response.conformance === 'C')) {
             findings.push({
               clause: `${clause.clause_no} - ${clause.title}`,
               subclause: `${subclause.clause_no} - ${subclause.title}`,
