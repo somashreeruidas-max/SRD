@@ -78,6 +78,11 @@ export default function NewAuditScreen() {
           questionnaire_id: selectedQuestionnaire,
           title: title.trim(),
           description: description.trim(),
+          plant_name: plantName.trim(),
+          auditor_name: auditorName.trim(),
+          auditee_name: auditeeName.trim(),
+          audit_scope: auditScope.trim(),
+          audit_criteria: auditCriteria.trim(),
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
