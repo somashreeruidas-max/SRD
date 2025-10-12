@@ -521,6 +521,115 @@ def init_default_questionnaire():
         }
         questionnaires_collection.insert_one(default_questionnaire)
         print("Default ISO 45001:2018 questionnaire initialized")
+    
+    # Initialize ISO 9001:2015 (QMS)
+    if questionnaires_collection.count_documents({"name": "ISO 9001:2015"}) == 0:
+        qms_questionnaire = {
+            "name": "ISO 9001:2015",
+            "description": "Quality Management System - Internal Audit Questionnaire for Packaged Drinking Water Plant",
+            "created_at": datetime.utcnow().isoformat(),
+            "is_default": True,
+            "clauses": [
+                {"clause_no": "4", "title": "Context of the Organization", "subclauses": [
+                    {"clause_no": "4.1", "title": "Understanding the organization and its context", "questions": [{"id": "q_qms_4_1_1", "question_text": "Are internal and external issues relevant to the organization's purpose and affecting QMS identified and reviewed?", "order": 1}]},
+                    {"clause_no": "4.2", "title": "Understanding the needs and expectations of interested parties", "questions": [{"id": "q_qms_4_2_1", "question_text": "Are interested parties (BIS, FSSAI, customers, employees, vendors) and their requirements identified?", "order": 1}]},
+                    {"clause_no": "4.3", "title": "Determining the scope of the QMS", "questions": [{"id": "q_qms_4_3_1", "question_text": "Is the scope of the QMS defined including products and services covered and made available as documented information?", "order": 1}]},
+                    {"clause_no": "4.4", "title": "Quality management system and its processes", "questions": [{"id": "q_qms_4_4_1", "question_text": "Are processes needed for QMS identified with their inputs, outputs, interactions, sequence and operation?", "order": 1}]}
+                ]},
+                {"clause_no": "5", "title": "Leadership", "subclauses": [
+                    {"clause_no": "5.1", "title": "Leadership and commitment", "questions": [{"id": "q_qms_5_1_1", "question_text": "Does top management demonstrate leadership and accountability for QMS effectiveness?", "order": 1}]},
+                    {"clause_no": "5.2", "title": "Quality Policy", "questions": [{"id": "q_qms_5_2_1", "question_text": "Is quality policy established, implemented, and providing framework for quality objectives?", "order": 1}]},
+                    {"clause_no": "5.3", "title": "Organizational roles, responsibilities and authorities", "questions": [{"id": "q_qms_5_3_1", "question_text": "Are relevant roles, responsibilities and authorities for quality management defined and communicated?", "order": 1}]}
+                ]},
+                {"clause_no": "6", "title": "Planning", "subclauses": [
+                    {"clause_no": "6.1", "title": "Actions to address risks and opportunities", "questions": [{"id": "q_qms_6_1_1", "question_text": "Are risks and opportunities related to QMS and achievement of intended results determined and addressed?", "order": 1}]},
+                    {"clause_no": "6.2", "title": "Quality objectives and planning to achieve them", "questions": [{"id": "q_qms_6_2_1", "question_text": "Are quality objectives established, measurable, monitored, communicated and updated?", "order": 1}]},
+                    {"clause_no": "6.3", "title": "Planning of changes", "questions": [{"id": "q_qms_6_3_1", "question_text": "Is planning of changes to QMS carried out in a planned manner considering purpose, consequences and integrity?", "order": 1}]}
+                ]},
+                {"clause_no": "7", "title": "Support", "subclauses": [
+                    {"clause_no": "7.1", "title": "Resources", "questions": [{"id": "q_qms_7_1_1", "question_text": "Are resources (people, infrastructure, environment, monitoring equipment) provided for QMS?", "order": 1}]},
+                    {"clause_no": "7.2", "title": "Competence", "questions": [{"id": "q_qms_7_2_1", "question_text": "Is competence determined for persons affecting QMS performance with appropriate education and training?", "order": 1}]},
+                    {"clause_no": "7.3", "title": "Awareness", "questions": [{"id": "q_qms_7_3_1", "question_text": "Are persons aware of quality policy, objectives, their contribution and implications of nonconformity?", "order": 1}]},
+                    {"clause_no": "7.4", "title": "Communication", "questions": [{"id": "q_qms_7_4_1", "question_text": "Are internal and external communications relevant to QMS determined and implemented?", "order": 1}]},
+                    {"clause_no": "7.5", "title": "Documented information", "questions": [{"id": "q_qms_7_5_1", "question_text": "Is documented information required by ISO 9001 and organization created, updated and controlled?", "order": 1}]}
+                ]},
+                {"clause_no": "8", "title": "Operation", "subclauses": [
+                    {"clause_no": "8.1", "title": "Operational planning and control", "questions": [{"id": "q_qms_8_1_1", "question_text": "Are operational processes planned, implemented and controlled to meet product/service requirements?", "order": 1}]},
+                    {"clause_no": "8.2", "title": "Requirements for products and services", "questions": [{"id": "q_qms_8_2_1", "question_text": "Are customer requirements, statutory/regulatory requirements determined and reviewed before commitment?", "order": 1}]},
+                    {"clause_no": "8.3", "title": "Design and development", "questions": [{"id": "q_qms_8_3_1", "question_text": "Is design and development process established with inputs, outputs, reviews, verification and validation?", "order": 1}]},
+                    {"clause_no": "8.4", "title": "Control of externally provided processes, products and services", "questions": [{"id": "q_qms_8_4_1", "question_text": "Are externally provided processes, products and services controlled with supplier evaluation and monitoring?", "order": 1}]},
+                    {"clause_no": "8.5", "title": "Production and service provision", "questions": [{"id": "q_qms_8_5_1", "question_text": "Is production carried out under controlled conditions with documented information, monitoring and competent personnel?", "order": 1}]},
+                    {"clause_no": "8.6", "title": "Release of products and services", "questions": [{"id": "q_qms_8_6_1", "question_text": "Are planned arrangements made to verify requirements are met before release to customer?", "order": 1}]},
+                    {"clause_no": "8.7", "title": "Control of nonconforming outputs", "questions": [{"id": "q_qms_8_7_1", "question_text": "Are nonconforming outputs identified, controlled and corrected to prevent unintended use?", "order": 1}]}
+                ]},
+                {"clause_no": "9", "title": "Performance Evaluation", "subclauses": [
+                    {"clause_no": "9.1", "title": "Monitoring, measurement, analysis and evaluation", "questions": [{"id": "q_qms_9_1_1", "question_text": "Are monitoring, measurement, analysis methods determined to ensure valid results and customer satisfaction monitored?", "order": 1}]},
+                    {"clause_no": "9.2", "title": "Internal audit", "questions": [{"id": "q_qms_9_2_1", "question_text": "Are internal audits conducted at planned intervals to determine QMS conformity and effectiveness?", "order": 1}]},
+                    {"clause_no": "9.3", "title": "Management review", "questions": [{"id": "q_qms_9_3_1", "question_text": "Does top management review QMS at planned intervals for suitability, adequacy and effectiveness?", "order": 1}]}
+                ]},
+                {"clause_no": "10", "title": "Improvement", "subclauses": [
+                    {"clause_no": "10.1", "title": "General", "questions": [{"id": "q_qms_10_1_1", "question_text": "Are opportunities for improvement determined and implemented to meet customer requirements?", "order": 1}]},
+                    {"clause_no": "10.2", "title": "Nonconformity and corrective action", "questions": [{"id": "q_qms_10_2_1", "question_text": "Are nonconformities reacted to, corrected, root causes evaluated and corrective actions implemented?", "order": 1}]},
+                    {"clause_no": "10.3", "title": "Continual improvement", "questions": [{"id": "q_qms_10_3_1", "question_text": "Does organization continually improve suitability, adequacy and effectiveness of QMS?", "order": 1}]}
+                ]}
+            ]
+        }
+        questionnaires_collection.insert_one(qms_questionnaire)
+        print("Default ISO 9001:2015 questionnaire initialized")
+    
+    # Initialize ISO 14001:2015 (EMS)
+    if questionnaires_collection.count_documents({"name": "ISO 14001:2015"}) == 0:
+        ems_questionnaire = {
+            "name": "ISO 14001:2015",
+            "description": "Environmental Management System - Internal Audit Questionnaire for Packaged Drinking Water Plant",
+            "created_at": datetime.utcnow().isoformat(),
+            "is_default": True,
+            "clauses": [
+                {"clause_no": "4", "title": "Context of the Organization", "subclauses": [
+                    {"clause_no": "4.1", "title": "Understanding the organization and its context", "questions": [{"id": "q_ems_4_1_1", "question_text": "Are internal and external environmental issues (water source, waste disposal, regulations) identified and reviewed?", "order": 1}]},
+                    {"clause_no": "4.2", "title": "Understanding the needs and expectations of interested parties", "questions": [{"id": "q_ems_4_2_1", "question_text": "Are interested parties (PCB, BIS, community, vendors) and their environmental expectations identified?", "order": 1}]},
+                    {"clause_no": "4.3", "title": "Determining the scope of the EMS", "questions": [{"id": "q_ems_4_3_1", "question_text": "Is the scope of EMS defined and documented (production of packaged drinking water and utilities)?", "order": 1}]},
+                    {"clause_no": "4.4", "title": "Environmental management system", "questions": [{"id": "q_ems_4_4_1", "question_text": "Are all environmental aspects (effluent, emissions, waste, energy) covered in EMS processes?", "order": 1}]}
+                ]},
+                {"clause_no": "5", "title": "Leadership", "subclauses": [
+                    {"clause_no": "5.1", "title": "Leadership and commitment", "questions": [{"id": "q_ems_5_1_1", "question_text": "Does top management demonstrate commitment to environmental protection, compliance and continual improvement?", "order": 1}]},
+                    {"clause_no": "5.2", "title": "Environmental policy", "questions": [{"id": "q_ems_5_2_1", "question_text": "Is there an environmental policy committing to pollution prevention, compliance and continual improvement?", "order": 1}]},
+                    {"clause_no": "5.3", "title": "Organizational roles, responsibilities and authorities", "questions": [{"id": "q_ems_5_3_1", "question_text": "Are EMS roles and responsibilities (Environmental Coordinator, STP Operator) defined and communicated?", "order": 1}]}
+                ]},
+                {"clause_no": "6", "title": "Planning", "subclauses": [
+                    {"clause_no": "6.1.1", "title": "General", "questions": [{"id": "q_ems_6_1_1_1", "question_text": "Are environmental aspects, impacts and compliance obligations identified and reviewed?", "order": 1}]},
+                    {"clause_no": "6.1.2", "title": "Environmental aspects", "questions": [{"id": "q_ems_6_1_2_1", "question_text": "Are significant aspects (water consumption, RO reject, chemical use, energy, solid waste) evaluated with controls?", "order": 1}]},
+                    {"clause_no": "6.1.3", "title": "Compliance obligations", "questions": [{"id": "q_ems_6_1_3_1", "question_text": "Are all legal requirements (PCB, CPCB, waste disposal) identified, updated and complied with?", "order": 1}]},
+                    {"clause_no": "6.1.4", "title": "Planning actions", "questions": [{"id": "q_ems_6_1_4_1", "question_text": "Are action plans established to address environmental risks, opportunities and compliance?", "order": 1}]},
+                    {"clause_no": "6.2", "title": "Environmental objectives and planning", "questions": [{"id": "q_ems_6_2_1", "question_text": "Are environmental objectives (reduce RO reject by 10%) defined, measurable and reviewed for progress?", "order": 1}]},
+                    {"clause_no": "6.3", "title": "Planning of changes", "questions": [{"id": "q_ems_6_3_1", "question_text": "Are environmental aspects considered while planning process or layout changes?", "order": 1}]}
+                ]},
+                {"clause_no": "7", "title": "Support", "subclauses": [
+                    {"clause_no": "7.1", "title": "Resources", "questions": [{"id": "q_ems_7_1_1", "question_text": "Are sufficient resources available for EMS operation (STP equipment, waste bins, monitoring instruments)?", "order": 1}]},
+                    {"clause_no": "7.2", "title": "Competence", "questions": [{"id": "q_ems_7_2_1", "question_text": "Are personnel handling chemicals or waste trained and competent?", "order": 1}]},
+                    {"clause_no": "7.3", "title": "Awareness", "questions": [{"id": "q_ems_7_3_1", "question_text": "Are employees aware of environmental policy, aspects and emergency response procedures?", "order": 1}]},
+                    {"clause_no": "7.4", "title": "Communication", "questions": [{"id": "q_ems_7_4_1", "question_text": "Is communication with external stakeholders (PCB) documented and tracked?", "order": 1}]},
+                    {"clause_no": "7.5", "title": "Documented information", "questions": [{"id": "q_ems_7_5_1", "question_text": "Are EMS documents and records (consent to operate, waste manifests, test reports) controlled?", "order": 1}]}
+                ]},
+                {"clause_no": "8", "title": "Operation", "subclauses": [
+                    {"clause_no": "8.1", "title": "Operational planning and control", "questions": [{"id": "q_ems_8_1_1", "question_text": "Are operational controls implemented for significant aspects (effluent, RO reject, solid waste, energy)?", "order": 1}]},
+                    {"clause_no": "8.2", "title": "Emergency preparedness and response", "questions": [{"id": "q_ems_8_2_1", "question_text": "Is there emergency preparedness plan for chemical spills, chlorine leaks or fire with mock drills conducted?", "order": 1}]}
+                ]},
+                {"clause_no": "9", "title": "Performance Evaluation", "subclauses": [
+                    {"clause_no": "9.1", "title": "Monitoring, measurement, analysis and evaluation", "questions": [{"id": "q_ems_9_1_1", "question_text": "Are environmental monitoring (effluent quality, noise, air, water consumption) carried out as per plan?", "order": 1}]},
+                    {"clause_no": "9.1.2", "title": "Evaluation of compliance", "questions": [{"id": "q_ems_9_1_2_1", "question_text": "Are compliance evaluations against legal requirements conducted periodically?", "order": 1}]},
+                    {"clause_no": "9.2", "title": "Internal audit", "questions": [{"id": "q_ems_9_2_1", "question_text": "Is EMS internal audit conducted as per schedule and nonconformities tracked for closure?", "order": 1}]},
+                    {"clause_no": "9.3", "title": "Management review", "questions": [{"id": "q_ems_9_3_1", "question_text": "Does management review cover environmental objectives, incidents, compliance and resource needs?", "order": 1}]}
+                ]},
+                {"clause_no": "10", "title": "Improvement", "subclauses": [
+                    {"clause_no": "10.1", "title": "General", "questions": [{"id": "q_ems_10_1_1", "question_text": "Are opportunities for environmental improvement identified and acted upon?", "order": 1}]},
+                    {"clause_no": "10.2", "title": "Nonconformity and corrective action", "questions": [{"id": "q_ems_10_2_1", "question_text": "Are environmental nonconformities (STP overflow, spillage) recorded and corrected with CAPA?", "order": 1}]},
+                    {"clause_no": "10.3", "title": "Continual improvement", "questions": [{"id": "q_ems_10_3_1", "question_text": "What environmental improvements have been implemented (reuse reject water, LED lighting, optimized CIP water)?", "order": 1}]}
+                ]}
+            ]
+        }
+        questionnaires_collection.insert_one(ems_questionnaire)
+        print("Default ISO 14001:2015 questionnaire initialized")
 
 # Auth Endpoints
 @app.post("/api/auth/register")
