@@ -717,7 +717,7 @@ export default function AuditScreen() {
         <div class="summary-stats">
           <p>📊 Total Findings: ${findings.length}</p>
           <p>⚠️ Minor Non-Conformances: ${findings.filter(f => f.conformance === 'Mi').length}</p>
-          <p>❌ Major Non-Conformances: ${findings.filter(f => f.conformance === 'Ma').length}</p>
+          <p>❌ Major Non-Conformances: ${findings.filter(f => f.conformance === 'Ma' || f.conformance === 'MA').length}</p>
         </div>
 
         <h2 style="color: #1F2937; margin-top: 30px;">Detailed Findings:</h2>
