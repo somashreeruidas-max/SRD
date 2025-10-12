@@ -245,42 +245,6 @@ export default function NewAuditScreen() {
           />
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Select Questionnaire *</Text>
-          {questionnaires.map((q) => (
-            <TouchableOpacity
-              key={q.id}
-              style={[
-                styles.questionnaireCard,
-                selectedQuestionnaire === q.id && styles.selectedCard,
-              ]}
-              onPress={() => setSelectedQuestionnaire(q.id)}
-              disabled={creating}
-            >
-              <View style={styles.radioContainer}>
-                <View
-                  style={[
-                    styles.radio,
-                    selectedQuestionnaire === q.id && styles.radioSelected,
-                  ]}
-                >
-                  {selectedQuestionnaire === q.id && (
-                    <View style={styles.radioInner} />
-                  )}
-                </View>
-              </View>
-              <View style={styles.questionnaireContent}>
-                <Text style={styles.questionnaireName}>{q.name}</Text>
-                {q.description && (
-                  <Text style={styles.questionnaireDescription} numberOfLines={2}>
-                    {q.description}
-                  </Text>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
         <TouchableOpacity
           style={[styles.createButton, creating && styles.createButtonDisabled]}
           onPress={handleCreateAudit}
