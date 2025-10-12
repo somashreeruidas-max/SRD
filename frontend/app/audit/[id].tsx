@@ -665,7 +665,11 @@ export default function AuditScreen() {
           <p><strong>Questionnaire:</strong> ${audit.questionnaire_name}</p>
           <p><strong>Status:</strong> ${audit.status.toUpperCase()}</p>
           <p><strong>Date:</strong> ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          <p><strong>Auditor:</strong> ${audit.auditor || 'N/A'}</p>
+          ${audit.plant_name ? `<p><strong>Plant Name:</strong> ${audit.plant_name}</p>` : ''}
+          ${audit.auditor_name ? `<p><strong>Auditor:</strong> ${audit.auditor_name}</p>` : `<p><strong>Auditor:</strong> ${audit.auditor || 'N/A'}</p>`}
+          ${audit.auditee_name ? `<p><strong>Auditee:</strong> ${audit.auditee_name}</p>` : ''}
+          ${audit.audit_scope ? `<p><strong>Scope:</strong> ${audit.audit_scope}</p>` : ''}
+          ${audit.audit_criteria ? `<p><strong>Criteria:</strong> ${audit.audit_criteria}</p>` : ''}
         </div>
     `;
 
