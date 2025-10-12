@@ -1608,32 +1608,35 @@ export default function AuditScreen() {
                               // For documents (PDF, Word, Excel), open or download
                               if (Platform.OS === 'web') {
                                 try {
-                                  console.log('Opening document:', ev.filename);
+                                  console.log('Opening document:', ev.filename, 'Data length:', ev.data?.length);
                                   
                                   // Check if it's a PDF - can be viewed in browser
                                   const isPDF = ev.filename.toLowerCase().endsWith('.pdf');
                                   
                                   if (isPDF) {
-                                    // Open PDF in new tab
-                                    const newWindow = window.open('', '_blank');
-                                    if (newWindow) {
-                                      newWindow.document.write(`
-                                        <html>
-                                          <head>
-                                            <title>${ev.filename}</title>
-                                            <style>
-                                              body { margin:0; }
-                                              iframe { width:100vw; height:100vh; border:none; }
-                                            </style>
-                                          </head>
-                                          <body>
-                                            <iframe src="${ev.data}" type="application/pdf"></iframe>
-                                          </body>
-                                        </html>
-                                      `);
-                                      newWindow.document.close();
-                                    } else {
-                                      alert('Please allow pop-ups to view documents');
+                                    // Prepare PDF data URL
+                                    let pdfUrl = ev.data;
+                                    
+                                    // Add proper data URL prefix if missing
+                                    if (!pdfUrl.startsWith('data:')) {
+                                      pdfUrl = `data:application/pdf;base64,${pdfUrl}`;
+                                    }
+                                    
+                                    console.log('Opening PDF with data URL format');
+                                    
+                                    // Try to open PDF directly in new tab
+                                    const newWindow = window.open(pdfUrl, '_blank');
+                                    
+                                    if (!newWindow) {
+                                      // If pop-up blocked, try downloading instead
+                                      console.log('Pop-up blocked, downloading instead');
+                                      const link = document.createElement('a');
+                                      link.href = pdfUrl;
+                                      link.download = ev.filename;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                      alert('Pop-ups are blocked. PDF has been downloaded instead. Check your downloads folder.');
                                     }
                                   } else {
                                     // For Word/Excel files, trigger download
