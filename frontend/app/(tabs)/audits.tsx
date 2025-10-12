@@ -9,11 +9,10 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth, API_URL } from '../../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
 
 interface Audit {
   id: string;
@@ -35,10 +34,12 @@ export default function AuditsScreen() {
     fetchAudits();
   }, []);
 
-  // Refresh audits list when screen comes into focus
+  // Refresh audits list when screen comes into focus (Expo Router version)
   useFocusEffect(
     useCallback(() => {
-      fetchAudits();
+      if (token) {
+        fetchAudits();
+      }
     }, [token])
   );
 
