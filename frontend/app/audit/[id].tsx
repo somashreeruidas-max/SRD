@@ -922,13 +922,13 @@ export default function AuditScreen() {
             let conformanceStatus = '';
             let conformanceSymbol = '';
             
-            if (response.conformance === 'C') {
+            if (response.conformance === 'C' || response.conformance === 'CO' || response.conformance === 'M') {
               conformanceStatus = 'COMPLIANT';
               conformanceSymbol = '✓';
             } else if (response.conformance === 'Mi') {
               conformanceStatus = '⚠ MINOR NON-CONFORMANCE';
               conformanceSymbol = '⚠';
-            } else if (response.conformance === 'Ma') {
+            } else if (response.conformance === 'Ma' || response.conformance === 'MA') {
               conformanceStatus = '✗ MAJOR NON-CONFORMANCE';
               conformanceSymbol = '✗';
             }
