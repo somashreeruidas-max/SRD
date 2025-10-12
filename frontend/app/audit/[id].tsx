@@ -207,13 +207,47 @@ export default function AuditScreen() {
   };
 
   const handleComplete = async () => {
+    // Check if audit is 100% complete
+    if (!questionnaire) return;
+    
+    let totalQuestions = 0;
+    let answeredQuestions = 0;
+
+    questionnaire.clauses.forEach((clause) => {
+      clause.subclauses.forEach((subclause) => {
+        totalQuestions += subclause.questions.length;
+        subclause.questions.forEach((question) => {
+          const response = responses.get(question.id);
+          if (response && (response.observations || response.conformance || response.evidence.length > 0)) {
+            answeredQuestions++;
+          }
+        });
+      });
+    });
+
+    const completionPercentage = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
+
+    // If not 100% complete, show error and don't complete
+    if (completionPercentage < 100) {
+      if (Platform.OS === 'web') {
+        alert(`Cannot complete audit. Only ${completionPercentage}% complete.\n\nPlease answer all ${totalQuestions} questions before completing.\nAnswered: ${answeredQuestions}/${totalQuestions}`);
+      } else {
+        Alert.alert(
+          'Incomplete Audit',
+          `Only ${completionPercentage}% complete.\n\nPlease answer all ${totalQuestions} questions before completing.\nAnswered: ${answeredQuestions}/${totalQuestions}`,
+          [{ text: 'OK' }]
+        );
+      }
+      return;
+    }
+
     // Use Platform to check if we're on web or mobile
     const confirmComplete = Platform.OS === 'web' 
-      ? window.confirm('Mark this audit as completed?')
+      ? window.confirm('Mark this audit as completed? (100% complete)')
       : await new Promise((resolve) => {
           Alert.alert(
             'Complete Audit',
-            'Mark this audit as completed?',
+            'Mark this audit as completed? (100% complete)',
             [
               { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
               { text: 'Complete', onPress: () => resolve(true) },
@@ -239,7 +273,7 @@ export default function AuditScreen() {
         alert('✅ Audit completed successfully!');
         router.replace('/(tabs)/audits');
       } else {
-        Alert.alert('Success', 'Audit completed', [
+        Alert.alert('Success', 'Audit completed successfully', [
           { text: 'OK', onPress: () => router.replace('/(tabs)/audits') },
         ]);
       }
