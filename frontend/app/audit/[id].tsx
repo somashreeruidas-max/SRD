@@ -798,7 +798,7 @@ export default function AuditScreen() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        alert(`✅ Findings Summary downloaded!\n\nTotal Findings: ${findings.length}\nMinor: ${findings.filter(f => f.conformance === 'Mi').length}\nMajor: ${findings.filter(f => f.conformance === 'MA' || f.conformance === 'C').length}`);
+        alert(`✅ Findings Summary downloaded!\n\nTotal Findings: ${findings.length}\nMinor: ${findings.filter(f => f.conformance === 'Mi').length}\nMajor: ${findings.filter(f => f.conformance === 'Ma').length}`);
       } else {
         await Sharing.shareAsync(uri, {
           mimeType: 'application/pdf',
