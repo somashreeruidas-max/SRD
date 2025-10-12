@@ -1025,6 +1025,9 @@ export default function AuditScreen() {
           {audit.title}
         </Text>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={handleDownloadFindings} style={styles.headerIconButton}>
+            <Ionicons name="document-text-outline" size={22} color="#F59E0B" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleDownloadAudit} style={styles.headerIconButton}>
             <Ionicons name="download-outline" size={22} color="#3B82F6" />
           </TouchableOpacity>
