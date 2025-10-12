@@ -318,22 +318,25 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 100,
   },
-  questionnaireCard: {
-    flexDirection: 'row',
+  dropdownContainer: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    overflow: 'hidden',
   },
-  selectedCard: {
-    borderColor: '#3B82F6',
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  dropdownItemSelected: {
     backgroundColor: '#EFF6FF',
   },
   radioContainer: {
     marginRight: 12,
-    paddingTop: 2,
   },
   radio: {
     width: 20,
@@ -353,17 +356,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#3B82F6',
   },
-  questionnaireContent: {
+  dropdownItemContent: {
     flex: 1,
   },
-  questionnaireName: {
-    fontSize: 16,
+  dropdownItemName: {
+    fontSize: 15,
     fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 4,
+    color: '#374151',
+    marginBottom: 2,
   },
-  questionnaireDescription: {
-    fontSize: 13,
+  dropdownItemNameSelected: {
+    color: '#1F2937',
+  },
+  dropdownItemDescription: {
+    fontSize: 12,
     color: '#6B7280',
   },
   createButton: {
