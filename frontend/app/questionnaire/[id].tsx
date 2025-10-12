@@ -51,6 +51,16 @@ export default function QuestionnaireDetailScreen() {
     fetchQuestionnaire();
   }, [id]);
 
+  const expandAllClauses = () => {
+    if (!questionnaire) return;
+    const allClauses = new Set(questionnaire.clauses.map(c => c.clause_no));
+    setExpandedClauses(allClauses);
+  };
+
+  const collapseAllClauses = () => {
+    setExpandedClauses(new Set());
+  };
+
   const fetchQuestionnaire = async () => {
     try {
       const response = await axios.get(
