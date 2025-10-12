@@ -274,7 +274,35 @@ backend:
         comment: "Base64 evidence storage working correctly. Successfully stores and retrieves photos, documents, audio, and video evidence with proper metadata (filename, type, timestamp)."
 
 frontend:
-  # No frontend testing performed as per instructions
+  - task: "Questionnaire Editing - Delete Questions"
+    implemented: true
+    working: true
+    file: "frontend/app/questionnaire/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: unable to delete added questions. If added one question but not able to delete it."
+      - working: true
+        agent: "main"
+        comment: "Fixed bug where wrong clause number was being passed to handleDeleteQuestion. Changed from passing subclause.clause_no to clause.clause_no. Also properly calculated subclauseIndex once per iteration to avoid repeated findIndex calls."
+  
+  - task: "Questionnaire Editing - Save Changes"
+    implemented: true
+    working: true
+    file: "frontend/app/questionnaire/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: unable to save changes after editing questions. The 'include option' is not working."
+      - working: true
+        agent: "main"
+        comment: "Fixed bug in handleEditQuestion, handleDeleteQuestion, and handleAddQuestion where incorrect clause numbers were being passed. Now correctly passing clause.clause_no as the clauseNo parameter instead of subclause.clause_no. This ensures the functions can properly find and update the correct clause."
 
 metadata:
   created_by: "testing_agent"
