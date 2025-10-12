@@ -1410,13 +1410,16 @@ export default function AuditScreen() {
                 <View style={styles.modalSection}>
                   <Text style={styles.modalLabel}>Conformance Status</Text>
                   <View style={styles.conformanceButtons}>
-                    {['M', 'Mi', 'C'].map((conf) => (
+                    {['CO', 'Mi', 'MA'].map((conf) => (
                       <TouchableOpacity
                         key={conf}
                         style={[
                           styles.conformanceButton,
                           getResponse(selectedQuestion.id).conformance === conf &&
                             styles.conformanceButtonActive,
+                          conf === 'CO' && styles.conformanceButtonCompliant,
+                          conf === 'Mi' && styles.conformanceButtonMinor,
+                          conf === 'MA' && styles.conformanceButtonMajor,
                         ]}
                         onPress={() =>
                           updateResponse(selectedQuestion.id, {
@@ -1433,7 +1436,7 @@ export default function AuditScreen() {
                               styles.conformanceButtonTextActive,
                           ]}
                         >
-                          {conf === 'M' ? 'Meets' : conf === 'Mi' ? 'Minor' : 'Major'}
+                          {conf === 'CO' ? 'Compliant' : conf === 'Mi' ? 'Minor NC' : 'Major NC'}
                         </Text>
                       </TouchableOpacity>
                     ))}
