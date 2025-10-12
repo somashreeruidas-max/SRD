@@ -1780,6 +1780,34 @@ const styles = StyleSheet.create({
   headerIconButton: {
     padding: 8,
   },
+  auditInfoHeader: {
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  auditInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  auditInfoItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  auditInfoLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  auditInfoValue: {
+    fontSize: 12,
+    color: '#1F2937',
+    fontWeight: '500',
+  },
   progressBar: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
