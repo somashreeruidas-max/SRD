@@ -91,6 +91,11 @@ class AuditCreate(BaseModel):
     questionnaire_id: str
     title: str
     description: Optional[str] = None
+    plant_name: Optional[str] = None
+    auditor_name: Optional[str] = None
+    auditee_name: Optional[str] = None
+    audit_scope: Optional[str] = None
+    audit_criteria: Optional[str] = None
 
 class AuditUpdate(BaseModel):
     status: Optional[str] = None  # draft, in-progress, completed
