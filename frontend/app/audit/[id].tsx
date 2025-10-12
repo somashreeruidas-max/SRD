@@ -1078,6 +1078,13 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 40,
   },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  headerIconButton: {
+    padding: 8,
+  },
   progressBar: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
