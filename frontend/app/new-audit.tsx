@@ -1,0 +1,314 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { useAuth, API_URL } from '../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+interface Questionnaire {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export default function NewAuditScreen() {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const { token } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchQuestionnaires();
+  }, []);
+
+  const fetchQuestionnaires = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/questionnaires`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setQuestionnaires(response.data.questionnaires);
+      if (response.data.questionnaires.length > 0) {
+        setSelectedQuestionnaire(response.data.questionnaires[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching questionnaires:', error);
+      Alert.alert('Error', 'Failed to load questionnaires');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateAudit = async () => {
+    if (!title.trim()) {
+      Alert.alert('Error', 'Please enter an audit title');
+      return;
+    }
+
+    if (!selectedQuestionnaire) {
+      Alert.alert('Error', 'Please select a questionnaire');
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/audits`,
+        {
+          questionnaire_id: selectedQuestionnaire,
+          title: title.trim(),
+          description: description.trim(),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      Alert.alert('Success', 'Audit created successfully', [
+        {
+          text: 'OK',
+          onPress: () => router.push(`/audit/${response.data.id}`),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Error creating audit:', error);
+      Alert.alert('Error', error.response?.data?.detail || 'Failed to create audit');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#3B82F6" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>New Audit</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.label}>Audit Title *</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter audit title"
+            value={title}
+            onChangeText={setTitle}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Description (Optional)</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Enter audit description"
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Select Questionnaire *</Text>
+          {questionnaires.map((q) => (
+            <TouchableOpacity
+              key={q.id}
+              style={[
+                styles.questionnaireCard,
+                selectedQuestionnaire === q.id && styles.selectedCard,
+              ]}
+              onPress={() => setSelectedQuestionnaire(q.id)}
+              disabled={creating}
+            >
+              <View style={styles.radioContainer}>
+                <View
+                  style={[
+                    styles.radio,
+                    selectedQuestionnaire === q.id && styles.radioSelected,
+                  ]}
+                >
+                  {selectedQuestionnaire === q.id && (
+                    <View style={styles.radioInner} />
+                  )}
+                </View>
+              </View>
+              <View style={styles.questionnaireContent}>
+                <Text style={styles.questionnaireName}>{q.name}</Text>
+                {q.description && (
+                  <Text style={styles.questionnaireDescription} numberOfLines={2}>
+                    {q.description}
+                  </Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[styles.createButton, creating && styles.createButtonDisabled]}
+          onPress={handleCreateAudit}
+          disabled={creating}
+        >
+          {creating ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <>
+              <Ionicons name="add-circle-outline" size={20} color="#FFFFFF" />
+              <Text style={styles.createButtonText}>Create Audit</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  placeholder: {
+    width: 40,
+  },
+  content: {
+    flex: 1,
+  },
+  section: {
+    padding: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+  },
+  textArea: {
+    minHeight: 100,
+  },
+  questionnaireCard: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  selectedCard: {
+    borderColor: '#3B82F6',
+    backgroundColor: '#EFF6FF',
+  },
+  radioContainer: {
+    marginRight: 12,
+    paddingTop: 2,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioSelected: {
+    borderColor: '#3B82F6',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#3B82F6',
+  },
+  questionnaireContent: {
+    flex: 1,
+  },
+  questionnaireName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  questionnaireDescription: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
+  createButton: {
+    flexDirection: 'row',
+    backgroundColor: '#3B82F6',
+    marginHorizontal: 16,
+    marginVertical: 24,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  createButtonDisabled: {
+    opacity: 0.6,
+  },
+  createButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+});
