@@ -627,68 +627,154 @@ export default function AuditScreen() {
   const handleDownloadAudit = async () => {
     if (!audit || !questionnaire) return;
 
-    // Generate text content for the audit
-    let content = `ISO 45001:2018 INTERNAL AUDIT REPORT\n\n`;
-    content += `Audit Title: ${audit.title}\n`;
-    content += `Questionnaire: ${audit.questionnaire_name}\n`;
-    content += `Status: ${audit.status}\n`;
-    content += `Date: ${new Date(audit.created_at).toLocaleDateString()}\n`;
-    content += `\n${'='.repeat(80)}\n\n`;
+    // Generate HTML content for PDF with colors
+    let htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h1 { color: #1F2937; text-align: center; border-bottom: 3px solid #3B82F6; padding-bottom: 10px; }
+          .header-info { background: #F3F4F6; padding: 15px; margin: 20px 0; border-radius: 8px; }
+          .header-info p { margin: 5px 0; }
+          .clause { margin: 30px 0; page-break-inside: avoid; }
+          .clause-title { background: #3B82F6; color: white; padding: 10px; font-weight: bold; font-size: 18px; }
+          .subclause { margin: 15px 0; padding-left: 20px; }
+          .subclause-title { font-weight: bold; color: #374151; margin: 10px 0; font-size: 16px; }
+          table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+          th { background: #E5E7EB; padding: 10px; text-align: left; border: 1px solid #D1D5DB; font-weight: bold; }
+          td { padding: 10px; border: 1px solid #D1D5DB; vertical-align: top; }
+          .meets { background-color: #D1FAE5; color: #065F46; font-weight: bold; }
+          .minor { background-color: #FEF3C7; color: #92400E; font-weight: bold; }
+          .major { background-color: #FEE2E2; color: #991B1B; font-weight: bold; }
+          .not-answered { background-color: #F3F4F6; color: #6B7280; font-style: italic; }
+          .question-cell { width: 60%; }
+          .conformance-cell { width: 15%; text-align: center; }
+          .observations-cell { width: 25%; }
+          .footer { margin-top: 40px; text-align: center; color: #6B7280; font-size: 12px; border-top: 2px solid #E5E7EB; padding-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <h1>ISO 45001:2018 INTERNAL AUDIT REPORT</h1>
+        
+        <div class="header-info">
+          <p><strong>Audit Title:</strong> ${audit.title}</p>
+          <p><strong>Questionnaire:</strong> ${audit.questionnaire_name}</p>
+          <p><strong>Status:</strong> ${audit.status.toUpperCase()}</p>
+          <p><strong>Date:</strong> ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p><strong>Auditor:</strong> ${audit.auditor || 'N/A'}</p>
+        </div>
+    `;
 
     questionnaire.clauses.forEach((clause) => {
-      content += `\nCLAUSE ${clause.clause_no}: ${clause.title}\n`;
-      content += `${'-'.repeat(80)}\n\n`;
+      htmlContent += `
+        <div class="clause">
+          <div class="clause-title">CLAUSE ${clause.clause_no}: ${clause.title}</div>
+      `;
 
       clause.subclauses.forEach((subclause) => {
-        content += `  ${subclause.clause_no} - ${subclause.title}\n\n`;
+        htmlContent += `
+          <div class="subclause">
+            <div class="subclause-title">${subclause.clause_no} - ${subclause.title}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th class="question-cell">Question</th>
+                  <th class="conformance-cell">Conformance</th>
+                  <th class="observations-cell">Observations / Evidence</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
 
         subclause.questions.forEach((question, index) => {
           const response = responses.get(question.id);
-          content += `    Q${index + 1}. ${question.question_text}\n`;
+          let conformanceClass = 'not-answered';
+          let conformanceText = 'Not Answered';
 
-          if (response) {
-            if (response.conformance) {
-              const conformanceLabel = response.conformance === 'M' ? 'Meets' : response.conformance === 'Mi' ? 'Minor Non-Conformance' : 'Major Non-Conformance';
-              content += `        Conformance: ${conformanceLabel}\n`;
+          if (response && response.conformance) {
+            if (response.conformance === 'M') {
+              conformanceClass = 'meets';
+              conformanceText = 'MEETS';
+            } else if (response.conformance === 'Mi') {
+              conformanceClass = 'minor';
+              conformanceText = 'MINOR';
+            } else if (response.conformance === 'C') {
+              conformanceClass = 'major';
+              conformanceText = 'MAJOR';
             }
-            if (response.observations) {
-              content += `        Observations: ${response.observations}\n`;
-            }
-            if (response.evidence.length > 0) {
-              content += `        Evidence: ${response.evidence.length} file(s) attached\n`;
-            }
-          } else {
-            content += `        Status: Not answered\n`;
           }
-          content += `\n`;
+
+          const observations = response?.observations || 'No observations recorded';
+          const evidenceCount = response?.evidence?.length || 0;
+
+          htmlContent += `
+            <tr>
+              <td class="question-cell">
+                <strong>Q${index + 1}.</strong> ${question.question_text}
+              </td>
+              <td class="conformance-cell ${conformanceClass}">
+                ${conformanceText}
+              </td>
+              <td class="observations-cell">
+                ${observations}
+                ${evidenceCount > 0 ? `<br><br><em>📎 ${evidenceCount} evidence file(s) attached</em>` : ''}
+              </td>
+            </tr>
+          `;
         });
+
+        htmlContent += `
+              </tbody>
+            </table>
+          </div>
+        `;
       });
+
+      htmlContent += `</div>`;
     });
 
-    content += `\n${'='.repeat(80)}\n`;
-    content += `End of Audit Report\n`;
+    htmlContent += `
+        <div class="footer">
+          <p>End of Audit Report - Generated on ${new Date().toLocaleString('en-US')}</p>
+          <p>ISO 45001:2018 Occupational Health and Safety Management Systems</p>
+        </div>
+      </body>
+      </html>
+    `;
 
-    // Download as text file (works on web and mobile)
-    if (Platform.OS === 'web') {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      alert('✅ Audit report downloaded!');
-    } else {
-      // For mobile, save to device using FileSystem
-      try {
-        const fileUri = FileSystem.documentDirectory + `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
-        await FileSystem.writeAsStringAsync(fileUri, content);
-        Alert.alert('Success', `Audit report saved to:\n${fileUri}`);
-      } catch (error) {
-        console.error('Error saving file:', error);
-        Alert.alert('Error', 'Failed to save audit report');
+    try {
+      // Use expo-print for PDF generation
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      
+      if (Platform.OS === 'web') {
+        // For web, download the PDF
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('✅ PDF audit report downloaded!');
+      } else {
+        // For mobile, share the PDF
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Save or Share Audit Report',
+          UTI: 'com.adobe.pdf',
+        });
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to generate PDF report. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to generate PDF report');
       }
     }
   };
