@@ -44,6 +44,11 @@ export default function QuestionnaireDetailScreen() {
   const [questionnaire, setQuestionnaire] = useState<Questionnaire | null>(null);
   const [expandedClauses, setExpandedClauses] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [editMode, setEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<{question: Question, clauseNo: string, subclauseIndex: number} | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editQuestionText, setEditQuestionText] = useState('');
   const { token } = useAuth();
   const router = useRouter();
 
