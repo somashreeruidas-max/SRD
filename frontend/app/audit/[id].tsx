@@ -1534,65 +1534,119 @@ export default function AuditScreen() {
                         <TouchableOpacity 
                           style={styles.evidenceInfo}
                           onPress={() => {
+                            console.log('Opening evidence:', { type: ev.type, filename: ev.filename, dataLength: ev.data?.length });
+                            
                             // Open evidence based on type
                             if (ev.type === 'photo') {
                               // For photos, open in new tab/window with base64 data
                               if (Platform.OS === 'web') {
-                                const newWindow = window.open();
-                                if (newWindow) {
-                                  newWindow.document.write(`
-                                    <html>
-                                      <head><title>${ev.filename}</title></head>
-                                      <body style="margin:0;display:flex;justify-content:center;align-items:center;background:#000;">
-                                        <img src="${ev.data}" style="max-width:100%;max-height:100vh;" />
-                                      </body>
-                                    </html>
-                                  `);
+                                try {
+                                  // Check if data has proper format
+                                  const imageData = ev.data.startsWith('data:') ? ev.data : `data:image/jpeg;base64,${ev.data}`;
+                                  const newWindow = window.open('', '_blank');
+                                  if (newWindow) {
+                                    newWindow.document.write(`
+                                      <html>
+                                        <head>
+                                          <title>${ev.filename}</title>
+                                          <style>
+                                            body { margin:0; display:flex; justify-content:center; align-items:center; background:#000; min-height:100vh; }
+                                            img { max-width:100%; max-height:100vh; object-fit:contain; }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <img src="${imageData}" alt="${ev.filename}" onerror="document.body.innerHTML='<p style=color:white;>Error loading image</p>'"/>
+                                        </body>
+                                      </html>
+                                    `);
+                                    newWindow.document.close();
+                                  } else {
+                                    alert('Please allow pop-ups to view attachments');
+                                  }
+                                } catch (error) {
+                                  console.error('Error opening photo:', error);
+                                  alert('Failed to open photo. Please try again.');
                                 }
                               } else {
-                                Alert.alert('View Photo', ev.filename, [
-                                  { text: 'OK', style: 'default' }
-                                ]);
+                                Alert.alert('View Photo', ev.filename);
                               }
                             } else if (ev.type === 'document') {
                               // For documents, download
                               if (Platform.OS === 'web') {
-                                const link = document.createElement('a');
-                                link.href = ev.data;
-                                link.download = ev.filename;
-                                link.click();
+                                try {
+                                  const link = document.createElement('a');
+                                  link.href = ev.data;
+                                  link.download = ev.filename;
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                                } catch (error) {
+                                  console.error('Error downloading document:', error);
+                                  alert('Failed to download document. Please try again.');
+                                }
                               } else {
                                 Alert.alert('Download', `Downloading ${ev.filename}`);
                               }
                             } else if (ev.type === 'audio') {
                               // For audio, play in new window
                               if (Platform.OS === 'web') {
-                                const newWindow = window.open();
-                                if (newWindow) {
-                                  newWindow.document.write(`
-                                    <html>
-                                      <head><title>${ev.filename}</title></head>
-                                      <body style="margin:20px;">
-                                        <h3>${ev.filename}</h3>
-                                        <audio controls autoplay src="${ev.data}"></audio>
-                                      </body>
-                                    </html>
-                                  `);
+                                try {
+                                  const newWindow = window.open('', '_blank');
+                                  if (newWindow) {
+                                    newWindow.document.write(`
+                                      <html>
+                                        <head>
+                                          <title>${ev.filename}</title>
+                                          <style>
+                                            body { margin:20px; font-family: Arial, sans-serif; }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <h3>${ev.filename}</h3>
+                                          <audio controls autoplay src="${ev.data}">
+                                            Your browser does not support audio playback.
+                                          </audio>
+                                        </body>
+                                      </html>
+                                    `);
+                                    newWindow.document.close();
+                                  } else {
+                                    alert('Please allow pop-ups to view attachments');
+                                  }
+                                } catch (error) {
+                                  console.error('Error opening audio:', error);
+                                  alert('Failed to open audio. Please try again.');
                                 }
                               }
                             } else if (ev.type === 'video') {
                               // For video, play in new window
                               if (Platform.OS === 'web') {
-                                const newWindow = window.open();
-                                if (newWindow) {
-                                  newWindow.document.write(`
-                                    <html>
-                                      <head><title>${ev.filename}</title></head>
-                                      <body style="margin:0;display:flex;justify-content:center;align-items:center;background:#000;">
-                                        <video controls autoplay style="max-width:100%;max-height:100vh;" src="${ev.data}"></video>
-                                      </body>
-                                    </html>
-                                  `);
+                                try {
+                                  const newWindow = window.open('', '_blank');
+                                  if (newWindow) {
+                                    newWindow.document.write(`
+                                      <html>
+                                        <head>
+                                          <title>${ev.filename}</title>
+                                          <style>
+                                            body { margin:0; display:flex; justify-content:center; align-items:center; background:#000; min-height:100vh; }
+                                            video { max-width:100%; max-height:100vh; }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <video controls autoplay src="${ev.data}">
+                                            Your browser does not support video playback.
+                                          </video>
+                                        </body>
+                                      </html>
+                                    `);
+                                    newWindow.document.close();
+                                  } else {
+                                    alert('Please allow pop-ups to view attachments');
+                                  }
+                                } catch (error) {
+                                  console.error('Error opening video:', error);
+                                  alert('Failed to open video. Please try again.');
                                 }
                               }
                             }
