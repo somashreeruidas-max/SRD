@@ -994,8 +994,8 @@ export default function AuditScreen() {
       textContent += '                    NON-CONFORMANCES SUMMARY                               \n';
       textContent += '═══════════════════════════════════════════════════════════════════════════\n\n';
       textContent += `Total Findings         : ${findings.length}\n`;
-      textContent += `Minor Non-Conformances : ${findings.filter(f => f.conformance === 'Mi').length}\n`;
-      textContent += `Major Non-Conformances : ${findings.filter(f => f.conformance === 'C').length}\n\n`;
+      textContent += `Minor NC (Mi)          : ${findings.filter(f => f.conformance === 'Mi').length}\n`;
+      textContent += `Major NC (MA)          : ${findings.filter(f => f.conformance === 'MA' || f.conformance === 'C').length}\n\n`;
 
       findings.forEach((finding, index) => {
         const isMajor = (finding.conformance === 'MA' || finding.conformance === 'C');
