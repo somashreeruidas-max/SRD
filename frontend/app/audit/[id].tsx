@@ -406,16 +406,53 @@ export default function AuditScreen() {
 
   const recordVideo = async () => {
     try {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        videoMaxDuration: 60,
-        quality: 0.5,
-      });
+      // On web, video recording from camera is not well supported
+      // So we'll use video picker instead
+      let result;
+      
+      if (Platform.OS === 'web') {
+        // On web, pick from library
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+          quality: 0.3,
+        });
+      } else {
+        // On mobile, record video
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+          videoMaxDuration: 60,
+          quality: 0.3,
+        });
+      }
 
       if (!result.canceled && selectedQuestion) {
-        const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
+        let base64 = '';
+        
+        // Platform-specific base64 conversion
+        if (Platform.OS === 'web') {
+          try {
+            const response = await fetch(result.assets[0].uri);
+            const blob = await response.blob();
+            base64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const base64String = reader.result as string;
+                resolve(base64String.split(',')[1]);
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          } catch (err) {
+            console.error('Web video read error:', err);
+            alert('Failed to read video. Video files may be too large. Please try a shorter video.');
+            return;
+          }
+        } else {
+          base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+        }
+        
         const currentResponse = getResponse(selectedQuestion.id);
         const newEvidence: Evidence = {
           type: 'video',
@@ -427,11 +464,20 @@ export default function AuditScreen() {
           ...currentResponse,
           evidence: [...currentResponse.evidence, newEvidence],
         });
-        Alert.alert('Success', 'Video added');
+        
+        if (Platform.OS === 'web') {
+          alert('✅ Video added successfully!');
+        } else {
+          Alert.alert('Success', 'Video added');
+        }
       }
     } catch (error) {
-      console.error('Error recording video:', error);
-      Alert.alert('Error', 'Failed to record video');
+      console.error('Error with video:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to add video. Please try again with a smaller file.');
+      } else {
+        Alert.alert('Error', 'Failed to record video');
+      }
     }
   };
 
