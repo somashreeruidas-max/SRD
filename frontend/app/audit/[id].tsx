@@ -210,11 +210,11 @@ export default function AuditScreen() {
       );
       
       if (Platform.OS === 'web') {
-        alert('Audit completed successfully!');
-        router.back();
+        alert('✅ Audit completed successfully!');
+        router.replace('/(tabs)/audits');
       } else {
         Alert.alert('Success', 'Audit completed', [
-          { text: 'OK', onPress: () => router.back() },
+          { text: 'OK', onPress: () => router.replace('/(tabs)/audits') },
         ]);
       }
     } catch (error) {
