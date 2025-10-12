@@ -148,6 +148,61 @@ export default function NewAuditScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.label}>Plant Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g., Packaged Drinking Water Plant"
+            value={plantName}
+            onChangeText={setPlantName}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Auditor Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter auditor name"
+            value={auditorName}
+            onChangeText={setAuditorName}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Auditee Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter auditee name"
+            value={auditeeName}
+            onChangeText={setAuditeeName}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Audit Scope</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g., ISO 45001:2018 - Production area"
+            value={auditScope}
+            onChangeText={setAuditScope}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.label}>Audit Criteria</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g., Clauses 4-10"
+            value={auditCriteria}
+            onChangeText={setAuditCriteria}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.label}>Select Questionnaire *</Text>
           {questionnaires.map((q) => (
             <TouchableOpacity
