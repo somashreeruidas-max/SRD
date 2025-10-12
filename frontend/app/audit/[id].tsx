@@ -856,7 +856,7 @@ export default function AuditScreen() {
           if (response && response.conformance) {
             answeredQuestions++;
             console.log(`Question ${question.id} conformance:`, response.conformance);
-            if (response.conformance === 'CO' || response.conformance === 'M') {
+            if (response.conformance === 'C') {
               meetsCount++;
               console.log('Counted as Compliant');
             }
@@ -864,7 +864,7 @@ export default function AuditScreen() {
               minorCount++;
               console.log('Counted as Minor NC');
             }
-            else if (response.conformance === 'MA' || response.conformance === 'C') {
+            else if (response.conformance === 'Ma') {
               majorCount++;
               console.log('Counted as Major NC');
             }
