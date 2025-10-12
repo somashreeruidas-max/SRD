@@ -51,7 +51,7 @@ export default function RegisterScreen() {
         >
           <View style={styles.header}>
             <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Join ISO 45001:2018 Audit</Text>
+            <Text style={styles.subtitle}>Join GO AUDIT</Text>
           </View>
 
           <View style={styles.form}>
