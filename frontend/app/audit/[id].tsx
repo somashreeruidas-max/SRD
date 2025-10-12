@@ -816,6 +816,235 @@ export default function AuditScreen() {
     }
   };
 
+  const handleDownloadTextReport = async () => {
+    if (!audit || !questionnaire) return;
+
+    // Generate comprehensive text report
+    let textContent = '';
+    
+    // Header Section
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+    textContent += '                    INTERNAL AUDIT REPORT - COMPLETE                       \n';
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n\n';
+    
+    // Audit Information
+    textContent += 'AUDIT INFORMATION\n';
+    textContent += '─────────────────────────────────────────────────────────────────────────\n';
+    textContent += `Audit Title       : ${audit.title}\n`;
+    textContent += `Standard          : ${audit.questionnaire_name}\n`;
+    textContent += `Status            : ${audit.status.toUpperCase()}\n`;
+    textContent += `Created Date      : ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}\n`;
+    if (audit.plant_name) textContent += `Plant Name        : ${audit.plant_name}\n`;
+    if (audit.auditor_name) textContent += `Auditor           : ${audit.auditor_name}\n`;
+    if (audit.auditee_name) textContent += `Auditee           : ${audit.auditee_name}\n`;
+    if (audit.scope_of_audit) textContent += `Scope of Audit    : ${audit.scope_of_audit}\n`;
+    if (audit.audit_criteria) textContent += `Audit Criteria    : ${audit.audit_criteria}\n`;
+    textContent += '\n';
+
+    // Statistics
+    let totalQuestions = 0;
+    let answeredQuestions = 0;
+    let meetsCount = 0;
+    let minorCount = 0;
+    let majorCount = 0;
+
+    questionnaire.clauses.forEach((clause) => {
+      clause.subclauses.forEach((subclause) => {
+        totalQuestions += subclause.questions.length;
+        subclause.questions.forEach((question) => {
+          const response = responses.get(question.id);
+          if (response && response.conformance) {
+            answeredQuestions++;
+            if (response.conformance === 'M') meetsCount++;
+            else if (response.conformance === 'Mi') minorCount++;
+            else if (response.conformance === 'C') majorCount++;
+          }
+        });
+      });
+    });
+
+    const completionRate = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
+
+    textContent += 'AUDIT STATISTICS\n';
+    textContent += '─────────────────────────────────────────────────────────────────────────\n';
+    textContent += `Total Questions        : ${totalQuestions}\n`;
+    textContent += `Answered Questions     : ${answeredQuestions}\n`;
+    textContent += `Completion Rate        : ${completionRate}%\n`;
+    textContent += `\n`;
+    textContent += `CONFORMANCE SUMMARY:\n`;
+    textContent += `  ✓ Meets Requirements        : ${meetsCount}\n`;
+    textContent += `  ⚠ Minor Non-Conformances    : ${minorCount}\n`;
+    textContent += `  ✗ Major Non-Conformances    : ${majorCount}\n`;
+    textContent += '\n\n';
+
+    // Detailed Audit Content
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+    textContent += '                         DETAILED AUDIT RESULTS                            \n';
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n\n';
+
+    questionnaire.clauses.forEach((clause, clauseIndex) => {
+      textContent += `\n${'═'.repeat(75)}\n`;
+      textContent += `CLAUSE ${clause.clause_no}: ${clause.title.toUpperCase()}\n`;
+      textContent += `${'═'.repeat(75)}\n\n`;
+
+      clause.subclauses.forEach((subclause, subclauseIndex) => {
+        textContent += `\n${'-'.repeat(75)}\n`;
+        textContent += `${subclause.clause_no} - ${subclause.title}\n`;
+        textContent += `${'-'.repeat(75)}\n\n`;
+
+        subclause.questions.forEach((question, qIndex) => {
+          const response = responses.get(question.id);
+          
+          textContent += `[Q${qIndex + 1}] ${question.question_text}\n\n`;
+          
+          if (response && response.conformance) {
+            let conformanceStatus = '';
+            let conformanceSymbol = '';
+            
+            if (response.conformance === 'M') {
+              conformanceStatus = 'MEETS REQUIREMENTS';
+              conformanceSymbol = '✓';
+            } else if (response.conformance === 'Mi') {
+              conformanceStatus = '⚠ MINOR NON-CONFORMANCE';
+              conformanceSymbol = '⚠';
+            } else if (response.conformance === 'C') {
+              conformanceStatus = '✗ MAJOR NON-CONFORMANCE';
+              conformanceSymbol = '✗';
+            }
+            
+            textContent += `    Conformance: ${conformanceSymbol} ${conformanceStatus}\n\n`;
+            
+            if (response.observations) {
+              textContent += `    Observations:\n`;
+              textContent += `    ${response.observations.split('\n').join('\n    ')}\n\n`;
+            } else {
+              textContent += `    Observations: No observations recorded\n\n`;
+            }
+            
+            if (response.evidence && response.evidence.length > 0) {
+              textContent += `    Evidence Attached: ${response.evidence.length} file(s)\n`;
+              response.evidence.forEach((ev, evIndex) => {
+                const typeIcon = ev.type === 'photo' ? '📷' : ev.type === 'document' ? '📄' : ev.type === 'audio' ? '🎤' : '🎥';
+                textContent += `      ${evIndex + 1}. ${typeIcon} ${ev.filename} (${new Date(ev.timestamp).toLocaleString()})\n`;
+              });
+              textContent += '\n';
+            } else {
+              textContent += `    Evidence: No evidence attached\n\n`;
+            }
+          } else {
+            textContent += `    Status: NOT ANSWERED\n\n`;
+          }
+          
+          textContent += `    ${'.'.repeat(71)}\n\n`;
+        });
+      });
+    });
+
+    // Findings Summary Section
+    const findings: Array<{
+      clause: string;
+      subclause: string;
+      question: string;
+      conformance: string;
+      observations: string;
+      evidence: Evidence[];
+    }> = [];
+
+    questionnaire.clauses.forEach((clause) => {
+      clause.subclauses.forEach((subclause) => {
+        subclause.questions.forEach((question) => {
+          const response = responses.get(question.id);
+          if (response && (response.conformance === 'Mi' || response.conformance === 'C')) {
+            findings.push({
+              clause: `${clause.clause_no} - ${clause.title}`,
+              subclause: `${subclause.clause_no} - ${subclause.title}`,
+              question: question.question_text,
+              conformance: response.conformance,
+              observations: response.observations || 'No observations recorded',
+              evidence: response.evidence || [],
+            });
+          }
+        });
+      });
+    });
+
+    if (findings.length > 0) {
+      textContent += '\n\n';
+      textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+      textContent += '                    NON-CONFORMANCES SUMMARY                               \n';
+      textContent += '═══════════════════════════════════════════════════════════════════════════\n\n';
+      textContent += `Total Findings         : ${findings.length}\n`;
+      textContent += `Minor Non-Conformances : ${findings.filter(f => f.conformance === 'Mi').length}\n`;
+      textContent += `Major Non-Conformances : ${findings.filter(f => f.conformance === 'C').length}\n\n`;
+
+      findings.forEach((finding, index) => {
+        const isMajor = finding.conformance === 'C';
+        const badge = isMajor ? '✗ MAJOR NON-CONFORMANCE' : '⚠ MINOR NON-CONFORMANCE';
+        
+        textContent += `\n${'-'.repeat(75)}\n`;
+        textContent += `FINDING #${index + 1}: ${badge}\n`;
+        textContent += `${'-'.repeat(75)}\n\n`;
+        textContent += `Clause    : ${finding.clause}\n`;
+        textContent += `Subclause : ${finding.subclause}\n\n`;
+        textContent += `Question:\n${finding.question}\n\n`;
+        textContent += `Observations:\n${finding.observations.split('\n').join('\n')}\n\n`;
+        
+        if (finding.evidence.length > 0) {
+          textContent += `Evidence (${finding.evidence.length} file(s)):\n`;
+          finding.evidence.forEach((ev, evIndex) => {
+            const typeIcon = ev.type === 'photo' ? '📷' : ev.type === 'document' ? '📄' : ev.type === 'audio' ? '🎤' : '🎥';
+            textContent += `  ${evIndex + 1}. ${typeIcon} ${ev.filename} - ${new Date(ev.timestamp).toLocaleString()}\n`;
+          });
+        } else {
+          textContent += `Evidence: No evidence attached\n`;
+        }
+        textContent += '\n';
+      });
+    }
+
+    // Footer
+    textContent += '\n';
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+    textContent += '                           END OF REPORT                                   \n';
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+    textContent += `Generated on: ${new Date().toLocaleString('en-US')}\n`;
+    textContent += `Report Type: Complete Audit Report (Text Format)\n`;
+    textContent += `Standard: ${audit.questionnaire_name}\n`;
+    textContent += '═══════════════════════════════════════════════════════════════════════════\n';
+
+    // Download the text file
+    try {
+      if (Platform.OS === 'web') {
+        // For web, create and download text file
+        const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Complete_Audit_Report_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert(`✅ Complete audit report downloaded as text file!\n\nTotal Questions: ${totalQuestions}\nAnswered: ${answeredQuestions} (${completionRate}%)\nFindings: ${findings.length}`);
+      } else {
+        // For mobile, use expo-sharing
+        const fileUri = `${FileSystem.documentDirectory}Complete_Audit_Report_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
+        await FileSystem.writeAsStringAsync(fileUri, textContent);
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'text/plain',
+          dialogTitle: 'Save or Share Audit Report',
+        });
+      }
+    } catch (error) {
+      console.error('Error generating text report:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to generate text report. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to generate text report');
+      }
+    }
+  };
+
   const handleDownloadAudit = async () => {
     if (!audit || !questionnaire) return;
 
