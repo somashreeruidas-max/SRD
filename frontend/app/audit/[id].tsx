@@ -834,9 +834,9 @@ export default function AuditScreen() {
     textContent += `Standard          : ${audit.questionnaire_name}\n`;
     textContent += `Status            : ${audit.status.toUpperCase()}\n`;
     textContent += `Created Date      : ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}\n`;
-    if (audit.plant_name) textContent += `Plant Name        : ${audit.plant_name}\n`;
-    if (audit.auditor_name) textContent += `Auditor           : ${audit.auditor_name}\n`;
-    if (audit.auditee_name) textContent += `Auditee           : ${audit.auditee_name}\n`;
+    textContent += `Plant/Company     : ${audit.plant_name || 'Not specified'}\n`;
+    textContent += `Auditor Name      : ${audit.auditor_name || 'Not specified'}\n`;
+    textContent += `Auditee Name      : ${audit.auditee_name || 'Not specified'}\n`;
     if (audit.scope_of_audit) textContent += `Scope of Audit    : ${audit.scope_of_audit}\n`;
     if (audit.audit_criteria) textContent += `Audit Criteria    : ${audit.audit_criteria}\n`;
     textContent += '\n';
