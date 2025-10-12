@@ -95,26 +95,42 @@ export default function QuestionnaireDetailScreen() {
   const handleDeleteQuestion = (questionId: string, clauseNo: string, subclauseIndex: number) => {
     if (!questionnaire) return;
 
-    Alert.alert(
-      'Delete Question',
-      'Are you sure you want to delete this question?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            const updatedQuestionnaire = { ...questionnaire };
-            const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
-            if (clause) {
-              const subclause = clause.subclauses[subclauseIndex];
-              subclause.questions = subclause.questions.filter(q => q.id !== questionId);
-            }
-            setQuestionnaire(updatedQuestionnaire);
-          },
-        },
-      ]
-    );
+    const confirmDelete = Platform.OS === 'web'
+      ? window.confirm('Are you sure you want to delete this question?')
+      : true;
+
+    if (confirmDelete) {
+      if (Platform.OS === 'web') {
+        const updatedQuestionnaire = { ...questionnaire };
+        const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
+        if (clause) {
+          const subclause = clause.subclauses[subclauseIndex];
+          subclause.questions = subclause.questions.filter(q => q.id !== questionId);
+        }
+        setQuestionnaire(updatedQuestionnaire);
+      } else {
+        Alert.alert(
+          'Delete Question',
+          'Are you sure you want to delete this question?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: () => {
+                const updatedQuestionnaire = { ...questionnaire };
+                const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
+                if (clause) {
+                  const subclause = clause.subclauses[subclauseIndex];
+                  subclause.questions = subclause.questions.filter(q => q.id !== questionId);
+                }
+                setQuestionnaire(updatedQuestionnaire);
+              },
+            },
+          ]
+        );
+      }
+    }
   };
 
   const handleAddQuestion = (clauseNo: string, subclauseIndex: number) => {
