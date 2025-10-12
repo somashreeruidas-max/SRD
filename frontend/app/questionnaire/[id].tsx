@@ -325,39 +325,45 @@ export default function QuestionnaireDetailScreen() {
                         {subclause.title}
                       </Text>
                     </View>
-                    {subclause.questions.map((question, index) => (
-                      <View key={question.id} style={styles.questionContainer}>
-                        <Text style={styles.questionNumber}>Q{index + 1}</Text>
-                        <Text style={[styles.questionText, editMode && styles.questionTextEdit]}>
-                          {question.question_text}
-                        </Text>
-                        {editMode && (
-                          <View style={styles.questionActions}>
-                            <TouchableOpacity
-                              style={styles.editIconButton}
-                              onPress={() => handleEditQuestion(question, subclause.clause_no, clause.subclauses.findIndex(sc => sc.clause_no === subclause.clause_no))}
-                            >
-                              <Ionicons name="create-outline" size={18} color="#3B82F6" />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={styles.deleteIconButton}
-                              onPress={() => handleDeleteQuestion(question.id, clause.clause_no, clause.subclauses.findIndex(sc => sc.clause_no === subclause.clause_no))}
-                            >
-                              <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                            </TouchableOpacity>
-                          </View>
-                        )}
-                      </View>
-                    ))}
-                    {editMode && (
-                      <TouchableOpacity
-                        style={styles.addQuestionButton}
-                        onPress={() => handleAddQuestion(clause.clause_no, clause.subclauses.findIndex(sc => sc.clause_no === subclause.clause_no))}
-                      >
-                        <Ionicons name="add-circle-outline" size={20} color="#3B82F6" />
-                        <Text style={styles.addQuestionText}>Add Question</Text>
-                      </TouchableOpacity>
-                    )}
+                    {subclause.questions.map((question, qIndex) => {
+                      const subclauseIndex = clause.subclauses.findIndex(sc => sc.clause_no === subclause.clause_no);
+                      return (
+                        <View key={question.id} style={styles.questionContainer}>
+                          <Text style={styles.questionNumber}>Q{qIndex + 1}</Text>
+                          <Text style={[styles.questionText, editMode && styles.questionTextEdit]}>
+                            {question.question_text}
+                          </Text>
+                          {editMode && (
+                            <View style={styles.questionActions}>
+                              <TouchableOpacity
+                                style={styles.editIconButton}
+                                onPress={() => handleEditQuestion(question, clause.clause_no, subclauseIndex)}
+                              >
+                                <Ionicons name="create-outline" size={18} color="#3B82F6" />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={styles.deleteIconButton}
+                                onPress={() => handleDeleteQuestion(question.id, clause.clause_no, subclauseIndex)}
+                              >
+                                <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                              </TouchableOpacity>
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })}
+                    {editMode && (() => {
+                      const subclauseIndex = clause.subclauses.findIndex(sc => sc.clause_no === subclause.clause_no);
+                      return (
+                        <TouchableOpacity
+                          style={styles.addQuestionButton}
+                          onPress={() => handleAddQuestion(clause.clause_no, subclauseIndex)}
+                        >
+                          <Ionicons name="add-circle-outline" size={20} color="#3B82F6" />
+                          <Text style={styles.addQuestionText}>Add Question</Text>
+                        </TouchableOpacity>
+                      );
+                    })()}
                   </View>
                 ))}
               </View>
