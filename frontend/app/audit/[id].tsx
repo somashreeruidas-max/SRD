@@ -160,21 +160,47 @@ export default function AuditScreen() {
   };
 
   const handleSave = async () => {
+    // Don't allow saving if already completed
+    if (audit?.status === 'completed') {
+      if (Platform.OS === 'web') {
+        alert('This audit is already completed. No changes can be saved.');
+      } else {
+        Alert.alert('Info', 'This audit is already completed. No changes can be saved.');
+      }
+      return;
+    }
+
     setSaving(true);
     try {
       const responsesArray = Array.from(responses.values());
+      const newStatus = audit?.status === 'draft' ? 'in-progress' : audit?.status;
+      
       await axios.put(
         `${API_URL}/api/audits/${id}`,
         {
           responses: responsesArray,
-          status: audit?.status === 'draft' ? 'in-progress' : audit?.status,
+          status: newStatus,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      Alert.alert('Success', 'Audit saved successfully');
+      
+      // Update local audit state
+      if (audit) {
+        setAudit({ ...audit, status: newStatus });
+      }
+      
+      if (Platform.OS === 'web') {
+        alert('✅ Audit saved successfully!');
+      } else {
+        Alert.alert('Success', 'Audit saved successfully');
+      }
     } catch (error) {
       console.error('Error saving audit:', error);
-      Alert.alert('Error', 'Failed to save audit');
+      if (Platform.OS === 'web') {
+        alert('Failed to save audit. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to save audit');
+      }
     } finally {
       setSaving(false);
     }
