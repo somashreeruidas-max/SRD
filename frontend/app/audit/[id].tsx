@@ -668,22 +668,33 @@ export default function AuditScreen() {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <TouchableOpacity
-          style={[styles.saveButton, saving && styles.buttonDisabled]}
-          onPress={handleSave}
-          disabled={saving}
-        >
-          <Text style={styles.saveButtonText}>
-            {saving ? 'Saving...' : 'Save Progress'}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.completeButton, saving && styles.buttonDisabled]}
-          onPress={handleComplete}
-          disabled={saving}
-        >
-          <Text style={styles.completeButtonText}>Complete</Text>
-        </TouchableOpacity>
+        {audit?.status === 'completed' ? (
+          <View style={styles.completedBanner}>
+            <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+            <Text style={styles.completedBannerText}>
+              This audit is completed. No further changes can be made.
+            </Text>
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity
+              style={[styles.saveButton, saving && styles.buttonDisabled]}
+              onPress={handleSave}
+              disabled={saving}
+            >
+              <Text style={styles.saveButtonText}>
+                {saving ? 'Saving...' : 'Save Progress'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.completeButton, saving && styles.buttonDisabled]}
+              onPress={handleComplete}
+              disabled={saving}
+            >
+              <Text style={styles.completeButtonText}>Complete</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       {/* Question Modal */}
