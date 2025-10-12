@@ -998,7 +998,7 @@ export default function AuditScreen() {
       textContent += `Major NC (MA)          : ${findings.filter(f => f.conformance === 'MA' || f.conformance === 'C').length}\n\n`;
 
       findings.forEach((finding, index) => {
-        const isMajor = (finding.conformance === 'MA' || finding.conformance === 'C');
+        const isMajor = (finding.conformance === 'Ma');
         const badge = isMajor ? '✗ MAJOR NON-CONFORMANCE' : '⚠ MINOR NON-CONFORMANCE';
         
         textContent += `\n${'-'.repeat(75)}\n`;
