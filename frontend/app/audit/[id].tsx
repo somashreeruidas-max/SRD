@@ -1291,6 +1291,40 @@ export default function AuditScreen() {
         </View>
       </View>
 
+      {/* Audit Information Header */}
+      <View style={styles.auditInfoHeader}>
+        <View style={styles.auditInfoRow}>
+          <View style={styles.auditInfoItem}>
+            <Ionicons name="business-outline" size={16} color="#6B7280" />
+            <Text style={styles.auditInfoLabel}>Plant:</Text>
+            <Text style={styles.auditInfoValue}>{audit.plant_name || 'Not specified'}</Text>
+          </View>
+          <View style={styles.auditInfoItem}>
+            <Ionicons name="calendar-outline" size={16} color="#6B7280" />
+            <Text style={styles.auditInfoLabel}>Date:</Text>
+            <Text style={styles.auditInfoValue}>
+              {new Date(audit.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+              })}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.auditInfoRow}>
+          <View style={styles.auditInfoItem}>
+            <Ionicons name="person-outline" size={16} color="#6B7280" />
+            <Text style={styles.auditInfoLabel}>Auditor:</Text>
+            <Text style={styles.auditInfoValue}>{audit.auditor_name || 'Not specified'}</Text>
+          </View>
+          <View style={styles.auditInfoItem}>
+            <Ionicons name="people-outline" size={16} color="#6B7280" />
+            <Text style={styles.auditInfoLabel}>Auditee:</Text>
+            <Text style={styles.auditInfoValue}>{audit.auditee_name || 'Not specified'}</Text>
+          </View>
+        </View>
+      </View>
+
       <View style={styles.progressBar}>
         <View style={styles.progressBarBg}>
           <View
