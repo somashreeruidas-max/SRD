@@ -1989,17 +1989,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     padding: 12,
     borderRadius: 8,
+    marginBottom: 8,
   },
   evidenceInfo: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    paddingRight: 8,
   },
   evidenceFilename: {
     flex: 1,
     fontSize: 13,
-    color: '#374151',
+    color: '#3B82F6',
+    fontWeight: '500',
   },
   modalFooter: {
     flexDirection: 'row',
