@@ -855,13 +855,28 @@ export default function AuditScreen() {
           const response = responses.get(question.id);
           if (response && response.conformance) {
             answeredQuestions++;
-            if (response.conformance === 'CO' || response.conformance === 'M') meetsCount++;
-            else if (response.conformance === 'Mi') minorCount++;
-            else if (response.conformance === 'MA' || response.conformance === 'C') majorCount++;
+            console.log(`Question ${question.id} conformance:`, response.conformance);
+            if (response.conformance === 'CO' || response.conformance === 'M') {
+              meetsCount++;
+              console.log('Counted as Compliant');
+            }
+            else if (response.conformance === 'Mi') {
+              minorCount++;
+              console.log('Counted as Minor NC');
+            }
+            else if (response.conformance === 'MA' || response.conformance === 'C') {
+              majorCount++;
+              console.log('Counted as Major NC');
+            }
+            else {
+              console.log('Unknown conformance type:', response.conformance);
+            }
           }
         });
       });
     });
+
+    console.log('Final counts:', { meetsCount, minorCount, majorCount, totalAnswered: meetsCount + minorCount + majorCount, answeredQuestions });
 
     const completionRate = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
     const totalClauses = questionnaire.clauses.length;
