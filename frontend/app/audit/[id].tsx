@@ -1531,7 +1531,73 @@ export default function AuditScreen() {
                   <View style={styles.evidenceList}>
                     {getResponse(selectedQuestion.id).evidence.map((ev, index) => (
                       <View key={index} style={styles.evidenceItem}>
-                        <View style={styles.evidenceInfo}>
+                        <TouchableOpacity 
+                          style={styles.evidenceInfo}
+                          onPress={() => {
+                            // Open evidence based on type
+                            if (ev.type === 'photo') {
+                              // For photos, open in new tab/window with base64 data
+                              if (Platform.OS === 'web') {
+                                const newWindow = window.open();
+                                if (newWindow) {
+                                  newWindow.document.write(`
+                                    <html>
+                                      <head><title>${ev.filename}</title></head>
+                                      <body style="margin:0;display:flex;justify-content:center;align-items:center;background:#000;">
+                                        <img src="${ev.data}" style="max-width:100%;max-height:100vh;" />
+                                      </body>
+                                    </html>
+                                  `);
+                                }
+                              } else {
+                                Alert.alert('View Photo', ev.filename, [
+                                  { text: 'OK', style: 'default' }
+                                ]);
+                              }
+                            } else if (ev.type === 'document') {
+                              // For documents, download
+                              if (Platform.OS === 'web') {
+                                const link = document.createElement('a');
+                                link.href = ev.data;
+                                link.download = ev.filename;
+                                link.click();
+                              } else {
+                                Alert.alert('Download', `Downloading ${ev.filename}`);
+                              }
+                            } else if (ev.type === 'audio') {
+                              // For audio, play in new window
+                              if (Platform.OS === 'web') {
+                                const newWindow = window.open();
+                                if (newWindow) {
+                                  newWindow.document.write(`
+                                    <html>
+                                      <head><title>${ev.filename}</title></head>
+                                      <body style="margin:20px;">
+                                        <h3>${ev.filename}</h3>
+                                        <audio controls autoplay src="${ev.data}"></audio>
+                                      </body>
+                                    </html>
+                                  `);
+                                }
+                              }
+                            } else if (ev.type === 'video') {
+                              // For video, play in new window
+                              if (Platform.OS === 'web') {
+                                const newWindow = window.open();
+                                if (newWindow) {
+                                  newWindow.document.write(`
+                                    <html>
+                                      <head><title>${ev.filename}</title></head>
+                                      <body style="margin:0;display:flex;justify-content:center;align-items:center;background:#000;">
+                                        <video controls autoplay style="max-width:100%;max-height:100vh;" src="${ev.data}"></video>
+                                      </body>
+                                    </html>
+                                  `);
+                                }
+                              }
+                            }
+                          }}
+                        >
                           <Ionicons
                             name={
                               ev.type === 'photo'
@@ -1543,12 +1609,13 @@ export default function AuditScreen() {
                                 : 'videocam'
                             }
                             size={20}
-                            color="#6B7280"
+                            color="#3B82F6"
                           />
                           <Text style={styles.evidenceFilename} numberOfLines={1}>
                             {ev.filename}
                           </Text>
-                        </View>
+                          <Ionicons name="open-outline" size={16} color="#3B82F6" style={{ marginLeft: 4 }} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => removeEvidence(index)}>
                           <Ionicons name="trash-outline" size={20} color="#EF4444" />
                         </TouchableOpacity>
