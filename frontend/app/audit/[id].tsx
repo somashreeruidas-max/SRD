@@ -901,13 +901,13 @@ export default function AuditScreen() {
             let conformanceStatus = '';
             let conformanceSymbol = '';
             
-            if (response.conformance === 'M') {
-              conformanceStatus = 'MEETS REQUIREMENTS';
+            if (response.conformance === 'CO' || response.conformance === 'M') {
+              conformanceStatus = 'COMPLIANT';
               conformanceSymbol = '✓';
             } else if (response.conformance === 'Mi') {
               conformanceStatus = '⚠ MINOR NON-CONFORMANCE';
               conformanceSymbol = '⚠';
-            } else if (response.conformance === 'C') {
+            } else if (response.conformance === 'MA' || response.conformance === 'C') {
               conformanceStatus = '✗ MAJOR NON-CONFORMANCE';
               conformanceSymbol = '✗';
             }
