@@ -208,7 +208,29 @@ export default function QuestionnaireDetailScreen() {
         <Text style={styles.headerTitle} numberOfLines={1}>
           Questionnaire
         </Text>
-        <View style={styles.placeholder} />
+        {editMode ? (
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={() => setEditMode(false)} style={styles.headerButton}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleSaveChanges}
+              style={[styles.headerButton, styles.saveHeaderButton]}
+              disabled={saving}
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.saveButtonHeaderText}>Save</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={() => setEditMode(true)} style={styles.headerButton}>
+            <Ionicons name="create-outline" size={20} color="#3B82F6" />
+            <Text style={styles.editButtonText}>Edit</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <ScrollView style={styles.content}>
