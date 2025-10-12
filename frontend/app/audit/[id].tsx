@@ -996,7 +996,7 @@ export default function AuditScreen() {
       textContent += '═══════════════════════════════════════════════════════════════════════════\n\n';
       textContent += `Total Findings         : ${findings.length}\n`;
       textContent += `Minor NC (Mi)          : ${findings.filter(f => f.conformance === 'Mi').length}\n`;
-      textContent += `Major NC (Ma)          : ${findings.filter(f => f.conformance === 'Ma').length}\n\n`;
+      textContent += `Major NC (Ma)          : ${findings.filter(f => f.conformance === 'Ma' || f.conformance === 'MA').length}\n\n`;
 
       findings.forEach((finding, index) => {
         const isMajor = (finding.conformance === 'Ma');
