@@ -66,6 +66,92 @@ export default function QuestionnaireDetailScreen() {
     setExpandedClauses(new Set());
   };
 
+  const handleEditQuestion = (question: Question, clauseNo: string, subclauseIndex: number) => {
+    setEditingQuestion({ question, clauseNo, subclauseIndex });
+    setEditQuestionText(question.question_text);
+    setShowEditModal(true);
+  };
+
+  const handleSaveQuestion = () => {
+    if (!editingQuestion || !questionnaire) return;
+
+    const updatedQuestionnaire = { ...questionnaire };
+    const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === editingQuestion.clauseNo);
+    if (clause) {
+      const subclause = clause.subclauses[editingQuestion.subclauseIndex];
+      const questionIndex = subclause.questions.findIndex(q => q.id === editingQuestion.question.id);
+      if (questionIndex !== -1) {
+        subclause.questions[questionIndex].question_text = editQuestionText;
+      }
+    }
+    setQuestionnaire(updatedQuestionnaire);
+    setShowEditModal(false);
+    setEditingQuestion(null);
+  };
+
+  const handleDeleteQuestion = (questionId: string, clauseNo: string, subclauseIndex: number) => {
+    if (!questionnaire) return;
+
+    Alert.alert(
+      'Delete Question',
+      'Are you sure you want to delete this question?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            const updatedQuestionnaire = { ...questionnaire };
+            const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
+            if (clause) {
+              const subclause = clause.subclauses[subclauseIndex];
+              subclause.questions = subclause.questions.filter(q => q.id !== questionId);
+            }
+            setQuestionnaire(updatedQuestionnaire);
+          },
+        },
+      ]
+    );
+  };
+
+  const handleAddQuestion = (clauseNo: string, subclauseIndex: number) => {
+    if (!questionnaire) return;
+
+    const newQuestionId = `q_${Date.now()}`;
+    const updatedQuestionnaire = { ...questionnaire };
+    const clause = updatedQuestionnaire.clauses.find(c => c.clause_no === clauseNo);
+    if (clause) {
+      const subclause = clause.subclauses[subclauseIndex];
+      const newQuestion: Question = {
+        id: newQuestionId,
+        question_text: 'New question - tap edit to customize',
+        order: subclause.questions.length + 1,
+      };
+      subclause.questions.push(newQuestion);
+    }
+    setQuestionnaire(updatedQuestionnaire);
+  };
+
+  const handleSaveChanges = async () => {
+    if (!questionnaire) return;
+
+    setSaving(true);
+    try {
+      await axios.put(
+        `${API_URL}/api/questionnaires/${id}`,
+        { clauses: questionnaire.clauses },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Alert.alert('Success', 'Questionnaire updated successfully');
+      setEditMode(false);
+    } catch (error) {
+      console.error('Error saving questionnaire:', error);
+      Alert.alert('Error', 'Failed to save changes');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const fetchQuestionnaire = async () => {
     try {
       const response = await axios.get(
