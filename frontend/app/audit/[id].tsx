@@ -724,7 +724,7 @@ export default function AuditScreen() {
     `;
 
     findings.forEach((finding, index) => {
-      const isMajor = (finding.conformance === 'Ma');
+      const isMajor = (finding.conformance === 'Ma' || finding.conformance === 'MA');
       const badgeClass = isMajor ? 'badge-major' : 'badge-minor';
       const findingClass = isMajor ? 'finding-major' : 'finding-minor';
       const headerClass = isMajor ? 'finding-header-major' : 'finding-header-minor';
