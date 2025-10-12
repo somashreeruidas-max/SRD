@@ -32,6 +32,8 @@ db = client["iso_audit_db"]
 users_collection = db["users"]
 questionnaires_collection = db["questionnaires"]
 audits_collection = db["audits"]
+audit_plans_collection = db["audit_plans"]
+capa_collection = db["capa"]
 
 # JWT Secret
 JWT_SECRET = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
