@@ -921,13 +921,13 @@ export default function AuditScreen() {
             let conformanceStatus = '';
             let conformanceSymbol = '';
             
-            if (response.conformance === 'CO' || response.conformance === 'M') {
+            if (response.conformance === 'C') {
               conformanceStatus = 'COMPLIANT';
               conformanceSymbol = '✓';
             } else if (response.conformance === 'Mi') {
               conformanceStatus = '⚠ MINOR NON-CONFORMANCE';
               conformanceSymbol = '⚠';
-            } else if (response.conformance === 'MA' || response.conformance === 'C') {
+            } else if (response.conformance === 'Ma') {
               conformanceStatus = '✗ MAJOR NON-CONFORMANCE';
               conformanceSymbol = '✗';
             }
