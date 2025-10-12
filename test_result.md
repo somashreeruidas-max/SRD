@@ -320,3 +320,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Comprehensive backend testing completed successfully. All 14 test scenarios passed with 100% success rate. All authentication, questionnaire, and audit APIs are working correctly including JWT security, base64 evidence storage, and proper error handling."
+  - agent: "main"
+    message: "Fixed critical bugs in questionnaire editing functionality. The root cause was that the handleEditQuestion, handleDeleteQuestion, and handleAddQuestion functions were receiving the wrong clause number parameter. They were receiving subclause.clause_no when they needed clause.clause_no. This caused the functions to fail to find the correct clause in the questionnaire structure, preventing both deletion and saving of changes. The fix now correctly passes clause.clause_no and properly calculates subclauseIndex. Changes should now persist when clicking Save."
