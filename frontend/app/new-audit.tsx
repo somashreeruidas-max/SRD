@@ -32,8 +32,10 @@ export default function NewAuditScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    fetchQuestionnaires();
-  }, []);
+    if (token) {
+      fetchQuestionnaires();
+    }
+  }, [token]);
 
   const fetchQuestionnaires = async () => {
     try {
