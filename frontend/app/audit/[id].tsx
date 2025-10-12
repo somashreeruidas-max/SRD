@@ -184,13 +184,15 @@ export default function AuditScreen() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
+      // Update local audit state
+      if (audit) {
+        setAudit({ ...audit, status: newStatus });
+      }
+      
       if (Platform.OS === 'web') {
         alert('✅ Audit progress saved successfully!');
-        router.replace('/(tabs)/audits');
       } else {
-        Alert.alert('Success', 'Audit progress saved successfully', [
-          { text: 'OK', onPress: () => router.replace('/(tabs)/audits') },
-        ]);
+        Alert.alert('Success', 'Audit progress saved successfully');
       }
     } catch (error) {
       console.error('Error saving audit:', error);
