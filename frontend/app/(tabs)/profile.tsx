@@ -16,24 +16,31 @@ export default function ProfileScreen() {
   const { user, logout } = useAuth();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    const confirmLogout = Platform.OS === 'web'
-      ? window.confirm('Are you sure you want to logout?')
-      : await new Promise((resolve) => {
-          Alert.alert(
-            'Logout',
-            'Are you sure you want to logout?',
-            [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Logout', style: 'destructive', onPress: () => resolve(true) },
-            ],
-            { cancelable: true }
-          );
-        });
-
-    if (confirmLogout) {
-      await logout();
-      router.replace('/(auth)/login');
+  const handleLogout = () => {
+    if (Platform.OS === 'web') {
+      // Web platform
+      if (window.confirm('Are you sure you want to logout?')) {
+        logout();
+        router.replace('/(auth)/login');
+      }
+    } else {
+      // Mobile platform
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to logout?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Logout',
+            style: 'destructive',
+            onPress: async () => {
+              await logout();
+              router.replace('/(auth)/login');
+            },
+          },
+        ],
+        { cancelable: true }
+      );
     }
   };
 
