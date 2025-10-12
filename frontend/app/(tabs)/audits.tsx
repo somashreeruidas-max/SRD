@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useAuth, API_URL } from '../../context/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Audit {
   id: string;
@@ -33,6 +34,13 @@ export default function AuditsScreen() {
   useEffect(() => {
     fetchAudits();
   }, []);
+
+  // Refresh audits list when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchAudits();
+    }, [token])
+  );
 
   const fetchAudits = async () => {
     try {
