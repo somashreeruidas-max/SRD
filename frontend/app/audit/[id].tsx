@@ -1852,6 +1852,15 @@ const styles = StyleSheet.create({
   conformanceButtonTextActive: {
     color: '#FFFFFF',
   },
+  conformanceButtonCompliant: {
+    borderColor: '#10B981',
+  },
+  conformanceButtonMinor: {
+    borderColor: '#F59E0B',
+  },
+  conformanceButtonMajor: {
+    borderColor: '#EF4444',
+  },
   textArea: {
     backgroundColor: '#F9FAFB',
     borderWidth: 1,
