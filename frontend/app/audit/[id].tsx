@@ -872,7 +872,7 @@ export default function AuditScreen() {
     textContent += `Completion Rate        : ${completionRate}%\n`;
     textContent += `\n`;
     textContent += `CONFORMANCE SUMMARY:\n`;
-    textContent += `  ✓ Meets Requirements        : ${meetsCount}\n`;
+    textContent += `  ✓ Compliant                 : ${meetsCount}\n`;
     textContent += `  ⚠ Minor Non-Conformances    : ${minorCount}\n`;
     textContent += `  ✗ Major Non-Conformances    : ${majorCount}\n`;
     textContent += '\n\n';
