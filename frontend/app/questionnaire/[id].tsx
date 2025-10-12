@@ -139,16 +139,30 @@ export default function QuestionnaireDetailScreen() {
 
     setSaving(true);
     try {
-      await axios.put(
+      const response = await axios.put(
         `${API_URL}/api/questionnaires/${id}`,
         { clauses: questionnaire.clauses },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      Alert.alert('Success', 'Questionnaire updated successfully');
+      
+      if (Platform.OS === 'web') {
+        alert('✅ Questionnaire updated successfully!');
+      } else {
+        Alert.alert('Success', 'Questionnaire updated successfully');
+      }
       setEditMode(false);
-    } catch (error) {
+      
+      // Refresh the questionnaire to get latest data
+      fetchQuestionnaire();
+    } catch (error: any) {
       console.error('Error saving questionnaire:', error);
-      Alert.alert('Error', 'Failed to save changes');
+      const errorMessage = error.response?.data?.detail || 'Failed to save changes. Please try again.';
+      
+      if (Platform.OS === 'web') {
+        alert(`❌ Error: ${errorMessage}`);
+      } else {
+        Alert.alert('Error', errorMessage);
+      }
     } finally {
       setSaving(false);
     }
