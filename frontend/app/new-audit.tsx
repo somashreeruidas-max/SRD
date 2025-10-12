@@ -24,6 +24,11 @@ interface Questionnaire {
 export default function NewAuditScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [plantName, setPlantName] = useState('');
+  const [auditorName, setAuditorName] = useState('');
+  const [auditeeName, setAuditeeName] = useState('');
+  const [auditScope, setAuditScope] = useState('');
+  const [auditCriteria, setAuditCriteria] = useState('');
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
