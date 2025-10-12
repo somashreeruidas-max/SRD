@@ -855,9 +855,9 @@ export default function AuditScreen() {
           const response = responses.get(question.id);
           if (response && response.conformance) {
             answeredQuestions++;
-            if (response.conformance === 'M') meetsCount++;
+            if (response.conformance === 'CO' || response.conformance === 'M') meetsCount++;
             else if (response.conformance === 'Mi') minorCount++;
-            else if (response.conformance === 'C') majorCount++;
+            else if (response.conformance === 'MA' || response.conformance === 'C') majorCount++;
           }
         });
       });
