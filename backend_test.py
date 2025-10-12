@@ -11,7 +11,7 @@ from datetime import datetime
 import sys
 
 # Configuration
-BASE_URL = "https://auditsync-2.preview.emergentagent.com/api"
+BASE_URL = "https://ohsms-audit.preview.emergentagent.com/api"
 TEST_USER = {
     "username": "audit_tester_2024",
     "password": "SecurePass123!",
