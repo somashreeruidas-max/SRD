@@ -134,6 +134,49 @@ export default function NewAuditScreen() {
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.label}>Select Audit Questionnaire *</Text>
+          <View style={styles.dropdownContainer}>
+            {questionnaires.map((q) => (
+              <TouchableOpacity
+                key={q.id}
+                style={[
+                  styles.dropdownItem,
+                  selectedQuestionnaire === q.id && styles.dropdownItemSelected,
+                ]}
+                onPress={() => setSelectedQuestionnaire(q.id)}
+                disabled={creating}
+              >
+                <View style={styles.radioContainer}>
+                  <View
+                    style={[
+                      styles.radio,
+                      selectedQuestionnaire === q.id && styles.radioSelected,
+                    ]}
+                  >
+                    {selectedQuestionnaire === q.id && (
+                      <View style={styles.radioInner} />
+                    )}
+                  </View>
+                </View>
+                <View style={styles.dropdownItemContent}>
+                  <Text style={[styles.dropdownItemName, selectedQuestionnaire === q.id && styles.dropdownItemNameSelected]}>
+                    {q.name}
+                  </Text>
+                  {q.description && (
+                    <Text style={styles.dropdownItemDescription} numberOfLines={1}>
+                      {q.description}
+                    </Text>
+                  )}
+                </View>
+                {selectedQuestionnaire === q.id && (
+                  <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.label}>Description (Optional)</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
