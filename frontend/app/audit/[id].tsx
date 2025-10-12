@@ -1139,13 +1139,13 @@ export default function AuditScreen() {
           let conformanceText = 'Not Answered';
 
           if (response && response.conformance) {
-            if (response.conformance === 'CO' || response.conformance === 'M') {
+            if (response.conformance === 'C') {
               conformanceClass = 'meets';
               conformanceText = 'COMPLIANT';
             } else if (response.conformance === 'Mi') {
               conformanceClass = 'minor';
               conformanceText = 'MINOR NC';
-            } else if (response.conformance === 'MA' || response.conformance === 'C') {
+            } else if (response.conformance === 'Ma') {
               conformanceClass = 'major';
               conformanceText = 'MAJOR NC';
             }
