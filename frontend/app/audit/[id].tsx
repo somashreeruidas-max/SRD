@@ -180,38 +180,52 @@ export default function AuditScreen() {
   };
 
   const handleComplete = async () => {
-    Alert.alert(
-      'Complete Audit',
-      'Mark this audit as completed?',
-      [
-        { text: 'Cancel', style: 'cancel' },
+    // Use Platform to check if we're on web or mobile
+    const confirmComplete = Platform.OS === 'web' 
+      ? window.confirm('Mark this audit as completed?')
+      : await new Promise((resolve) => {
+          Alert.alert(
+            'Complete Audit',
+            'Mark this audit as completed?',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Complete', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmComplete) return;
+
+    setSaving(true);
+    try {
+      const responsesArray = Array.from(responses.values());
+      await axios.put(
+        `${API_URL}/api/audits/${id}`,
         {
-          text: 'Complete',
-          onPress: async () => {
-            setSaving(true);
-            try {
-              const responsesArray = Array.from(responses.values());
-              await axios.put(
-                `${API_URL}/api/audits/${id}`,
-                {
-                  responses: responsesArray,
-                  status: 'completed',
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-              );
-              Alert.alert('Success', 'Audit completed', [
-                { text: 'OK', onPress: () => router.back() },
-              ]);
-            } catch (error) {
-              console.error('Error completing audit:', error);
-              Alert.alert('Error', 'Failed to complete audit');
-            } finally {
-              setSaving(false);
-            }
-          },
+          responses: responsesArray,
+          status: 'completed',
         },
-      ]
-    );
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      if (Platform.OS === 'web') {
+        alert('Audit completed successfully!');
+        router.back();
+      } else {
+        Alert.alert('Success', 'Audit completed', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error completing audit:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to complete audit. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to complete audit');
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addPhotoFromCamera = async () => {
