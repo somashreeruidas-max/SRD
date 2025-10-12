@@ -1074,6 +1074,23 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
+  completedBanner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D1FAE5',
+    padding: 16,
+    borderRadius: 8,
+    gap: 8,
+  },
+  completedBannerText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#065F46',
+    textAlign: 'center',
+  },
   modalContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
