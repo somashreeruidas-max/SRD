@@ -626,6 +626,196 @@ export default function AuditScreen() {
     }
   };
 
+  const handleDownloadFindings = async () => {
+    if (!audit || !questionnaire) return;
+
+    // Filter only findings (Minor and Major non-conformances)
+    const findings: Array<{
+      clause: string;
+      subclause: string;
+      question: string;
+      conformance: string;
+      observations: string;
+      evidence: Evidence[];
+    }> = [];
+
+    questionnaire.clauses.forEach((clause) => {
+      clause.subclauses.forEach((subclause) => {
+        subclause.questions.forEach((question) => {
+          const response = responses.get(question.id);
+          if (response && (response.conformance === 'Mi' || response.conformance === 'C')) {
+            findings.push({
+              clause: `${clause.clause_no} - ${clause.title}`,
+              subclause: `${subclause.clause_no} - ${subclause.title}`,
+              question: question.question_text,
+              conformance: response.conformance,
+              observations: response.observations || 'No observations recorded',
+              evidence: response.evidence || [],
+            });
+          }
+        });
+      });
+    });
+
+    if (findings.length === 0) {
+      if (Platform.OS === 'web') {
+        alert('No findings to report! This audit has no non-conformances.');
+      } else {
+        Alert.alert('No Findings', 'This audit has no non-conformances to report.');
+      }
+      return;
+    }
+
+    // Generate HTML for findings summary
+    let htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h1 { color: #1F2937; text-align: center; border-bottom: 3px solid #EF4444; padding-bottom: 10px; }
+          .header-info { background: #F3F4F6; padding: 15px; margin: 20px 0; border-radius: 8px; }
+          .header-info p { margin: 5px 0; }
+          .summary-stats { background: #FEF3C7; padding: 15px; margin: 20px 0; border-radius: 8px; border: 2px solid #F59E0B; }
+          .summary-stats p { margin: 5px 0; font-weight: bold; }
+          .finding { margin: 20px 0; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
+          .finding-minor { background: #FEF3C7; border-left: 5px solid #F59E0B; }
+          .finding-major { background: #FEE2E2; border-left: 5px solid #DC2626; }
+          .finding-header { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+          .finding-header-minor { color: #92400E; }
+          .finding-header-major { color: #991B1B; }
+          .finding-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-right: 10px; }
+          .badge-minor { background: #F59E0B; color: white; }
+          .badge-major { background: #DC2626; color: white; }
+          .clause-info { color: #6B7280; font-size: 13px; margin-bottom: 10px; font-style: italic; }
+          .question { font-weight: bold; color: #374151; margin: 10px 0; font-size: 15px; }
+          .observations { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
+          .observations-label { font-weight: bold; color: #374151; margin-bottom: 5px; }
+          .observations-text { color: #1F2937; line-height: 1.6; }
+          .evidence { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
+          .evidence-label { font-weight: bold; color: #374151; margin-bottom: 5px; }
+          .evidence-list { list-style: none; padding: 0; }
+          .evidence-item { padding: 5px 0; color: #1F2937; }
+          .evidence-icon { margin-right: 5px; }
+          .footer { margin-top: 40px; text-align: center; color: #6B7280; font-size: 12px; border-top: 2px solid #E5E7EB; padding-top: 20px; }
+        </style>
+      </head>
+      <body>
+        <h1>🔍 AUDIT FINDINGS SUMMARY REPORT</h1>
+        
+        <div class="header-info">
+          <p><strong>Audit Title:</strong> ${audit.title}</p>
+          <p><strong>Standard:</strong> ${audit.questionnaire_name}</p>
+          <p><strong>Status:</strong> ${audit.status.toUpperCase()}</p>
+          <p><strong>Date:</strong> ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          ${audit.plant_name ? `<p><strong>Plant Name:</strong> ${audit.plant_name}</p>` : ''}
+          ${audit.auditor_name ? `<p><strong>Auditor:</strong> ${audit.auditor_name}</p>` : ''}
+          ${audit.auditee_name ? `<p><strong>Auditee:</strong> ${audit.auditee_name}</p>` : ''}
+        </div>
+
+        <div class="summary-stats">
+          <p>📊 Total Findings: ${findings.length}</p>
+          <p>⚠️ Minor Non-Conformances: ${findings.filter(f => f.conformance === 'Mi').length}</p>
+          <p>❌ Major Non-Conformances: ${findings.filter(f => f.conformance === 'C').length}</p>
+        </div>
+
+        <h2 style="color: #1F2937; margin-top: 30px;">Detailed Findings:</h2>
+    `;
+
+    findings.forEach((finding, index) => {
+      const isMajor = finding.conformance === 'C';
+      const badgeClass = isMajor ? 'badge-major' : 'badge-minor';
+      const findingClass = isMajor ? 'finding-major' : 'finding-minor';
+      const headerClass = isMajor ? 'finding-header-major' : 'finding-header-minor';
+      const badgeText = isMajor ? 'MAJOR NON-CONFORMANCE' : 'MINOR NON-CONFORMANCE';
+
+      htmlContent += `
+        <div class="finding ${findingClass}">
+          <div class="finding-header ${headerClass}">
+            <span class="finding-badge ${badgeClass}">${badgeText}</span>
+            Finding #${index + 1}
+          </div>
+          
+          <div class="clause-info">
+            <strong>Clause:</strong> ${finding.clause}<br>
+            <strong>Subclause:</strong> ${finding.subclause}
+          </div>
+
+          <div class="question">
+            <strong>Question:</strong> ${finding.question}
+          </div>
+
+          <div class="observations">
+            <div class="observations-label">📝 Observations:</div>
+            <div class="observations-text">${finding.observations}</div>
+          </div>
+
+          ${finding.evidence.length > 0 ? `
+            <div class="evidence">
+              <div class="evidence-label">📎 Evidence Attached (${finding.evidence.length} file(s)):</div>
+              <ul class="evidence-list">
+                ${finding.evidence.map(ev => `
+                  <li class="evidence-item">
+                    <span class="evidence-icon">
+                      ${ev.type === 'photo' ? '📷' : ev.type === 'document' ? '📄' : ev.type === 'audio' ? '🎤' : '🎥'}
+                    </span>
+                    ${ev.filename} - ${new Date(ev.timestamp).toLocaleString()}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          ` : '<div class="evidence"><em>No evidence attached</em></div>'}
+        </div>
+      `;
+    });
+
+    htmlContent += `
+        <div class="footer">
+          <p><strong>End of Findings Summary Report</strong></p>
+          <p>Generated on ${new Date().toLocaleString('en-US')}</p>
+          <p>${audit.questionnaire_name} - ${audit.plant_name || 'Internal Audit'}</p>
+          <p style="margin-top: 10px; font-style: italic;">
+            ⚠️ This report contains only non-conformances (Minor and Major findings).<br>
+            For complete audit details, please refer to the full audit report.
+          </p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    try {
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      
+      if (Platform.OS === 'web') {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Findings_Summary_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert(`✅ Findings Summary downloaded!\n\nTotal Findings: ${findings.length}\nMinor: ${findings.filter(f => f.conformance === 'Mi').length}\nMajor: ${findings.filter(f => f.conformance === 'C').length}`);
+      } else {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Save or Share Findings Summary',
+          UTI: 'com.adobe.pdf',
+        });
+      }
+    } catch (error) {
+      console.error('Error generating findings summary:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to generate findings summary. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to generate findings summary');
+      }
+    }
+  };
+
   const handleDownloadAudit = async () => {
     if (!audit || !questionnaire) return;
 
