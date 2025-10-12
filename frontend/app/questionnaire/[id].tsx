@@ -124,6 +124,22 @@ export default function QuestionnaireDetailScreen() {
           {questionnaire.description && (
             <Text style={styles.description}>{questionnaire.description}</Text>
           )}
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity style={styles.actionButton} onPress={expandAllClauses}>
+              <Ionicons name="expand-outline" size={16} color="#3B82F6" />
+              <Text style={styles.actionButtonText}>Expand All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton} onPress={collapseAllClauses}>
+              <Ionicons name="contract-outline" size={16} color="#3B82F6" />
+              <Text style={styles.actionButtonText}>Collapse All</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.hintBox}>
+            <Ionicons name="information-circle-outline" size={16} color="#3B82F6" />
+            <Text style={styles.hintText}>
+              Tap on any clause below to expand and view questions
+            </Text>
+          </View>
         </View>
 
         {questionnaire.clauses.map((clause) => (
