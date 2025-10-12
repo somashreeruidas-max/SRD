@@ -709,6 +709,25 @@ export default function AuditScreen() {
               </>
             )}
           </ScrollView>
+
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={styles.modalCancelButton}
+              onPress={() => setShowQuestionModal(false)}
+            >
+              <Text style={styles.modalCancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalSaveButton}
+              onPress={() => {
+                setShowQuestionModal(false);
+                Alert.alert('Saved', 'Response saved. Remember to tap "Save Progress" at the bottom to save the audit.');
+              }}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+              <Text style={styles.modalSaveButtonText}>Save & Close</Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </Modal>
     </SafeAreaView>
