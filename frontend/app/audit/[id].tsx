@@ -1254,11 +1254,14 @@ export default function AuditScreen() {
           {audit.title}
         </Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity onPress={handleDownloadFindings} style={styles.headerIconButton}>
-            <Ionicons name="document-text-outline" size={22} color="#F59E0B" />
+          <TouchableOpacity onPress={handleDownloadTextReport} style={styles.headerIconButton} title="Complete Report (Text)">
+            <Ionicons name="document-text" size={22} color="#10B981" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleDownloadAudit} style={styles.headerIconButton}>
-            <Ionicons name="download-outline" size={22} color="#3B82F6" />
+          <TouchableOpacity onPress={handleDownloadFindings} style={styles.headerIconButton} title="Findings Only (PDF)">
+            <Ionicons name="warning-outline" size={22} color="#F59E0B" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDownloadAudit} style={styles.headerIconButton} title="Full Report (PDF)">
+            <Ionicons name="document-outline" size={22} color="#3B82F6" />
           </TouchableOpacity>
           {audit?.status !== 'completed' && (
             <TouchableOpacity onPress={handleDeleteAudit} style={styles.headerIconButton}>
