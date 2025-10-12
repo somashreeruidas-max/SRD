@@ -724,7 +724,7 @@ export default function AuditScreen() {
     `;
 
     findings.forEach((finding, index) => {
-      const isMajor = finding.conformance === 'C';
+      const isMajor = (finding.conformance === 'MA' || finding.conformance === 'C');
       const badgeClass = isMajor ? 'badge-major' : 'badge-minor';
       const findingClass = isMajor ? 'finding-major' : 'finding-minor';
       const headerClass = isMajor ? 'finding-header-major' : 'finding-header-minor';
@@ -978,7 +978,7 @@ export default function AuditScreen() {
       textContent += `Major Non-Conformances : ${findings.filter(f => f.conformance === 'C').length}\n\n`;
 
       findings.forEach((finding, index) => {
-        const isMajor = finding.conformance === 'C';
+        const isMajor = (finding.conformance === 'MA' || finding.conformance === 'C');
         const badge = isMajor ? '✗ MAJOR NON-CONFORMANCE' : '⚠ MINOR NON-CONFORMANCE';
         
         textContent += `\n${'-'.repeat(75)}\n`;
