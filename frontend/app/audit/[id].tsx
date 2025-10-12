@@ -288,13 +288,45 @@ export default function AuditScreen() {
   const addDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        type: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+        copyToCacheDirectory: true,
       });
 
       if (!result.canceled && selectedQuestion) {
-        const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
+        let base64 = '';
+        
+        // Platform-specific base64 conversion
+        if (Platform.OS === 'web') {
+          // For web, use fetch to get the file
+          try {
+            const response = await fetch(result.assets[0].uri);
+            const blob = await response.blob();
+            base64 = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const base64String = reader.result as string;
+                // Remove data:*/*;base64, prefix
+                resolve(base64String.split(',')[1]);
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          } catch (err) {
+            console.error('Web file read error:', err);
+            if (Platform.OS === 'web') {
+              alert('Failed to read document. Please try again.');
+            } else {
+              Alert.alert('Error', 'Failed to read document');
+            }
+            return;
+          }
+        } else {
+          // For mobile, use FileSystem
+          base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+        }
+        
         const currentResponse = getResponse(selectedQuestion.id);
         const newEvidence: Evidence = {
           type: 'document',
@@ -306,11 +338,20 @@ export default function AuditScreen() {
           ...currentResponse,
           evidence: [...currentResponse.evidence, newEvidence],
         });
-        Alert.alert('Success', 'Document added');
+        
+        if (Platform.OS === 'web') {
+          alert('✅ Document added successfully!');
+        } else {
+          Alert.alert('Success', 'Document added');
+        }
       }
     } catch (error) {
       console.error('Error selecting document:', error);
-      Alert.alert('Error', 'Failed to select document');
+      if (Platform.OS === 'web') {
+        alert('Failed to select document. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to select document');
+      }
     }
   };
 
