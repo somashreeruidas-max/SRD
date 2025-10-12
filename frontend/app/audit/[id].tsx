@@ -864,17 +864,22 @@ export default function AuditScreen() {
     });
 
     const completionRate = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
+    const totalClauses = questionnaire.clauses.length;
+    const totalSubclauses = questionnaire.clauses.reduce((sum, clause) => sum + clause.subclauses.length, 0);
 
     textContent += 'AUDIT STATISTICS\n';
     textContent += '─────────────────────────────────────────────────────────────────────────\n';
+    textContent += `Total Clauses          : ${totalClauses}\n`;
+    textContent += `Total Subclauses       : ${totalSubclauses}\n`;
     textContent += `Total Questions        : ${totalQuestions}\n`;
     textContent += `Answered Questions     : ${answeredQuestions}\n`;
     textContent += `Completion Rate        : ${completionRate}%\n`;
     textContent += `\n`;
     textContent += `CONFORMANCE SUMMARY:\n`;
-    textContent += `  ✓ Compliant                 : ${meetsCount}\n`;
-    textContent += `  ⚠ Minor Non-Conformances    : ${minorCount}\n`;
-    textContent += `  ✗ Major Non-Conformances    : ${majorCount}\n`;
+    textContent += `  ✓ Compliant (CO)            : ${meetsCount}\n`;
+    textContent += `  ⚠ Minor NC (Mi)             : ${minorCount}\n`;
+    textContent += `  ✗ Major NC (MA)             : ${majorCount}\n`;
+    textContent += `  Total Answered              : ${meetsCount + minorCount + majorCount}\n`;
     textContent += '\n\n';
 
     // Detailed Audit Content
