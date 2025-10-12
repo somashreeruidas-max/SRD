@@ -1605,18 +1605,74 @@ export default function AuditScreen() {
                                 Alert.alert('View Photo', ev.filename);
                               }
                             } else if (ev.type === 'document') {
-                              // For documents, download
+                              // For documents (PDF, Word, Excel), open or download
                               if (Platform.OS === 'web') {
                                 try {
-                                  const link = document.createElement('a');
-                                  link.href = ev.data;
-                                  link.download = ev.filename;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
+                                  console.log('Opening document:', ev.filename);
+                                  
+                                  // Check if it's a PDF - can be viewed in browser
+                                  const isPDF = ev.filename.toLowerCase().endsWith('.pdf');
+                                  
+                                  if (isPDF) {
+                                    // Open PDF in new tab
+                                    const newWindow = window.open('', '_blank');
+                                    if (newWindow) {
+                                      newWindow.document.write(`
+                                        <html>
+                                          <head>
+                                            <title>${ev.filename}</title>
+                                            <style>
+                                              body { margin:0; }
+                                              iframe { width:100vw; height:100vh; border:none; }
+                                            </style>
+                                          </head>
+                                          <body>
+                                            <iframe src="${ev.data}" type="application/pdf"></iframe>
+                                          </body>
+                                        </html>
+                                      `);
+                                      newWindow.document.close();
+                                    } else {
+                                      alert('Please allow pop-ups to view documents');
+                                    }
+                                  } else {
+                                    // For Word/Excel files, trigger download
+                                    // Convert base64 to blob if needed
+                                    let downloadUrl = ev.data;
+                                    
+                                    if (ev.data.startsWith('data:')) {
+                                      // Already a data URL, use directly
+                                      downloadUrl = ev.data;
+                                    } else if (ev.data.startsWith('http')) {
+                                      // Already a URL, use directly
+                                      downloadUrl = ev.data;
+                                    } else {
+                                      // Assume it's base64, add proper mime type
+                                      const mimeType = ev.filename.toLowerCase().endsWith('.docx') 
+                                        ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                        : ev.filename.toLowerCase().endsWith('.doc')
+                                        ? 'application/msword'
+                                        : ev.filename.toLowerCase().endsWith('.xlsx')
+                                        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                        : ev.filename.toLowerCase().endsWith('.xls')
+                                        ? 'application/vnd.ms-excel'
+                                        : 'application/octet-stream';
+                                      
+                                      downloadUrl = `data:${mimeType};base64,${ev.data}`;
+                                    }
+                                    
+                                    const link = document.createElement('a');
+                                    link.href = downloadUrl;
+                                    link.download = ev.filename;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    
+                                    alert(`Document "${ev.filename}" has been downloaded. Check your downloads folder.`);
+                                  }
                                 } catch (error) {
-                                  console.error('Error downloading document:', error);
-                                  alert('Failed to download document. Please try again.');
+                                  console.error('Error opening/downloading document:', error);
+                                  alert('Failed to open document. Please try again.');
                                 }
                               } else {
                                 Alert.alert('Download', `Downloading ${ev.filename}`);
