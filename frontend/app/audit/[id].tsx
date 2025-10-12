@@ -543,26 +543,43 @@ export default function AuditScreen() {
 
   const removeEvidence = (index: number) => {
     if (!selectedQuestion) return;
-    Alert.alert(
-      'Remove Evidence',
-      'Are you sure you want to remove this evidence?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => {
-            const currentResponse = getResponse(selectedQuestion.id);
-            const newEvidence = [...currentResponse.evidence];
-            newEvidence.splice(index, 1);
-            updateResponse(selectedQuestion.id, {
-              ...currentResponse,
-              evidence: newEvidence,
-            });
-          },
-        },
-      ]
-    );
+    
+    const confirmRemove = Platform.OS === 'web'
+      ? window.confirm('Are you sure you want to remove this evidence?')
+      : true;
+
+    if (confirmRemove) {
+      if (Platform.OS !== 'web') {
+        Alert.alert(
+          'Remove Evidence',
+          'Are you sure you want to remove this evidence?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Remove',
+              style: 'destructive',
+              onPress: () => {
+                const currentResponse = getResponse(selectedQuestion.id);
+                const newEvidence = [...currentResponse.evidence];
+                newEvidence.splice(index, 1);
+                updateResponse(selectedQuestion.id, {
+                  ...currentResponse,
+                  evidence: newEvidence,
+                });
+              },
+            },
+          ]
+        );
+      } else {
+        const currentResponse = getResponse(selectedQuestion.id);
+        const newEvidence = [...currentResponse.evidence];
+        newEvidence.splice(index, 1);
+        updateResponse(selectedQuestion.id, {
+          ...currentResponse,
+          evidence: newEvidence,
+        });
+      }
+    }
   };
 
   const getProgressPercentage = () => {
