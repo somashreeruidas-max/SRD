@@ -582,6 +582,117 @@ export default function AuditScreen() {
     }
   };
 
+  const handleDeleteAudit = async () => {
+    const confirmDelete = Platform.OS === 'web'
+      ? window.confirm('Are you sure you want to delete this audit? This cannot be undone.')
+      : await new Promise((resolve) => {
+          Alert.alert(
+            'Delete Audit',
+            'Are you sure you want to delete this audit? This cannot be undone.',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Delete', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmDelete) return;
+
+    setSaving(true);
+    try {
+      await axios.delete(`${API_URL}/api/audits/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (Platform.OS === 'web') {
+        alert('✅ Audit deleted successfully!');
+        router.replace('/(tabs)/audits');
+      } else {
+        Alert.alert('Success', 'Audit deleted successfully', [
+          { text: 'OK', onPress: () => router.replace('/(tabs)/audits') },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error deleting audit:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to delete audit. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to delete audit');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDownloadAudit = async () => {
+    if (!audit || !questionnaire) return;
+
+    // Generate text content for the audit
+    let content = `ISO 45001:2018 INTERNAL AUDIT REPORT\n\n`;
+    content += `Audit Title: ${audit.title}\n`;
+    content += `Questionnaire: ${audit.questionnaire_name}\n`;
+    content += `Status: ${audit.status}\n`;
+    content += `Date: ${new Date(audit.created_at).toLocaleDateString()}\n`;
+    content += `\n${'='.repeat(80)}\n\n`;
+
+    questionnaire.clauses.forEach((clause) => {
+      content += `\nCLAUSE ${clause.clause_no}: ${clause.title}\n`;
+      content += `${'-'.repeat(80)}\n\n`;
+
+      clause.subclauses.forEach((subclause) => {
+        content += `  ${subclause.clause_no} - ${subclause.title}\n\n`;
+
+        subclause.questions.forEach((question, index) => {
+          const response = responses.get(question.id);
+          content += `    Q${index + 1}. ${question.question_text}\n`;
+
+          if (response) {
+            if (response.conformance) {
+              const conformanceLabel = response.conformance === 'M' ? 'Meets' : response.conformance === 'Mi' ? 'Minor Non-Conformance' : 'Major Non-Conformance';
+              content += `        Conformance: ${conformanceLabel}\n`;
+            }
+            if (response.observations) {
+              content += `        Observations: ${response.observations}\n`;
+            }
+            if (response.evidence.length > 0) {
+              content += `        Evidence: ${response.evidence.length} file(s) attached\n`;
+            }
+          } else {
+            content += `        Status: Not answered\n`;
+          }
+          content += `\n`;
+        });
+      });
+    });
+
+    content += `\n${'='.repeat(80)}\n`;
+    content += `End of Audit Report\n`;
+
+    // Download as text file (works on web and mobile)
+    if (Platform.OS === 'web') {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert('✅ Audit report downloaded!');
+    } else {
+      // For mobile, save to device using FileSystem
+      try {
+        const fileUri = FileSystem.documentDirectory + `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.txt`;
+        await FileSystem.writeAsStringAsync(fileUri, content);
+        Alert.alert('Success', `Audit report saved to:\n${fileUri}`);
+      } catch (error) {
+        console.error('Error saving file:', error);
+        Alert.alert('Error', 'Failed to save audit report');
+      }
+    }
+  };
+
   const getProgressPercentage = () => {
     if (!questionnaire) return 0;
     let totalQuestions = 0;
