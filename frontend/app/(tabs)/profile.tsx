@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,14 @@ import {
   Alert,
   Platform,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+import Constants from 'expo-constants';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
