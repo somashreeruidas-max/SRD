@@ -18,8 +18,12 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
   const router = useRouter();
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
   const handleLogout = () => {
     if (Platform.OS === 'web') {
