@@ -686,8 +686,33 @@ async def get_current_user(username: str = Depends(verify_token)):
     return {
         "id": str(user_doc["_id"]),
         "username": user_doc["username"],
-        "full_name": user_doc.get("full_name", user_doc["username"])
+        "full_name": user_doc.get("full_name", user_doc["username"]),
+        "profile_picture": user_doc.get("profile_picture", None)
     }
+
+@app.put("/api/auth/profile-picture")
+async def update_profile_picture(data: ProfilePictureUpdate, username: str = Depends(verify_token)):
+    """Update or delete user's profile picture"""
+    update_data = {}
+    
+    if data.profile_picture is None:
+        # Delete profile picture
+        update_data["profile_picture"] = None
+        message = "Profile picture deleted"
+    else:
+        # Update profile picture with base64 data
+        update_data["profile_picture"] = data.profile_picture
+        message = "Profile picture updated"
+    
+    result = users_collection.update_one(
+        {"username": username},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": message, "profile_picture": data.profile_picture}
 
 # Questionnaire Endpoints
 @app.get("/api/questionnaires")
