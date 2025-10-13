@@ -22,7 +22,17 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "GO AUDIT",
+      "shortName": "GO AUDIT",
+      "lang": "en",
+      "scope": "/",
+      "themeColor": "#3B82F6",
+      "backgroundColor": "#FFFFFF",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "preferRelatedApplications": false
     },
     "plugins": [
       "expo-router",
