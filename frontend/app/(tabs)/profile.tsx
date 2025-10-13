@@ -63,7 +63,10 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.infoRow}>
             <Ionicons name="shield-checkmark-outline" size={20} color="#6B7280" />
-            <Text style={styles.infoText}>ISO 45001:2018 Certified</Text>
+            <View style={styles.certificationTextContainer}>
+              <Text style={styles.infoText}>IMS (Integrated Management System)</Text>
+              <Text style={styles.certificationText}>Certified by DNV Business Assurance India Pvt Ltd</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -81,8 +84,10 @@ export default function ProfileScreen() {
           <View style={styles.infoRow}>
             <Ionicons name="shield-outline" size={20} color="#6B7280" />
             <View style={styles.infoTextContainer}>
-              <Text style={styles.infoLabel}>Standard</Text>
-              <Text style={styles.infoValue}>ISO 45001:2018</Text>
+              <Text style={styles.infoLabel}>Standards Supported</Text>
+              <Text style={styles.infoValue}>ISO 45001:2018 (OHSMS)</Text>
+              <Text style={styles.infoValue}>ISO 9001:2015 (QMS)</Text>
+              <Text style={styles.infoValue}>ISO 14001:2015 (EMS)</Text>
             </View>
           </View>
         </View>
