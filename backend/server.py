@@ -50,6 +50,9 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
+class ProfilePictureUpdate(BaseModel):
+    profile_picture: Optional[str] = None  # base64 image data or None to delete
+
 class QuestionModel(BaseModel):
     id: str
     question_text: str
