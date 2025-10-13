@@ -34,6 +34,7 @@ questionnaires_collection = db["questionnaires"]
 audits_collection = db["audits"]
 audit_plans_collection = db["audit_plans"]
 capa_collection = db["capa"]
+organizations_collection = db["organizations"]
 
 # JWT Secret
 JWT_SECRET = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
