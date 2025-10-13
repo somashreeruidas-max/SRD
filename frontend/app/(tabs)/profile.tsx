@@ -180,37 +180,43 @@ export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          {profilePicture ? (
-            <Image
-              source={{ uri: profilePicture }}
-              style={styles.avatarImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <Ionicons name="person" size={48} color="#FFFFFF" />
-          )}
-          {uploading && (
-            <View style={styles.uploadingOverlay}>
-              <ActivityIndicator size="large" color="#FFFFFF" />
-            </View>
-          )}
-          <TouchableOpacity 
-            style={styles.editAvatarButton} 
-            onPress={pickImage}
-            disabled={uploading}
-          >
-            <Ionicons name="camera" size={20} color="#FFFFFF" />
-          </TouchableOpacity>
-          {profilePicture && (
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarContainer}>
+            {profilePicture ? (
+              <Image
+                source={{ uri: profilePicture }}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Ionicons name="person" size={64} color="#FFFFFF" />
+            )}
+            {uploading && (
+              <View style={styles.uploadingOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+              </View>
+            )}
+          </View>
+          <View style={styles.avatarButtonsContainer}>
             <TouchableOpacity 
-              style={styles.deleteAvatarButton} 
-              onPress={deleteProfilePicture}
+              style={styles.avatarActionButton} 
+              onPress={pickImage}
               disabled={uploading}
             >
-              <Ionicons name="trash" size={18} color="#FFFFFF" />
+              <Ionicons name="camera" size={20} color="#3B82F6" />
+              <Text style={styles.avatarActionButtonText}>Upload</Text>
             </TouchableOpacity>
-          )}
+            {profilePicture && (
+              <TouchableOpacity 
+                style={[styles.avatarActionButton, styles.deleteButton]} 
+                onPress={deleteProfilePicture}
+                disabled={uploading}
+              >
+                <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                <Text style={[styles.avatarActionButtonText, styles.deleteButtonText]}>Delete</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <Text style={styles.name}>{user?.full_name || user?.username}</Text>
         <Text style={styles.username}>@{user?.username}</Text>
