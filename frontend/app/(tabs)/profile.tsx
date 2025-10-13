@@ -48,7 +48,11 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
-          <Ionicons name="person" size={48} color="#FFFFFF" />
+          <Image
+            source={{ uri: 'https://customer-assets.emergentagent.com/job_80bb64c4-8df3-4d29-86af-facb13d07f22/artifacts/3bp1sypz_WhatsApp%20Image%202025-10-08%20at%206.10.20%20PM.jpeg' }}
+            style={styles.avatarImage}
+            resizeMode="cover"
+          />
         </View>
         <Text style={styles.name}>{user?.full_name || user?.username}</Text>
         <Text style={styles.username}>@{user?.username}</Text>
