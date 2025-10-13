@@ -56,8 +56,8 @@ export default function ProfileScreen() {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.5, // Reduce quality for smaller size
+        // Remove aspect ratio constraint - allow free cropping
+        quality: 0.7, // Better quality
       });
 
       if (!result.canceled && result.assets[0]) {
