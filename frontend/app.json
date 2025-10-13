@@ -2,6 +2,7 @@
   "expo": {
     "name": "GO AUDIT",
     "slug": "go-audit",
+    "description": "Complete audit management system for ISO 45001, 9001, and 14001 standards",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
