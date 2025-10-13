@@ -25,14 +25,19 @@
       "favicon": "./assets/images/favicon.png",
       "name": "GO AUDIT",
       "shortName": "GO AUDIT",
+      "description": "Complete audit management system for ISO standards",
       "lang": "en",
       "scope": "/",
       "themeColor": "#3B82F6",
       "backgroundColor": "#FFFFFF",
       "display": "standalone",
-      "orientation": "portrait",
+      "orientation": "portrait-primary",
       "startUrl": "/",
-      "preferRelatedApplications": false
+      "preferRelatedApplications": false,
+      "config": {
+        "firebase": {},
+        "manifest": "/manifest.json"
+      }
     },
     "plugins": [
       "expo-router",
