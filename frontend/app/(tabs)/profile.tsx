@@ -127,6 +127,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 4,
     borderColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 48,
   },
   name: {
     fontSize: 24,
