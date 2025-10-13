@@ -25,6 +25,130 @@ export default function ProfileScreen() {
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
+  // Fetch user profile picture on mount
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.profile_picture) {
+        setProfilePicture(response.data.profile_picture);
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      // Request permission
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to upload a profile picture!');
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5, // Reduce quality for smaller size
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setUploading(true);
+        const uri = result.assets[0].uri;
+
+        // Convert to base64
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const reader = new FileReader();
+        
+        reader.onloadend = async () => {
+          const base64data = reader.result as string;
+          await uploadProfilePicture(base64data);
+        };
+        
+        reader.readAsDataURL(blob);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      alert('Failed to pick image. Please try again.');
+      setUploading(false);
+    }
+  };
+
+  const uploadProfilePicture = async (base64Image: string) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/auth/profile-picture`,
+        { profile_picture: base64Image },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.profile_picture) {
+        setProfilePicture(response.data.profile_picture);
+        alert('Profile picture updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      alert('Failed to upload profile picture. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const deleteProfilePicture = async () => {
+    const confirmDelete = Platform.OS === 'web' 
+      ? window.confirm('Are you sure you want to delete your profile picture?')
+      : true;
+
+    if (!confirmDelete) return;
+
+    if (Platform.OS !== 'web') {
+      Alert.alert(
+        'Delete Profile Picture',
+        'Are you sure you want to delete your profile picture?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              await performDelete();
+            },
+          },
+        ]
+      );
+    } else {
+      await performDelete();
+    }
+  };
+
+  const performDelete = async () => {
+    try {
+      setUploading(true);
+      await axios.put(
+        `${API_URL}/api/auth/profile-picture`,
+        { profile_picture: null },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setProfilePicture(null);
+      alert('Profile picture deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting profile picture:', error);
+      alert('Failed to delete profile picture. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleLogout = () => {
     if (Platform.OS === 'web') {
       // Web platform
