@@ -33,7 +33,7 @@ users_collection = db["users"]
 questionnaires_collection = db["questionnaires"]
 audits_collection = db["audits"]
 audit_plans_collection = db["audit_plans"]
-capa_collection = db["capa"]
+capa_reports_collection = db["capa_reports"]
 organizations_collection = db["organizations"]
 
 # JWT Secret
