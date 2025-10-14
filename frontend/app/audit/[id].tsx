@@ -1532,11 +1532,10 @@ export default function AuditScreen() {
           <TouchableOpacity
             style={[styles.completeButton, saving && styles.buttonDisabled]}
             onPress={handleComplete}
-              disabled={saving}
-            >
-              <Text style={styles.completeButtonText}>Complete</Text>
-            </TouchableOpacity>
-          </>
+            disabled={saving}
+          >
+            <Text style={styles.completeButtonText}>Complete</Text>
+          </TouchableOpacity>
         )}
       </View>
 
