@@ -1127,7 +1127,7 @@ export default function AuditScreen() {
         audit.plant_name || '',  // Site Name (auto-filled)
         new Date(audit.created_at).toLocaleDateString(),  // Audit Date (auto-filled)
         audit.auditor_name || '',  // Auditor Name (auto-filled)
-        `CLAUSE: ${finding.clause}\n\nSUBCLAUSE: ${finding.subclause}\n\nQUESTION/REQUIREMENT:\n${finding.question}\n\nOBSERVATIONS/NON-CONFORMITY:\n${finding.observations || 'No observations recorded'}\n\nEVIDENCE: ${finding.evidence.length} file(s) attached in audit system`,  // Description (auto-filled)
+        finding.observations || 'No observations recorded',  // Description - ONLY OBSERVATIONS
         `${audit.questionnaire_name} - ${finding.subclause.split(' - ')[0]}`,  // Standard and Clause (auto-filled)
         category,  // Category (auto-filled)
         '',  // Correction (to be filled by auditee)
