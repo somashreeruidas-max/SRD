@@ -105,6 +105,35 @@ class AuditUpdate(BaseModel):
     status: Optional[str] = None  # draft, in-progress, completed
     responses: Optional[List[ResponseModel]] = None
 
+class ClosureEvidence(BaseModel):
+    type: str  # photo, document
+    filename: str
+    data: str  # base64
+    timestamp: str
+
+class CAPAModel(BaseModel):
+    audit_id: str
+    audit_title: str
+    site_name: Optional[str] = None
+    audit_date: str
+    auditor_name: Optional[str] = None
+    finding_description: str
+    standard_clause: str
+    category: str  # Minor NC, Major NC
+    correction: Optional[str] = None
+    root_cause_analysis: Optional[str] = None
+    status: str = "Open"  # Open, In Progress, Closed
+    closure_evidence: Optional[List[ClosureEvidence]] = None
+    created_by: str
+    created_at: str
+    updated_at: Optional[str] = None
+
+class CAPAUpdate(BaseModel):
+    correction: Optional[str] = None
+    root_cause_analysis: Optional[str] = None
+    status: Optional[str] = None
+    closure_evidence: Optional[List[ClosureEvidence]] = None
+
 # Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
