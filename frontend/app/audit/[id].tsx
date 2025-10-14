@@ -162,16 +162,7 @@ export default function AuditScreen() {
   };
 
   const handleSave = async () => {
-    // Don't allow saving if already completed
-    if (audit?.status === 'completed') {
-      if (Platform.OS === 'web') {
-        alert('This audit is already completed. No changes can be saved.');
-      } else {
-        Alert.alert('Info', 'This audit is already completed. No changes can be saved.');
-      }
-      return;
-    }
-
+    // Allow saving even if completed - auditor can always make changes
     setSaving(true);
     try {
       const responsesArray = Array.from(responses.values());
