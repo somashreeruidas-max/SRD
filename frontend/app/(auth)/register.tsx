@@ -104,6 +104,14 @@ export default function RegisterScreen() {
               </Text>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.creditsContainer}>
+            <Text style={styles.creditsText}>Developed by</Text>
+            <Text style={styles.creditsName}>Saila Ruidas</Text>
+            <Text style={styles.creditsCollaboration}>
+              In collaboration with Emergent Lab
+            </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
