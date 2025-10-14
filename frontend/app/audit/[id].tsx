@@ -1066,6 +1066,114 @@ export default function AuditScreen() {
     }
   };
 
+  const handleDownloadCAPA = async () => {
+    if (!audit || !questionnaire) return;
+
+    // Filter only findings (Non-conformances)
+    const findings: Array<{
+      clause: string;
+      subclause: string;
+      question: string;
+      conformance: string;
+      observations: string;
+      evidence: Evidence[];
+    }> = [];
+
+    questionnaire.clauses.forEach((clause) => {
+      clause.subclauses.forEach((subclause) => {
+        subclause.questions.forEach((question) => {
+          const response = responses.get(question.id);
+          if (response && (response.conformance === 'Mi' || response.conformance === 'Ma' || response.conformance === 'MA')) {
+            findings.push({
+              clause: `${clause.clause_no} - ${clause.title}`,
+              subclause: `${subclause.clause_no} - ${subclause.title}`,
+              question: question.question_text,
+              conformance: response.conformance,
+              observations: response.observations || '',
+              evidence: response.evidence || [],
+            });
+          }
+        });
+      });
+    });
+
+    if (findings.length === 0) {
+      alert('No non-conformances found in this audit. CAPA report is not needed.');
+      return;
+    }
+
+    // Generate CSV content (Excel-compatible)
+    let csvContent = '';
+    
+    // Header
+    csvContent += 'CORRECTIVE ACTION PLAN (CAP) REPORT\n';
+    csvContent += `Audit: ${audit.title}\n`;
+    csvContent += `Standard: ${audit.questionnaire_name}\n`;
+    csvContent += `Date: ${new Date(audit.created_at).toLocaleDateString()}\n`;
+    csvContent += '\n';
+    
+    // Column headers
+    const headers = [
+      'Site Name',
+      'Audit Date',
+      'Auditor Name',
+      'Description of Finding (Requirement, non-conformity and evidence)',
+      'Standard and Clause',
+      'Category of Finding',
+      'Correction to Eliminate the Non-conformity',
+      'Analysis of root cause of Non-conformity, Corrective action to Eliminate root cause of non-conformity',
+      'Status'
+    ];
+    
+    csvContent += headers.map(h => `"${h}"`).join(',') + '\n';
+    
+    // Data rows - one for each finding
+    findings.forEach((finding) => {
+      const isMajor = (finding.conformance === 'Ma' || finding.conformance === 'MA');
+      const category = isMajor ? 'Major NC' : 'Minor NC';
+      
+      const row = [
+        audit.plant_name || '',  // Site Name (auto-filled)
+        new Date(audit.created_at).toLocaleDateString(),  // Audit Date (auto-filled)
+        audit.auditor_name || '',  // Auditor Name (auto-filled)
+        `Requirement: ${finding.clause}\nSubclause: ${finding.subclause}\nQuestion: ${finding.question}\nNon-Conformity: ${finding.observations}\nEvidence: ${finding.evidence.length} file(s) attached`,  // Description (auto-filled)
+        `${audit.questionnaire_name} - ${finding.subclause.split(' - ')[0]}`,  // Standard and Clause (auto-filled)
+        category,  // Category (auto-filled)
+        '',  // Correction (to be filled by auditee)
+        '',  // Root cause analysis (to be filled by auditee)
+        'Open'  // Status (default)
+      ];
+      
+      csvContent += row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',') + '\n';
+    });
+
+    // Download the CSV file
+    try {
+      if (Platform.OS === 'web') {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `CAPA_Report_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        alert(`✅ CAPA Report downloaded!\n\nTotal Non-Conformances: ${findings.length}\nMinor NC: ${findings.filter(f => f.conformance === 'Mi').length}\nMajor NC: ${findings.filter(f => f.conformance === 'Ma' || f.conformance === 'MA').length}\n\nOpen the CSV file in Excel to fill remaining fields.`);
+      } else {
+        const fileUri = `${FileSystem.documentDirectory}CAPA_Report_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.csv`;
+        await FileSystem.writeAsStringAsync(fileUri, csvContent);
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'text/csv',
+          dialogTitle: 'Save or Share CAPA Report',
+        });
+      }
+    } catch (error) {
+      console.error('Error generating CAPA report:', error);
+      alert('Failed to generate CAPA report. Please try again.');
+    }
+  };
+
   const handleDownloadAudit = async () => {
     if (!audit || !questionnaire) return;
 
