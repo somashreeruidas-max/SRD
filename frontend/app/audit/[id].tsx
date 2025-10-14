@@ -1513,27 +1513,25 @@ export default function AuditScreen() {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        {audit?.status === 'completed' ? (
-          <View style={styles.completedBanner}>
-            <Ionicons name="checkmark-circle" size={24} color="#10B981" />
-            <Text style={styles.completedBannerText}>
-              This audit is completed. No further changes can be made.
-            </Text>
+        {audit?.status === 'completed' && (
+          <View style={styles.completedBadge}>
+            <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+            <Text style={styles.completedBadgeText}>Completed Audit</Text>
           </View>
-        ) : (
-          <>
-            <TouchableOpacity
-              style={[styles.saveButton, saving && styles.buttonDisabled]}
-              onPress={handleSave}
-              disabled={saving}
-            >
-              <Text style={styles.saveButtonText}>
-                {saving ? 'Saving...' : 'Save Progress'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.completeButton, saving && styles.buttonDisabled]}
-              onPress={handleComplete}
+        )}
+        <TouchableOpacity
+          style={[styles.saveButton, saving && styles.buttonDisabled]}
+          onPress={handleSave}
+          disabled={saving}
+        >
+          <Text style={styles.saveButtonText}>
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Text>
+        </TouchableOpacity>
+        {audit?.status !== 'completed' && (
+          <TouchableOpacity
+            style={[styles.completeButton, saving && styles.buttonDisabled]}
+            onPress={handleComplete}
               disabled={saving}
             >
               <Text style={styles.completeButtonText}>Complete</Text>
