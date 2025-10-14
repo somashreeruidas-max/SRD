@@ -2134,22 +2134,20 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
-  completedBanner: {
-    flex: 1,
+  completedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#D1FAE5',
-    padding: 16,
-    borderRadius: 8,
-    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    gap: 6,
+    alignSelf: 'flex-start',
   },
-  completedBannerText: {
-    flex: 1,
+  completedBadgeText: {
     fontSize: 14,
-    fontWeight: '600',
     color: '#065F46',
-    textAlign: 'center',
+    fontWeight: '600',
   },
   modalContainer: {
     flex: 1,
