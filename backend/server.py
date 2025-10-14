@@ -105,6 +105,23 @@ class AuditUpdate(BaseModel):
     status: Optional[str] = None  # draft, in-progress, completed
     responses: Optional[List[ResponseModel]] = None
 
+class AuditModel(BaseModel):
+    title: str
+    questionnaire_id: str
+    questionnaire_name: str
+    description: Optional[str] = None
+    status: str = "draft"  # draft, in-progress, completed
+    auditor: str
+    created_at: str
+    responses: Optional[List[ResponseModel]] = []
+    plant_name: Optional[str] = None
+    auditor_name: Optional[str] = None
+    auditee_name: Optional[str] = None
+    scope_of_audit: Optional[str] = None
+    audit_criteria: Optional[str] = None
+    capa_report_file: Optional[str] = None  # base64 file data
+    capa_report_filename: Optional[str] = None
+
 class ClosureEvidence(BaseModel):
     type: str  # photo, document
     filename: str
