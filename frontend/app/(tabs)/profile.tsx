@@ -258,6 +258,14 @@ export default function ProfileScreen() {
               <Text style={styles.infoValue}>ISO 14001:2015 (EMS)</Text>
             </View>
           </View>
+          <View style={styles.infoRow}>
+            <Ionicons name="code-outline" size={20} color="#6B7280" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Developer</Text>
+              <Text style={styles.developerName}>Saila Ruidas</Text>
+              <Text style={styles.collaboration}>In collaboration with Emergent Lab</Text>
+            </View>
+          </View>
         </View>
       </View>
 
