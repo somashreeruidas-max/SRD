@@ -863,23 +863,49 @@ async def create_audit(audit: AuditCreate, username: str = Depends(verify_token)
     return {"message": "Audit created", "id": str(result.inserted_id)}
 
 @app.put("/api/audits/{audit_id}")
-async def update_audit(
-    audit_id: str,
-    audit: AuditUpdate,
-    username: str = Depends(verify_token)
-):
-    update_data = {k: v for k, v in audit.dict().items() if v is not None}
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No data to update")
+async def update_audit(audit_id: str, audit_update: AuditUpdate, username: str = Depends(verify_token)):
+    update_data = {k: v for k, v in audit_update.dict().items() if v is not None}
     
-    update_data["updated_at"] = datetime.utcnow().isoformat()
     result = audits_collection.update_one(
         {"_id": ObjectId(audit_id), "auditor": username},
         {"$set": update_data}
     )
+    
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Audit not found")
+    
     return {"message": "Audit updated successfully"}
+
+@app.put("/api/audits/{audit_id}/capa-file")
+async def upload_capa_file(audit_id: str, file_data: dict, username: str = Depends(verify_token)):
+    """Upload CAPA report file to audit"""
+    update_data = {
+        "capa_report_file": file_data.get("file_data"),
+        "capa_report_filename": file_data.get("filename")
+    }
+    
+    result = audits_collection.update_one(
+        {"_id": ObjectId(audit_id), "auditor": username},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Audit not found")
+    
+    return {"message": "CAPA report uploaded successfully", "filename": file_data.get("filename")}
+
+@app.delete("/api/audits/{audit_id}/capa-file")
+async def delete_capa_file(audit_id: str, username: str = Depends(verify_token)):
+    """Delete CAPA report file from audit"""
+    result = audits_collection.update_one(
+        {"_id": ObjectId(audit_id), "auditor": username},
+        {"$set": {"capa_report_file": None, "capa_report_filename": None}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Audit not found")
+    
+    return {"message": "CAPA report deleted successfully"}
 
 @app.delete("/api/audits/{audit_id}")
 async def delete_audit(audit_id: str, username: str = Depends(verify_token)):
