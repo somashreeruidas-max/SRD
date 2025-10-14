@@ -1,0 +1,53 @@
+# CAPA Endpoints to add before @app.get("/api/health")
+
+# CAPA Report Endpoints
+@app.post("/api/capa")
+async def create_capa(capa: CAPAModel, username: str = Depends(verify_token)):
+    """Create CAPA report entry"""
+    capa_dict = capa.dict()
+    capa_dict["created_at"] = datetime.utcnow().isoformat()
+    capa_dict["created_by"] = username
+    result = capa_reports_collection.insert_one(capa_dict)
+    capa_dict["_id"] = str(result.inserted_id)
+    return capa_dict
+
+@app.get("/api/capa")
+async def get_all_capa(username: str = Depends(verify_token)):
+    """Get all CAPA reports for current user"""
+    capas = list(capa_reports_collection.find({"created_by": username}).sort("created_at", -1))
+    for capa in capas:
+        capa["_id"] = str(capa["_id"])
+    return capas
+
+@app.get("/api/capa/{capa_id}")
+async def get_capa(capa_id: str, username: str = Depends(verify_token)):
+    """Get specific CAPA report"""
+    capa = capa_reports_collection.find_one({"_id": ObjectId(capa_id), "created_by": username})
+    if not capa:
+        raise HTTPException(status_code=404, detail="CAPA report not found")
+    capa["_id"] = str(capa["_id"])
+    return capa
+
+@app.put("/api/capa/{capa_id}")
+async def update_capa(capa_id: str, updates: CAPAUpdate, username: str = Depends(verify_token)):
+    """Update CAPA report"""
+    update_data = {k: v for k, v in updates.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.utcnow().isoformat()
+    
+    result = capa_reports_collection.update_one(
+        {"_id": ObjectId(capa_id), "created_by": username},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="CAPA report not found")
+    
+    return {"message": "CAPA report updated successfully"}
+
+@app.delete("/api/capa/{capa_id}")
+async def delete_capa(capa_id: str, username: str = Depends(verify_token)):
+    """Delete CAPA report"""
+    result = capa_reports_collection.delete_one({"_id": ObjectId(capa_id), "created_by": username})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="CAPA report not found")
+    return {"message": "CAPA report deleted successfully"}
