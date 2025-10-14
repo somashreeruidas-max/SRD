@@ -413,6 +413,17 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     fontWeight: '500',
   },
+  developerName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3B82F6',
+    marginTop: 2,
+  },
+  collaboration: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
