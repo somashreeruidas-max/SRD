@@ -1383,6 +1383,9 @@ export default function AuditScreen() {
           {audit.title}
         </Text>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={handleDownloadCAPA} style={styles.headerIconButton} title="CAPA Report (CSV)">
+            <Ionicons name="clipboard-outline" size={22} color="#8B5CF6" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleDownloadTextReport} style={styles.headerIconButton} title="Complete Report (Text)">
             <Ionicons name="document-text" size={22} color="#10B981" />
           </TouchableOpacity>
