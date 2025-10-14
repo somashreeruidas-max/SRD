@@ -193,4 +193,27 @@ const styles = StyleSheet.create({
     color: '#3B82F6',
     fontSize: 14,
   },
+  creditsContainer: {
+    alignItems: 'center',
+    marginTop: 32,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  creditsText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginBottom: 4,
+  },
+  creditsName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 2,
+  },
+  creditsCollaboration: {
+    fontSize: 12,
+    color: '#6B7280',
+    textAlign: 'center',
+  },
 });
