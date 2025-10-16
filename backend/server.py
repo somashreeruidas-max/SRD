@@ -45,6 +45,9 @@ class UserRegister(BaseModel):
     username: str
     password: str
     full_name: Optional[str] = None
+    qualifications: Optional[str] = None  # Educational qualifications
+    certifications: Optional[str] = None  # Relevant certifications
+    years_of_experience: Optional[int] = None  # Years in auditing
 
 class UserLogin(BaseModel):
     username: str
