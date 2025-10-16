@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'expo-router';
 import axios from 'axios';
 import Constants from 'expo-constants';
 
