@@ -348,6 +348,18 @@ frontend:
       - working: true
         agent: "testing"
         comment: "Backend support for profile qualification display fully working. GET /api/auth/me endpoint correctly returns qualifications, certifications, and years_of_experience fields. Fields are properly null when not provided during registration. Authentication required and working correctly. Data flow from registration to profile retrieval is complete and functional."
+  
+  - task: "Default Questionnaire - FSSC 22000 V6.0"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created new default questionnaire for FSSC 22000 V6.0 (Food Safety System Certification) including three major sections: 1) ISO 22000:2018 (Food Safety Management System) with 25 clauses, 2) ISO/TS 22002-1:2009 (Prerequisite Programs) with 15 clauses covering facility, utilities, hygiene, maintenance, etc., and 3) FSSC 22000 V6 Additional Requirements with 10 clauses covering food defense, fraud prevention, allergen management, environmental monitoring, and food safety culture. Total 50 audit questions structured for packaged drinking water plant operations."
 
 metadata:
   created_by: "testing_agent"
