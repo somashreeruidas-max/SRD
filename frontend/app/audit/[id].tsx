@@ -1389,11 +1389,9 @@ export default function AuditScreen() {
           <TouchableOpacity onPress={handleDownloadAudit} style={styles.headerIconButton} title="Full Report (PDF)">
             <Ionicons name="document-outline" size={22} color="#3B82F6" />
           </TouchableOpacity>
-          {audit?.status !== 'completed' && (
-            <TouchableOpacity onPress={handleDeleteAudit} style={styles.headerIconButton}>
-              <Ionicons name="trash-outline" size={22} color="#EF4444" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={handleDeleteAudit} style={styles.headerIconButton} title="Delete Audit">
+            <Ionicons name="trash-outline" size={22} color="#EF4444" />
+          </TouchableOpacity>
         </View>
       </View>
 
