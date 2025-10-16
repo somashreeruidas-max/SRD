@@ -230,23 +230,6 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <View style={styles.infoCard}>
-          <View style={styles.infoRow}>
-            <Ionicons name="briefcase-outline" size={20} color="#6B7280" />
-            <Text style={styles.infoText}>Internal Auditor</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Ionicons name="shield-checkmark-outline" size={20} color="#6B7280" />
-            <View style={styles.certificationTextContainer}>
-              <Text style={styles.infoText}>IMS (Integrated Management System)</Text>
-              <Text style={styles.certificationText}>Certified by DNV Business Assurance India Pvt Ltd</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Auditor Qualifications</Text>
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
