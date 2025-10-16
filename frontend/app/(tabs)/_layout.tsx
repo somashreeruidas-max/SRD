@@ -62,17 +62,16 @@ export default function TabsLayout() {
         }}
       />
       {/* Admin Tab - Only visible to developer (SRD) */}
-      {isDeveloper && (
-        <Tabs.Screen
-          name="admin"
-          options={{
-            title: 'Admin',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="shield-checkmark" size={size} color={color} />
-            ),
-          }}
-        />
-      )}
+      <Tabs.Screen
+        name="admin"
+        options={{
+          title: 'Admin',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="shield-checkmark" size={size} color={color} />
+          ),
+          href: isDeveloper ? '/(tabs)/admin' : null, // Hide tab if not developer
+        }}
+      />
     </Tabs>
   );
 }
