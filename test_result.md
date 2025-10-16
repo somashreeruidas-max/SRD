@@ -318,6 +318,30 @@ frontend:
       - working: true
         agent: "main"
         comment: "Implemented comprehensive text-based audit report (handleDownloadTextReport). Report includes: header with audit info, statistics (completion rate, conformance summary), detailed clause-by-clause results with all questions/observations/evidence, and non-conformances summary section. Downloads as .txt file. Added green download button in audit header alongside existing PDF options."
+  
+  - task: "User Registration - Auditor Qualification Fields"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/(auth)/register.tsx, frontend/context/AuthContext.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added three new optional input fields to registration screen: Qualifications, Certifications, and Years of Experience. Updated AuthContext register function to accept and send these fields to backend. Backend already supports these fields in the User model and /api/auth/register endpoint."
+  
+  - task: "User Profile - Display Auditor Qualifications"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/(tabs)/profile.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 'Auditor Qualifications' section to profile screen. Displays qualifications, certifications, and years of experience fetched from /api/auth/me endpoint. Shows 'Not specified' for empty fields. Uses appropriate icons (school, ribbon, time) for visual clarity."
 
 metadata:
   created_by: "testing_agent"
