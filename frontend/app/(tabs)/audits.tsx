@@ -127,16 +127,6 @@ export default function AuditsScreen() {
         {item.questionnaire_name}
       </Text>
 
-      {/* Show auditor name for admin viewing all audits */}
-      {item.auditor && (
-        <View style={styles.auditorInfo}>
-          <Ionicons name="person-outline" size={14} color="#6B7280" />
-          <Text style={styles.auditorText}>
-            Auditor: {item.auditor_name || item.auditor}
-          </Text>
-        </View>
-      )}
-
       <View style={styles.auditFooter}>
         <View style={styles.dateContainer}>
           <Ionicons name="calendar-outline" size={14} color="#6B7280" />
