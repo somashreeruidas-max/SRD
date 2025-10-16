@@ -18,6 +18,23 @@ TEST_USER = {
     "full_name": "Audit Test User"
 }
 
+# Test user with qualification fields for new feature testing
+TEST_USER_WITH_QUALIFICATIONS = {
+    "username": "qualified_auditor_2024",
+    "password": "SecurePass456!",
+    "full_name": "Dr. Sarah Johnson",
+    "qualifications": "PhD in Environmental Engineering, MSc in Quality Management",
+    "certifications": "ISO 45001 Lead Auditor, ISO 9001 Lead Auditor, NEBOSH IGC",
+    "years_of_experience": 15
+}
+
+# Test user without qualification fields
+TEST_USER_MINIMAL = {
+    "username": "minimal_auditor_2024",
+    "password": "SecurePass789!",
+    "full_name": "John Smith"
+}
+
 class BackendTester:
     def __init__(self):
         self.base_url = BASE_URL
