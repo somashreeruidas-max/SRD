@@ -368,7 +368,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Default Questionnaire - FSSC 22000 V6.0"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
