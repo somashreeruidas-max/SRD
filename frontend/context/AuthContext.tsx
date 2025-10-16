@@ -9,6 +9,9 @@ interface User {
   id: string;
   username: string;
   full_name: string;
+  qualifications?: string;
+  certifications?: string;
+  years_experience?: string;
 }
 
 interface AuthContextType {
@@ -16,7 +19,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string, fullName?: string) => Promise<void>;
+  register: (username: string, password: string, fullName?: string, qualifications?: string, certifications?: string, yearsExperience?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
