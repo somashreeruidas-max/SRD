@@ -846,29 +846,20 @@ export default function AuditScreen() {
           const response = responses.get(question.id);
           if (response && response.conformance) {
             answeredQuestions++;
-            console.log(`Question ${question.id} conformance:`, response.conformance);
             // Support both new codes (C, Mi, Ma) and old codes (M, CO, MA) for backward compatibility
             if (response.conformance === 'C' || response.conformance === 'CO' || response.conformance === 'M') {
               meetsCount++;
-              console.log('Counted as Compliant:', response.conformance);
             }
             else if (response.conformance === 'Mi') {
               minorCount++;
-              console.log('Counted as Minor NC:', response.conformance);
             }
             else if (response.conformance === 'Ma' || response.conformance === 'MA') {
               majorCount++;
-              console.log('Counted as Major NC:', response.conformance);
-            }
-            else {
-              console.log('Unknown conformance type:', response.conformance);
             }
           }
         });
       });
     });
-
-    console.log('Final counts:', { meetsCount, minorCount, majorCount, totalAnswered: meetsCount + minorCount + majorCount, answeredQuestions });
 
     const completionRate = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
     const totalClauses = questionnaire.clauses.length;
