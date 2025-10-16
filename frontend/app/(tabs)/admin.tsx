@@ -28,6 +28,14 @@ interface User {
   created_at: string;
 }
 
+interface Audit {
+  id: string;
+  title: string;
+  questionnaire_name: string;
+  status: string;
+  created_at: string;
+}
+
 export default function AdminScreen() {
   const { token, user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
@@ -43,6 +51,9 @@ export default function AdminScreen() {
     years_of_experience: '',
   });
   const [creating, setCreating] = useState(false);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+  const [userAudits, setUserAudits] = useState<{ [key: string]: Audit[] }>({});
+  const [loadingAudits, setLoadingAudits] = useState<{ [key: string]: boolean }>({});
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
