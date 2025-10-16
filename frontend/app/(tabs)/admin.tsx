@@ -150,6 +150,45 @@ export default function AdminScreen() {
     }
   };
 
+  const handleDeleteUser = async (userId: string, username: string) => {
+    if (Platform.OS === 'web') {
+      if (!window.confirm(`Are you sure you want to PERMANENTLY DELETE user "${username}"? This action cannot be undone.`)) {
+        return;
+      }
+    } else {
+      Alert.alert(
+        'Delete User',
+        `Are you sure you want to PERMANENTLY DELETE user "${username}"? This action cannot be undone.`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              await deleteUser(userId);
+            },
+          },
+        ]
+      );
+      return;
+    }
+
+    await deleteUser(userId);
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      await axios.delete(
+        `${API_URL}/api/admin/users/${userId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Alert.alert('Success', 'User deleted successfully');
+      fetchUsers();
+    } catch (error: any) {
+      Alert.alert('Error', error.response?.data?.detail || 'Failed to delete user');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
