@@ -1183,6 +1183,7 @@ async def health_check():
 # Initialize default data on startup
 @app.on_event("startup")
 async def startup_event():
+    init_default_admin()
     init_default_questionnaire()
 
 if __name__ == "__main__":
