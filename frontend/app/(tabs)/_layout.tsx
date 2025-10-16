@@ -4,7 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function TabsLayout() {
   const { user } = useAuth();
-  const isAdmin = user?.is_admin || false;
+  // Only show Admin tab to developer account (SRD)
+  const isDeveloper = user?.username === 'SRD';
 
   return (
     <Tabs
@@ -60,8 +61,8 @@ export default function TabsLayout() {
           ),
         }}
       />
-      {/* Admin Tab - Only visible to admin users */}
-      {isAdmin && (
+      {/* Admin Tab - Only visible to developer (SRD) */}
+      {isDeveloper && (
         <Tabs.Screen
           name="admin"
           options={{
