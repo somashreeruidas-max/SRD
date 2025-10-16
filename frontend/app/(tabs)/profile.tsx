@@ -489,6 +489,32 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     marginBottom: 12,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  editButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  saveButton: {
+    padding: 4,
+  },
+  cancelButton: {
+    padding: 4,
+  },
+  editInput: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 14,
+    color: '#374151',
+    backgroundColor: '#F9FAFB',
+    marginTop: 6,
+  },
   infoCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
