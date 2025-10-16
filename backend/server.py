@@ -56,6 +56,15 @@ class UserLogin(BaseModel):
 class ProfilePictureUpdate(BaseModel):
     profile_picture: Optional[str] = None  # base64 image data or None to delete
 
+class AdminCreateUser(BaseModel):
+    username: str
+    password: str
+    full_name: Optional[str] = None
+    qualifications: Optional[str] = None
+    certifications: Optional[str] = None
+    years_of_experience: Optional[int] = None
+    is_admin: bool = False
+
 class QuestionModel(BaseModel):
     id: str
     question_text: str
