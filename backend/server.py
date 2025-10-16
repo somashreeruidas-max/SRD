@@ -739,6 +739,9 @@ async def get_current_user(username: str = Depends(verify_token)):
         "id": str(user_doc["_id"]),
         "username": user_doc["username"],
         "full_name": user_doc.get("full_name", user_doc["username"]),
+        "qualifications": user_doc.get("qualifications", None),
+        "certifications": user_doc.get("certifications", None),
+        "years_of_experience": user_doc.get("years_of_experience", None),
         "profile_picture": user_doc.get("profile_picture", None)
     }
 
