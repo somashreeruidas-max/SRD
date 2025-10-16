@@ -187,6 +187,30 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) 
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+def verify_admin(username: str = Depends(verify_token)) -> str:
+    """Verify that the user is an admin"""
+    user = users_collection.find_one({"username": username})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user.get("is_admin", False):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return username
+
+# Initialize default admin account
+def init_default_admin():
+    """Create default admin account if it doesn't exist"""
+    if users_collection.count_documents({"username": "SRD"}) == 0:
+        admin_user = {
+            "username": "SRD",
+            "password": hash_password("7550"),
+            "full_name": "Admin",
+            "is_admin": True,
+            "is_active": True,
+            "created_at": datetime.utcnow().isoformat()
+        }
+        users_collection.insert_one(admin_user)
+        print("Default admin account created: SRD")
+
 # Initialize default questionnaire
 def init_default_questionnaire():
     if questionnaires_collection.count_documents({"name": "ISO 45001:2018"}) == 0:
