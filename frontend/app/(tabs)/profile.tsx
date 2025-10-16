@@ -9,6 +9,7 @@ import {
   Platform,
   Image,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,6 +26,8 @@ export default function ProfileScreen() {
   const [qualifications, setQualifications] = useState<string>('');
   const [certifications, setCertifications] = useState<string>('');
   const [yearsExperience, setYearsExperience] = useState<string>('');
+  const [isEditingQualifications, setIsEditingQualifications] = useState(false);
+  const [savingQualifications, setSavingQualifications] = useState(false);
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
