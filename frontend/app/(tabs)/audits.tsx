@@ -234,7 +234,18 @@ const styles = StyleSheet.create({
   questionnaireName: {
     fontSize: 14,
     color: '#6B7280',
-    marginBottom: 12,
+    marginBottom: 8,
+  },
+  auditorInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  auditorText: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginLeft: 6,
+    fontStyle: 'italic',
   },
   auditFooter: {
     flexDirection: 'row',
