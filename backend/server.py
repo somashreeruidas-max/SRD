@@ -1028,6 +1028,39 @@ async def admin_delete_user(user_id: str, admin: str = Depends(verify_admin)):
         "username": user["username"]
     }
 
+@app.put("/api/admin/users/{user_id}/qualifications")
+async def admin_update_user_qualifications(user_id: str, data: QualificationsUpdate, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to update any user's qualifications"""
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {}
+    if data.qualifications is not None:
+        update_data["qualifications"] = data.qualifications
+    if data.certifications is not None:
+        update_data["certifications"] = data.certifications
+    if data.years_of_experience is not None:
+        update_data["years_of_experience"] = data.years_of_experience
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "message": "Qualifications updated successfully",
+        "qualifications": data.qualifications,
+        "certifications": data.certifications,
+        "years_of_experience": data.years_of_experience
+    }
+
 @app.get("/api/admin/users/{user_id}/audits")
 async def admin_get_user_audits(user_id: str, admin: str = Depends(verify_admin)):
     """Admin-only endpoint to get all audits for a specific user"""
