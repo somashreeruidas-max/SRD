@@ -159,6 +159,37 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleSaveQualifications = async () => {
+    try {
+      setSavingQualifications(true);
+      await axios.put(
+        `${API_URL}/api/auth/qualifications`,
+        {
+          qualifications,
+          certifications,
+          years_of_experience: yearsExperience,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setIsEditingQualifications(false);
+      if (Platform.OS === 'web') {
+        alert('Qualifications updated successfully!');
+      } else {
+        Alert.alert('Success', 'Qualifications updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating qualifications:', error);
+      if (Platform.OS === 'web') {
+        alert('Failed to update qualifications. Please try again.');
+      } else {
+        Alert.alert('Error', 'Failed to update qualifications. Please try again.');
+      }
+    } finally {
+      setSavingQualifications(false);
+    }
+  };
+
   const handleLogout = () => {
     if (Platform.OS === 'web') {
       // Web platform
