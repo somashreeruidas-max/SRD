@@ -877,6 +877,16 @@ class BackendTester:
         self.test_invalid_credentials()
         self.test_delete_default_questionnaire_protection()
         
+        # FSSC 22000 V6.0 Specific Tests
+        print("\n🧪 Testing FSSC 22000 V6.0 Questionnaire")
+        print("-" * 40)
+        
+        fssc_id = self.test_fssc_questionnaire_exists()
+        if fssc_id:
+            self.test_fssc_questionnaire_structure(fssc_id)
+            fssc_audit_id = self.test_create_audit_from_fssc(fssc_id)
+            self.test_fssc_delete_protection(fssc_id)
+        
         # Summary
         print("\n" + "=" * 60)
         print("📊 TEST SUMMARY")
