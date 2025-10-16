@@ -18,6 +18,9 @@ export default function RegisterScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [qualifications, setQualifications] = useState('');
+  const [certifications, setCertifications] = useState('');
+  const [yearsExperience, setYearsExperience] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
@@ -30,7 +33,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await register(username, password, fullName);
+      await register(username, password, fullName, qualifications, certifications, yearsExperience);
       router.replace('/(tabs)/audits');
     } catch (error: any) {
       Alert.alert('Registration Failed', error.message);
