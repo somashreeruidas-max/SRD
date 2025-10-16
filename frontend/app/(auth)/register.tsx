@@ -87,6 +87,34 @@ export default function RegisterScreen() {
               editable={!loading}
             />
 
+            <Text style={styles.label}>Qualifications (Optional)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., B.Tech, MBA, etc."
+              value={qualifications}
+              onChangeText={setQualifications}
+              editable={!loading}
+            />
+
+            <Text style={styles.label}>Certifications (Optional)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., ISO Lead Auditor, Six Sigma, etc."
+              value={certifications}
+              onChangeText={setCertifications}
+              editable={!loading}
+            />
+
+            <Text style={styles.label}>Years of Experience (Optional)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g., 5"
+              value={yearsExperience}
+              onChangeText={setYearsExperience}
+              keyboardType="numeric"
+              editable={!loading}
+            />
+
             <TouchableOpacity
               style={[styles.button, loading && styles.buttonDisabled]}
               onPress={handleRegister}
