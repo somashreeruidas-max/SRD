@@ -41,6 +41,10 @@ export default function ProfileScreen() {
       if (response.data.profile_picture) {
         setProfilePicture(response.data.profile_picture);
       }
+      // Load qualifications data
+      setQualifications(response.data.qualifications || '');
+      setCertifications(response.data.certifications || '');
+      setYearsExperience(response.data.years_experience || '');
     } catch (error) {
       console.error('Error fetching profile picture:', error);
     }
