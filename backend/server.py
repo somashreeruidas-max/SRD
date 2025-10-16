@@ -1054,7 +1054,16 @@ async def delete_questionnaire(questionnaire_id: str, username: str = Depends(ve
 # Audit Endpoints
 @app.get("/api/audits")
 async def get_audits(username: str = Depends(verify_token)):
-    audits = list(audits_collection.find({"auditor": username}).sort("created_at", -1))
+    # Check if user is admin
+    user = users_collection.find_one({"username": username})
+    is_admin = user.get("is_admin", False) if user else False
+    
+    # Admin sees all audits, regular users see only their own
+    if is_admin:
+        audits = list(audits_collection.find().sort("created_at", -1))
+    else:
+        audits = list(audits_collection.find({"auditor": username}).sort("created_at", -1))
+    
     for audit in audits:
         audit["id"] = str(audit["_id"])
         del audit["_id"]
@@ -1062,7 +1071,16 @@ async def get_audits(username: str = Depends(verify_token)):
 
 @app.get("/api/audits/{audit_id}")
 async def get_audit(audit_id: str, username: str = Depends(verify_token)):
-    audit = audits_collection.find_one({"_id": ObjectId(audit_id), "auditor": username})
+    # Check if user is admin
+    user = users_collection.find_one({"username": username})
+    is_admin = user.get("is_admin", False) if user else False
+    
+    # Admin can view any audit, regular users can only view their own
+    if is_admin:
+        audit = audits_collection.find_one({"_id": ObjectId(audit_id)})
+    else:
+        audit = audits_collection.find_one({"_id": ObjectId(audit_id), "auditor": username})
+    
     if not audit:
         raise HTTPException(status_code=404, detail="Audit not found")
     audit["id"] = str(audit["_id"])
