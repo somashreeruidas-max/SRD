@@ -356,9 +356,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "User Registration - Auditor Qualification Fields"
-    - "User Profile - Display Auditor Qualifications"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
