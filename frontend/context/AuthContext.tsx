@@ -12,6 +12,8 @@ interface User {
   qualifications?: string;
   certifications?: string;
   years_experience?: string;
+  is_admin?: boolean;
+  is_active?: boolean;
 }
 
 interface AuthContextType {
