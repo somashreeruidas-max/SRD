@@ -993,6 +993,21 @@ async def admin_delete_user(user_id: str, admin: str = Depends(verify_admin)):
         "username": user["username"]
     }
 
+@app.get("/api/admin/users/{user_id}/audits")
+async def admin_get_user_audits(user_id: str, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to get all audits for a specific user"""
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get all audits for this user
+    audits = list(audits_collection.find({"auditor": user["username"]}).sort("created_at", -1))
+    for audit in audits:
+        audit["id"] = str(audit["_id"])
+        del audit["_id"]
+    
+    return {"audits": audits}
+
 # Questionnaire Endpoints
 @app.get("/api/questionnaires")
 async def get_questionnaires(username: str = Depends(verify_token)):
