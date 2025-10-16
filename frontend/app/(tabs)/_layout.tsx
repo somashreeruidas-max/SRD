@@ -1,7 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/AuthContext';
 
 export default function TabsLayout() {
+  const { user } = useAuth();
+  const isAdmin = user?.is_admin || false;
+
   return (
     <Tabs
       screenOptions={{
@@ -56,6 +60,18 @@ export default function TabsLayout() {
           ),
         }}
       />
+      {/* Admin Tab - Only visible to admin users */}
+      {isAdmin && (
+        <Tabs.Screen
+          name="admin"
+          options={{
+            title: 'Admin',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="shield-checkmark" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }
