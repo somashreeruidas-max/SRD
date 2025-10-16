@@ -442,25 +442,77 @@ export default function AdminScreen() {
               </View>
             </View>
 
-            {(user.qualifications || user.certifications || user.years_of_experience) && (
-              <View style={styles.userDetails}>
-                {user.qualifications && (
-                  <Text style={styles.detailText}>
-                    <Text style={styles.detailLabel}>Qualifications:</Text> {user.qualifications}
-                  </Text>
-                )}
-                {user.certifications && (
-                  <Text style={styles.detailText}>
-                    <Text style={styles.detailLabel}>Certifications:</Text> {user.certifications}
-                  </Text>
-                )}
-                {user.years_of_experience && (
-                  <Text style={styles.detailText}>
-                    <Text style={styles.detailLabel}>Experience:</Text> {user.years_of_experience} years
-                  </Text>
+            {/* Qualifications Section - Editable */}
+            <View style={styles.qualSection}>
+              <View style={styles.qualHeader}>
+                <Text style={styles.qualTitle}>Qualifications</Text>
+                {editingQualifications !== user.id ? (
+                  <TouchableOpacity onPress={() => handleEditQualifications(user)}>
+                    <Ionicons name="create-outline" size={22} color="#3B82F6" />
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.qualEditButtons}>
+                    <TouchableOpacity 
+                      onPress={() => handleSaveQualifications(user.id)}
+                      disabled={savingQual}
+                    >
+                      {savingQual ? (
+                        <ActivityIndicator size="small" color="#10B981" />
+                      ) : (
+                        <Ionicons name="checkmark-circle" size={26} color="#10B981" />
+                      )}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleCancelEdit} disabled={savingQual}>
+                      <Ionicons name="close-circle" size={26} color="#EF4444" />
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
-            )}
+              
+              {editingQualifications === user.id ? (
+                <View style={styles.qualEditForm}>
+                  <Text style={styles.qualInputLabel}>Qualifications</Text>
+                  <TextInput
+                    style={styles.qualInput}
+                    placeholder="e.g., B.Tech, MBA"
+                    value={editQualData.qualifications}
+                    onChangeText={(text) => setEditQualData({ ...editQualData, qualifications: text })}
+                    editable={!savingQual}
+                  />
+                  
+                  <Text style={styles.qualInputLabel}>Certifications</Text>
+                  <TextInput
+                    style={styles.qualInput}
+                    placeholder="e.g., ISO Lead Auditor"
+                    value={editQualData.certifications}
+                    onChangeText={(text) => setEditQualData({ ...editQualData, certifications: text })}
+                    editable={!savingQual}
+                  />
+                  
+                  <Text style={styles.qualInputLabel}>Years of Experience</Text>
+                  <TextInput
+                    style={styles.qualInput}
+                    placeholder="e.g., 5"
+                    value={editQualData.years_of_experience}
+                    onChangeText={(text) => setEditQualData({ ...editQualData, years_of_experience: text })}
+                    keyboardType="numeric"
+                    editable={!savingQual}
+                  />
+                </View>
+              ) : (
+                <View style={styles.userDetails}>
+                  <Text style={styles.detailText}>
+                    <Text style={styles.detailLabel}>Qualifications:</Text> {user.qualifications || 'Not specified'}
+                  </Text>
+                  <Text style={styles.detailText}>
+                    <Text style={styles.detailLabel}>Certifications:</Text> {user.certifications || 'Not specified'}
+                  </Text>
+                  <Text style={styles.detailText}>
+                    <Text style={styles.detailLabel}>Experience:</Text> {user.years_of_experience ? `${user.years_of_experience} years` : 'Not specified'}
+                  </Text>
+                </View>
+              )}
+            </View>
 
             {user.username !== currentUser?.username && (
               <View style={styles.buttonContainer}>
