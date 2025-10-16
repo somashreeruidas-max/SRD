@@ -629,6 +629,23 @@ class BackendTester:
             
         self.test_get_current_user()
         
+        # NEW: Auditor Qualification Fields Testing
+        print("\n🧪 Testing Auditor Qualification Fields Feature")
+        print("-" * 40)
+        
+        # Test registration with qualification fields
+        qualified_token = self.test_registration_with_qualifications()
+        if qualified_token:
+            self.test_qualification_data_retrieval(qualified_token, TEST_USER_WITH_QUALIFICATIONS)
+        
+        # Test registration without qualification fields
+        minimal_token = self.test_registration_without_qualifications()
+        if minimal_token:
+            self.test_qualification_data_retrieval(minimal_token, None)
+        
+        print("\n📋 Continuing with Standard Backend Tests")
+        print("-" * 40)
+        
         # Questionnaire management
         self.test_get_questionnaires()
         self.test_get_specific_questionnaire()
