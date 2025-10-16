@@ -810,9 +810,18 @@ export default function AuditScreen() {
 
   const handleDownloadTextReport = async () => {
     if (!audit || !questionnaire) return;
-
-    // Generate comprehensive text report
-    let textContent = '';
+    
+    // Prevent multiple simultaneous downloads
+    if (downloading) {
+      console.log('Download already in progress, ignoring duplicate call');
+      return;
+    }
+    
+    setDownloading(true);
+    
+    try {
+      // Generate comprehensive text report
+      let textContent = '';
     
     // Header Section
     textContent += '═══════════════════════════════════════════════════════════════════════════\n';
