@@ -407,21 +407,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
   },
-  infoText: {
-    fontSize: 16,
-    color: '#374151',
-    marginLeft: 12,
-  },
-  certificationTextContainer: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  certificationText: {
-    fontSize: 13,
-    color: '#6B7280',
-    marginTop: 4,
-    lineHeight: 18,
-  },
   infoTextContainer: {
     flex: 1,
     marginLeft: 12,
