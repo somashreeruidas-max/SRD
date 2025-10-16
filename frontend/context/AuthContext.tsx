@@ -79,12 +79,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (username: string, password: string, fullName?: string) => {
+  const register = async (username: string, password: string, fullName?: string, qualifications?: string, certifications?: string, yearsExperience?: string) => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/register`, {
         username,
         password,
         full_name: fullName,
+        qualifications,
+        certifications,
+        years_experience: yearsExperience,
       });
       
       const { token, user } = response.data;
