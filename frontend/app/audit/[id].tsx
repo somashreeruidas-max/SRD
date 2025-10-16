@@ -819,9 +819,8 @@ export default function AuditScreen() {
     
     setDownloading(true);
     
-    try {
-      // Generate comprehensive text report
-      let textContent = '';
+    // Generate comprehensive text report
+    let textContent = '';
     
     // Header Section
     textContent += '═══════════════════════════════════════════════════════════════════════════\n';
