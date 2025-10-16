@@ -351,9 +351,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend APIs tested and working"
+    - "User Registration - Auditor Qualification Fields"
+    - "User Profile - Display Auditor Qualifications"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
