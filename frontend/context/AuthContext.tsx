@@ -33,15 +33,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadStoredAuth = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedUser = await AsyncStorage.getItem('user');
+      // Add timeout to prevent hanging
+      const timeout = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Storage timeout')), 5000)
+      );
       
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      }
+      const loadData = async () => {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedUser = await AsyncStorage.getItem('user');
+        
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      };
+      
+      await Promise.race([loadData(), timeout]);
     } catch (error) {
       console.error('Error loading stored auth:', error);
+      // Clear potentially corrupted data
+      await AsyncStorage.multiRemove(['token', 'user']);
     } finally {
       setLoading(false);
     }
