@@ -264,33 +264,95 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Auditor Qualifications</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Auditor Qualifications</Text>
+          {!isEditingQualifications ? (
+            <TouchableOpacity onPress={() => setIsEditingQualifications(true)}>
+              <Ionicons name="create-outline" size={24} color="#3B82F6" />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.editButtonsContainer}>
+              <TouchableOpacity 
+                onPress={handleSaveQualifications} 
+                disabled={savingQualifications}
+                style={styles.saveButton}
+              >
+                {savingQualifications ? (
+                  <ActivityIndicator size="small" color="#10B981" />
+                ) : (
+                  <Ionicons name="checkmark-circle" size={28} color="#10B981" />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => {
+                  setIsEditingQualifications(false);
+                  fetchProfilePicture(); // Reload original values
+                }}
+                disabled={savingQualifications}
+                style={styles.cancelButton}
+              >
+                <Ionicons name="close-circle" size={28} color="#EF4444" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
             <Ionicons name="school-outline" size={20} color="#6B7280" />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Qualifications</Text>
-              <Text style={styles.infoValue}>
-                {qualifications || 'Not specified'}
-              </Text>
+              {isEditingQualifications ? (
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="e.g., B.Tech, MBA"
+                  value={qualifications}
+                  onChangeText={setQualifications}
+                  editable={!savingQualifications}
+                />
+              ) : (
+                <Text style={styles.infoValue}>
+                  {qualifications || 'Not specified'}
+                </Text>
+              )}
             </View>
           </View>
           <View style={styles.infoRow}>
             <Ionicons name="ribbon-outline" size={20} color="#6B7280" />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Certifications</Text>
-              <Text style={styles.infoValue}>
-                {certifications || 'Not specified'}
-              </Text>
+              {isEditingQualifications ? (
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="e.g., ISO Lead Auditor"
+                  value={certifications}
+                  onChangeText={setCertifications}
+                  editable={!savingQualifications}
+                />
+              ) : (
+                <Text style={styles.infoValue}>
+                  {certifications || 'Not specified'}
+                </Text>
+              )}
             </View>
           </View>
           <View style={styles.infoRow}>
             <Ionicons name="time-outline" size={20} color="#6B7280" />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Years of Experience</Text>
-              <Text style={styles.infoValue}>
-                {yearsExperience ? `${yearsExperience} years` : 'Not specified'}
-              </Text>
+              {isEditingQualifications ? (
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="e.g., 5"
+                  value={yearsExperience}
+                  onChangeText={setYearsExperience}
+                  keyboardType="numeric"
+                  editable={!savingQualifications}
+                />
+              ) : (
+                <Text style={styles.infoValue}>
+                  {yearsExperience ? `${yearsExperience} years` : 'Not specified'}
+                </Text>
+              )}
             </View>
           </View>
         </View>
