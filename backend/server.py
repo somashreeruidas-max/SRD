@@ -897,6 +897,36 @@ async def update_profile_picture(data: ProfilePictureUpdate, username: str = Dep
     
     return {"message": message, "profile_picture": data.profile_picture}
 
+@app.put("/api/auth/qualifications")
+async def update_qualifications(data: QualificationsUpdate, username: str = Depends(verify_token)):
+    """Update user's qualifications, certifications, and years of experience"""
+    update_data = {}
+    
+    if data.qualifications is not None:
+        update_data["qualifications"] = data.qualifications
+    if data.certifications is not None:
+        update_data["certifications"] = data.certifications
+    if data.years_of_experience is not None:
+        update_data["years_of_experience"] = data.years_of_experience
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = users_collection.update_one(
+        {"username": username},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "message": "Qualifications updated successfully",
+        "qualifications": data.qualifications,
+        "certifications": data.certifications,
+        "years_of_experience": data.years_of_experience
+    }
+
 # Admin Endpoints
 @app.post("/api/admin/users")
 async def admin_create_user(user_data: AdminCreateUser, admin: str = Depends(verify_admin)):
