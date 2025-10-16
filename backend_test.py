@@ -486,6 +486,131 @@ class BackendTester:
             self.log_result("Delete Default Questionnaire Protection", False, f"Should have protected default questionnaire, got status {response.status_code}")
             return False
     
+    def test_registration_with_qualifications(self):
+        """Test user registration with qualification fields"""
+        response = self.make_request("POST", "/auth/register", TEST_USER_WITH_QUALIFICATIONS)
+        if isinstance(response, tuple):
+            self.log_result("Registration with Qualifications", False, "Connection failed", response[1])
+            return False
+            
+        if response.status_code == 200:
+            data = response.json()
+            if "token" in data and "user" in data:
+                self.log_result("Registration with Qualifications", True, "User with qualifications registered successfully")
+                return data["token"]
+            else:
+                self.log_result("Registration with Qualifications", False, "Missing token or user in response", data)
+                return False
+        elif response.status_code == 400:
+            # User might already exist, try login
+            login_data = {
+                "username": TEST_USER_WITH_QUALIFICATIONS["username"],
+                "password": TEST_USER_WITH_QUALIFICATIONS["password"]
+            }
+            login_response = self.make_request("POST", "/auth/login", login_data)
+            if login_response.status_code == 200:
+                data = login_response.json()
+                self.log_result("Registration with Qualifications", True, "User with qualifications logged in (already existed)")
+                return data["token"]
+            else:
+                self.log_result("Registration with Qualifications", False, f"Registration failed with status {response.status_code}", response.text)
+                return False
+        else:
+            self.log_result("Registration with Qualifications", False, f"Registration failed with status {response.status_code}", response.text)
+            return False
+    
+    def test_registration_without_qualifications(self):
+        """Test user registration without qualification fields"""
+        response = self.make_request("POST", "/auth/register", TEST_USER_MINIMAL)
+        if isinstance(response, tuple):
+            self.log_result("Registration without Qualifications", False, "Connection failed", response[1])
+            return False
+            
+        if response.status_code == 200:
+            data = response.json()
+            if "token" in data and "user" in data:
+                self.log_result("Registration without Qualifications", True, "User without qualifications registered successfully")
+                return data["token"]
+            else:
+                self.log_result("Registration without Qualifications", False, "Missing token or user in response", data)
+                return False
+        elif response.status_code == 400:
+            # User might already exist, try login
+            login_data = {
+                "username": TEST_USER_MINIMAL["username"],
+                "password": TEST_USER_MINIMAL["password"]
+            }
+            login_response = self.make_request("POST", "/auth/login", login_data)
+            if login_response.status_code == 200:
+                data = login_response.json()
+                self.log_result("Registration without Qualifications", True, "User without qualifications logged in (already existed)")
+                return data["token"]
+            else:
+                self.log_result("Registration without Qualifications", False, f"Registration failed with status {response.status_code}", response.text)
+                return False
+        else:
+            self.log_result("Registration without Qualifications", False, f"Registration failed with status {response.status_code}", response.text)
+            return False
+    
+    def test_qualification_data_retrieval(self, token, expected_qualifications=None):
+        """Test retrieving user data with qualification fields"""
+        # Save current token
+        original_token = self.token
+        self.token = token
+        
+        response = self.make_request("GET", "/auth/me")
+        if isinstance(response, tuple):
+            self.log_result("Qualification Data Retrieval", False, "Connection failed", response[1])
+            self.token = original_token
+            return False
+            
+        if response.status_code == 200:
+            data = response.json()
+            
+            # Check if qualification fields are present
+            qualification_fields = ["qualifications", "certifications", "years_of_experience"]
+            
+            if expected_qualifications:
+                # Test user with qualifications - verify all fields are correct
+                all_correct = True
+                errors = []
+                
+                for field in qualification_fields:
+                    if field not in data:
+                        errors.append(f"Missing field: {field}")
+                        all_correct = False
+                    elif data[field] != expected_qualifications.get(field):
+                        errors.append(f"{field}: got '{data[field]}', expected '{expected_qualifications.get(field)}'")
+                        all_correct = False
+                
+                if all_correct:
+                    self.log_result("Qualification Data Retrieval (with qualifications)", True, "All qualification fields retrieved correctly")
+                    self.token = original_token
+                    return True
+                else:
+                    self.log_result("Qualification Data Retrieval (with qualifications)", False, f"Qualification field errors: {errors}")
+                    self.token = original_token
+                    return False
+            else:
+                # Test user without qualifications - verify fields are null/empty
+                non_null_fields = []
+                for field in qualification_fields:
+                    if field in data and data[field] is not None:
+                        non_null_fields.append(f"{field}: {data[field]}")
+                
+                if len(non_null_fields) == 0:
+                    self.log_result("Qualification Data Retrieval (without qualifications)", True, "Qualification fields are properly null/empty")
+                    self.token = original_token
+                    return True
+                else:
+                    self.log_result("Qualification Data Retrieval (without qualifications)", False, f"Expected null qualification fields but found: {non_null_fields}")
+                    self.token = original_token
+                    return False
+        else:
+            self.log_result("Qualification Data Retrieval", False, f"Get user data failed with status {response.status_code}", response.text)
+            self.token = original_token
+            return False
+    
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting ISO 45001:2018 Backend API Tests")
