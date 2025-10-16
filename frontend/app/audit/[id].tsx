@@ -1334,7 +1334,10 @@ export default function AuditScreen() {
         totalQuestions += subclause.questions.length;
         subclause.questions.forEach((question) => {
           const response = responses.get(question.id);
-          if (response && (response.observations || response.conformance)) {
+          // A question is considered answered if:
+          // 1. Response exists AND
+          // 2. It has observations (non-empty) OR conformance (non-empty)
+          if (response && (response.observations?.trim() || response.conformance?.trim())) {
             answeredQuestions++;
           }
         });
