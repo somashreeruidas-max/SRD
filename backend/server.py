@@ -683,6 +683,87 @@ def init_default_questionnaire():
         }
         questionnaires_collection.insert_one(ems_questionnaire)
         print("Default ISO 14001:2015 questionnaire initialized")
+    
+    # Initialize FSSC 22000 V6.0
+    if questionnaires_collection.count_documents({"name": "FSSC 22000 V6.0"}) == 0:
+        fssc_questionnaire = {
+            "name": "FSSC 22000 V6.0",
+            "description": "Food Safety System Certification 22000 Version 6.0 - Audit Questionnaire for Packaged Drinking Water Plant",
+            "created_at": datetime.utcnow().isoformat(),
+            "is_default": True,
+            "clauses": [
+                {
+                    "clause_no": "ISO 22000:2018",
+                    "title": "Food Safety Management System",
+                    "subclauses": [
+                        {"clause_no": "4.1", "title": "Understanding the organization and its context", "questions": [{"id": "q_fssc_4_1_1", "question_text": "Has the organization identified internal and external issues affecting FSMS (e.g., raw water variability, supplier reliability)?", "order": 1}]},
+                        {"clause_no": "4.2", "title": "Understanding interested parties", "questions": [{"id": "q_fssc_4_2_1", "question_text": "Have interested parties (e.g., BIS, FSSAI, customers) and their requirements been defined?", "order": 1}]},
+                        {"clause_no": "4.3", "title": "Scope of the food safety management system", "questions": [{"id": "q_fssc_4_3_1", "question_text": "Is the scope of FSMS documented including production of packaged drinking water (20L jars, 1L bottles)?", "order": 1}]},
+                        {"clause_no": "4.4", "title": "Food safety management system", "questions": [{"id": "q_fssc_4_4_1", "question_text": "Is the FSMS established, implemented, and continually improved?", "order": 1}]},
+                        {"clause_no": "5.1", "title": "Leadership and commitment", "questions": [{"id": "q_fssc_5_1_1", "question_text": "Does top management demonstrate commitment to food safety (attending reviews, providing resources)?", "order": 1}]},
+                        {"clause_no": "5.2", "title": "Food safety policy", "questions": [{"id": "q_fssc_5_2_1", "question_text": "Is the Food Safety Policy communicated and understood at all levels?", "order": 1}]},
+                        {"clause_no": "5.3", "title": "Organizational roles, responsibilities and authorities", "questions": [{"id": "q_fssc_5_3_1", "question_text": "Are food safety responsibilities assigned to trained personnel (QA, production, maintenance)?", "order": 1}]},
+                        {"clause_no": "6.1", "title": "Actions to address risks and opportunities", "questions": [{"id": "q_fssc_6_1_1", "question_text": "Have risks and opportunities been identified for each process (e.g., contamination, supply chain)?", "order": 1}]},
+                        {"clause_no": "6.2", "title": "Food safety objectives and planning to achieve them", "questions": [{"id": "q_fssc_6_2_1", "question_text": "Are measurable FSMS objectives set (e.g., micro compliance rate > 98%) and tracked?", "order": 1}]},
+                        {"clause_no": "7.1.1", "title": "Resources", "questions": [{"id": "q_fssc_7_1_1_1", "question_text": "Are adequate resources provided (trained staff, lab equipment, RO plant maintenance)?", "order": 1}]},
+                        {"clause_no": "7.2", "title": "Competence", "questions": [{"id": "q_fssc_7_2_1", "question_text": "Is competence ensured through training on GMP, HACCP, BIS, and hygiene?", "order": 1}]},
+                        {"clause_no": "7.3", "title": "Awareness", "questions": [{"id": "q_fssc_7_3_1", "question_text": "Is awareness on food safety maintained among employees?", "order": 1}]},
+                        {"clause_no": "7.4", "title": "Communication", "questions": [{"id": "q_fssc_7_4_1", "question_text": "Are internal and external communications defined and documented?", "order": 1}]},
+                        {"clause_no": "7.5", "title": "Documented information", "questions": [{"id": "q_fssc_7_5_1", "question_text": "Is documented information (SOPs, records) controlled and updated properly?", "order": 1}]},
+                        {"clause_no": "8.1", "title": "Operational planning and control", "questions": [{"id": "q_fssc_8_1_1", "question_text": "Are PRPs implemented as per ISO/TS 22002-1 requirements?", "order": 1}]},
+                        {"clause_no": "8.2", "title": "Traceability", "questions": [{"id": "q_fssc_8_2_1", "question_text": "Are traceability systems available for each batch and container of water produced?", "order": 1}]},
+                        {"clause_no": "8.3", "title": "Emergency preparedness and response", "questions": [{"id": "q_fssc_8_3_1", "question_text": "Are emergency preparedness plans available for contamination, power failure, or water source failure?", "order": 1}]},
+                        {"clause_no": "8.4", "title": "Hazard analysis", "questions": [{"id": "q_fssc_8_4_1", "question_text": "Is hazard analysis conducted covering all inputs (raw water, chemicals, packaging)?", "order": 1}]},
+                        {"clause_no": "8.5", "title": "Operational PRPs and CCPs monitoring", "questions": [{"id": "q_fssc_8_5_1", "question_text": "Are operational PRPs and CCPs monitored and records maintained?", "order": 1}]},
+                        {"clause_no": "8.6", "title": "Verification of the hazard control plan", "questions": [{"id": "q_fssc_8_6_1", "question_text": "Are verification and validation procedures in place for filters, UV, and RO units?", "order": 1}]},
+                        {"clause_no": "9.1", "title": "Monitoring, measurement, analysis and evaluation", "questions": [{"id": "q_fssc_9_1_1", "question_text": "Are monitoring and analysis results reviewed for FSMS performance?", "order": 1}]},
+                        {"clause_no": "9.2", "title": "Internal audit", "questions": [{"id": "q_fssc_9_2_1", "question_text": "Are internal audits conducted and corrective actions implemented?", "order": 1}]},
+                        {"clause_no": "9.3", "title": "Management review", "questions": [{"id": "q_fssc_9_3_1", "question_text": "Does management review cover all inputs and outputs related to FSMS?", "order": 1}]},
+                        {"clause_no": "10.1", "title": "Nonconformity and corrective action", "questions": [{"id": "q_fssc_10_1_1", "question_text": "Are nonconformities addressed and root causes analyzed?", "order": 1}]},
+                        {"clause_no": "10.2", "title": "Continual improvement", "questions": [{"id": "q_fssc_10_2_1", "question_text": "Is continual improvement evident in FSMS performance and audits?", "order": 1}]}
+                    ]
+                },
+                {
+                    "clause_no": "ISO/TS 22002-1:2009",
+                    "title": "Prerequisite Programs (PRPs)",
+                    "subclauses": [
+                        {"clause_no": "4.1", "title": "Facility location and surrounding areas", "questions": [{"id": "q_fssc_prp_4_1_1", "question_text": "Is the facility located away from potential contamination sources (drains, garbage, smoke)?", "order": 1}]},
+                        {"clause_no": "4.2", "title": "Building design and facilities", "questions": [{"id": "q_fssc_prp_4_2_1", "question_text": "Are building structures designed to prevent cross-contamination (e.g., air curtains, segregation)?", "order": 1}]},
+                        {"clause_no": "4.3", "title": "Utilities", "questions": [{"id": "q_fssc_prp_4_3_1", "question_text": "Are utilities such as process water, compressed air, and steam tested and controlled?", "order": 1}]},
+                        {"clause_no": "4.4", "title": "Waste management", "questions": [{"id": "q_fssc_prp_4_4_1", "question_text": "Is waste managed effectively (sludge, reject water, damaged bottles)?", "order": 1}]},
+                        {"clause_no": "4.5", "title": "Equipment suitability", "questions": [{"id": "q_fssc_prp_4_5_1", "question_text": "Is equipment made of food-grade materials and easy to clean?", "order": 1}]},
+                        {"clause_no": "4.6", "title": "Cleaning and sanitation", "questions": [{"id": "q_fssc_prp_4_6_1", "question_text": "Are validated cleaning and sanitation programs in place for tanks, pipelines, and fillers?", "order": 1}]},
+                        {"clause_no": "4.7", "title": "Personnel hygiene facilities", "questions": [{"id": "q_fssc_prp_4_7_1", "question_text": "Are adequate hygiene facilities (hand wash, sanitizers, foot dips) provided?", "order": 1}]},
+                        {"clause_no": "4.8", "title": "Personnel hygiene", "questions": [{"id": "q_fssc_prp_4_8_1", "question_text": "Are personnel trained on personal hygiene and GMP practices?", "order": 1}]},
+                        {"clause_no": "4.9", "title": "Maintenance and calibration", "questions": [{"id": "q_fssc_prp_4_9_1", "question_text": "Is a preventive maintenance and calibration program implemented for instruments?", "order": 1}]},
+                        {"clause_no": "4.10", "title": "Prevention of cross-contamination", "questions": [{"id": "q_fssc_prp_4_10_1", "question_text": "Are foreign material controls like strainers, filters, and sieves maintained?", "order": 1}]},
+                        {"clause_no": "4.11", "title": "Product handling, storage and transportation", "questions": [{"id": "q_fssc_prp_4_11_1", "question_text": "Is product stored under hygienic conditions and protected from recontamination?", "order": 1}]},
+                        {"clause_no": "4.12", "title": "Procurement of materials", "questions": [{"id": "q_fssc_prp_4_12_1", "question_text": "Are approved suppliers verified for RM/PM like soda ash, antiscalant, bottles, caps, and jars?", "order": 1}]},
+                        {"clause_no": "4.13", "title": "Product formulation and allergen management", "questions": [{"id": "q_fssc_prp_4_13_1", "question_text": "Is allergen management considered (if any additives are used)?", "order": 1}]},
+                        {"clause_no": "4.14", "title": "Rework control", "questions": [{"id": "q_fssc_prp_4_14_1", "question_text": "Is rework (e.g., rewashed jars) controlled and traceable?", "order": 1}]},
+                        {"clause_no": "4.15", "title": "Food defense", "questions": [{"id": "q_fssc_prp_4_15_1", "question_text": "Is food defense implemented (restricted entry, CCTV, visitor log)?", "order": 1}]}
+                    ]
+                },
+                {
+                    "clause_no": "FSSC 22000 V6",
+                    "title": "Additional Requirements",
+                    "subclauses": [
+                        {"clause_no": "2.5.1", "title": "Control of purchased materials and services", "questions": [{"id": "q_fssc_add_2_5_1_1", "question_text": "Is control over purchased materials and services documented and verified?", "order": 1}]},
+                        {"clause_no": "2.5.2", "title": "Product labeling and traceability", "questions": [{"id": "q_fssc_add_2_5_2_1", "question_text": "Are product labeling and traceability verified for accuracy and regulatory compliance?", "order": 1}]},
+                        {"clause_no": "2.5.3", "title": "Food defense", "questions": [{"id": "q_fssc_add_2_5_3_1", "question_text": "Is a food defense plan in place with periodic vulnerability assessment?", "order": 1}]},
+                        {"clause_no": "2.5.4", "title": "Food fraud prevention", "questions": [{"id": "q_fssc_add_2_5_4_1", "question_text": "Is food fraud prevention documented with raw material vulnerability assessment?", "order": 1}]},
+                        {"clause_no": "2.5.5", "title": "Allergen management", "questions": [{"id": "q_fssc_add_2_5_5_1", "question_text": "Are allergen controls documented (even if 'not applicable')?", "order": 1}]},
+                        {"clause_no": "2.5.6", "title": "Environmental monitoring program", "questions": [{"id": "q_fssc_add_2_5_6_1", "question_text": "Is an environmental monitoring program in place for airborne yeast & mold in filling areas?", "order": 1}]},
+                        {"clause_no": "2.5.7", "title": "Equipment management", "questions": [{"id": "q_fssc_add_2_5_7_1", "question_text": "Is equipment management ensuring food contact safety (SS material verification)?", "order": 1}]},
+                        {"clause_no": "2.5.8", "title": "Transportation", "questions": [{"id": "q_fssc_add_2_5_8_1", "question_text": "Is transportation system controlled to ensure sealed and hygienic delivery of jars?", "order": 1}]},
+                        {"clause_no": "2.5.9", "title": "Management of change", "questions": [{"id": "q_fssc_add_2_5_9_1", "question_text": "Is management of change applied to any new supplier, process, or design change?", "order": 1}]},
+                        {"clause_no": "2.5.10", "title": "Food safety culture", "questions": [{"id": "q_fssc_add_2_5_10_1", "question_text": "Is a food safety culture program implemented (training, awareness, reporting culture)?", "order": 1}]}
+                    ]
+                }
+            ]
+        }
+        questionnaires_collection.insert_one(fssc_questionnaire)
+        print("Default FSSC 22000 V6.0 questionnaire initialized")
 
 # Auth Endpoints
 @app.post("/api/auth/register")
