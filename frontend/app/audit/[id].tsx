@@ -80,6 +80,7 @@ export default function AuditScreen() {
   const [expandedClauses, setExpandedClauses] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
