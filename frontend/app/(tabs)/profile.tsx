@@ -247,6 +247,39 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Auditor Qualifications</Text>
+        <View style={styles.infoCard}>
+          <View style={styles.infoRow}>
+            <Ionicons name="school-outline" size={20} color="#6B7280" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Qualifications</Text>
+              <Text style={styles.infoValue}>
+                {qualifications || 'Not specified'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Ionicons name="ribbon-outline" size={20} color="#6B7280" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Certifications</Text>
+              <Text style={styles.infoValue}>
+                {certifications || 'Not specified'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Ionicons name="time-outline" size={20} color="#6B7280" />
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoLabel}>Years of Experience</Text>
+              <Text style={styles.infoValue}>
+                {yearsExperience ? `${yearsExperience} years` : 'Not specified'}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>App Information</Text>
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
