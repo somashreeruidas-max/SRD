@@ -486,6 +486,220 @@ class BackendTester:
             self.log_result("Delete Default Questionnaire Protection", False, f"Should have protected default questionnaire, got status {response.status_code}")
             return False
     
+    def test_fssc_questionnaire_exists(self):
+        """Test that FSSC 22000 V6.0 questionnaire exists in the list"""
+        if not self.token:
+            self.log_result("FSSC Questionnaire Exists", False, "No authentication token available")
+            return False
+            
+        response = self.make_request("GET", "/questionnaires")
+        if isinstance(response, tuple):
+            self.log_result("FSSC Questionnaire Exists", False, "Connection failed", response[1])
+            return False
+            
+        if response.status_code == 200:
+            data = response.json()
+            questionnaires = data.get("questionnaires", [])
+            
+            # Find FSSC 22000 V6.0 questionnaire
+            fssc_questionnaire = None
+            for q in questionnaires:
+                if q.get("name") == "FSSC 22000 V6.0":
+                    fssc_questionnaire = q
+                    break
+            
+            if fssc_questionnaire:
+                details = {
+                    "fssc_id": fssc_questionnaire.get("id"),
+                    "description": fssc_questionnaire.get("description", "")[:100] + "...",
+                    "is_default": fssc_questionnaire.get("is_default", False)
+                }
+                self.log_result("FSSC Questionnaire Exists", True, "FSSC 22000 V6.0 found in questionnaires list", details)
+                return fssc_questionnaire.get("id")
+            else:
+                available_names = [q.get("name") for q in questionnaires]
+                self.log_result("FSSC Questionnaire Exists", False, "FSSC 22000 V6.0 not found", 
+                              {"available_questionnaires": available_names})
+                return False
+        else:
+            self.log_result("FSSC Questionnaire Exists", False, f"Get questionnaires failed with status {response.status_code}", response.text)
+            return False
+    
+    def test_fssc_questionnaire_structure(self, fssc_id):
+        """Test FSSC 22000 V6.0 questionnaire structure and content"""
+        if not self.token or not fssc_id:
+            self.log_result("FSSC Questionnaire Structure", False, "No authentication token or FSSC ID available")
+            return False
+            
+        response = self.make_request("GET", f"/questionnaires/{fssc_id}")
+        if isinstance(response, tuple):
+            self.log_result("FSSC Questionnaire Structure", False, "Connection failed", response[1])
+            return False
+            
+        if response.status_code == 200:
+            questionnaire = response.json()
+            
+            # Verify basic properties
+            name = questionnaire.get("name")
+            description = questionnaire.get("description", "")
+            clauses = questionnaire.get("clauses", [])
+            is_default = questionnaire.get("is_default", False)
+            
+            # Check name
+            if name != "FSSC 22000 V6.0":
+                self.log_result("FSSC Questionnaire Structure", False, f"Wrong name: expected 'FSSC 22000 V6.0', got '{name}'")
+                return False
+            
+            # Check description contains Food Safety System Certification
+            if "Food Safety System Certification" not in description:
+                self.log_result("FSSC Questionnaire Structure", False, "Description doesn't mention Food Safety System Certification")
+                return False
+            
+            # Check is_default
+            if not is_default:
+                self.log_result("FSSC Questionnaire Structure", False, "FSSC questionnaire should be marked as default")
+                return False
+            
+            # Verify 3 main sections
+            expected_sections = [
+                "ISO 22000:2018",
+                "ISO/TS 22002-1:2009", 
+                "FSSC 22000 V6"
+            ]
+            
+            section_titles = [clause.get("title") for clause in clauses]
+            clause_numbers = [clause.get("clause_no") for clause in clauses]
+            
+            missing_sections = []
+            for expected in expected_sections:
+                if expected not in section_titles and expected not in clause_numbers:
+                    missing_sections.append(expected)
+            
+            if missing_sections:
+                self.log_result("FSSC Questionnaire Structure", False, f"Missing sections: {missing_sections}", 
+                              {"found_sections": section_titles, "found_clause_nos": clause_numbers})
+                return False
+            
+            # Count total questions
+            total_questions = 0
+            section_details = {}
+            
+            for clause in clauses:
+                section_name = clause.get("title") or clause.get("clause_no")
+                subclauses = clause.get("subclauses", [])
+                section_questions = 0
+                
+                for subclause in subclauses:
+                    questions = subclause.get("questions", [])
+                    section_questions += len(questions)
+                
+                section_details[section_name] = {
+                    "subclauses": len(subclauses),
+                    "questions": section_questions
+                }
+                total_questions += section_questions
+            
+            # Verify approximately 50 questions (allow some flexibility)
+            if total_questions < 45 or total_questions > 55:
+                self.log_result("FSSC Questionnaire Structure", False, 
+                              f"Expected ~50 questions, found {total_questions}", section_details)
+                return False
+            
+            details = {
+                "total_sections": len(clauses),
+                "total_questions": total_questions,
+                "section_breakdown": section_details
+            }
+            
+            self.log_result("FSSC Questionnaire Structure", True, 
+                          f"FSSC structure verified: {total_questions} questions in 3 sections", details)
+            return True
+            
+        else:
+            self.log_result("FSSC Questionnaire Structure", False, f"Get FSSC questionnaire failed with status {response.status_code}", response.text)
+            return False
+    
+    def test_create_audit_from_fssc(self, fssc_id):
+        """Test creating an audit from FSSC 22000 V6.0 questionnaire"""
+        if not self.token or not fssc_id:
+            self.log_result("Create Audit from FSSC", False, "No authentication token or FSSC ID available")
+            return False
+            
+        audit_data = {
+            "questionnaire_id": fssc_id,
+            "title": "FSSC 22000 V6.0 Test Audit",
+            "description": "Test audit created from FSSC questionnaire",
+            "plant_name": "Test Packaged Water Plant",
+            "auditor_name": "FSSC Test Auditor",
+            "auditee_name": "Plant Manager",
+            "audit_scope": "Complete FSSC 22000 V6.0 audit",
+            "audit_criteria": "FSSC 22000 V6.0 standard requirements"
+        }
+        
+        response = self.make_request("POST", "/audits", audit_data)
+        if isinstance(response, tuple):
+            self.log_result("Create Audit from FSSC", False, "Connection failed", response[1])
+            return False
+            
+        if response.status_code == 200:
+            data = response.json()
+            fssc_audit_id = data.get("id")
+            
+            if not fssc_audit_id:
+                self.log_result("Create Audit from FSSC", False, "No audit ID returned", data)
+                return False
+            
+            # Verify audit was created correctly
+            audit_response = self.make_request("GET", f"/audits/{fssc_audit_id}")
+            
+            if audit_response.status_code != 200:
+                self.log_result("Create Audit from FSSC", False, "Failed to retrieve created audit")
+                return False
+            
+            audit = audit_response.json()
+            
+            details = {
+                "audit_id": fssc_audit_id,
+                "questionnaire_name": audit.get("questionnaire_name"),
+                "title": audit.get("title"),
+                "status": audit.get("status")
+            }
+            
+            if audit.get("questionnaire_name") != "FSSC 22000 V6.0":
+                self.log_result("Create Audit from FSSC", False, "Audit created with wrong questionnaire name", details)
+                return False
+            
+            self.log_result("Create Audit from FSSC", True, "Audit successfully created from FSSC questionnaire", details)
+            return fssc_audit_id
+            
+        else:
+            self.log_result("Create Audit from FSSC", False, f"Create audit failed with status {response.status_code}", response.text)
+            return False
+    
+    def test_fssc_delete_protection(self, fssc_id):
+        """Test that FSSC questionnaire cannot be deleted (protected as default)"""
+        if not self.token or not fssc_id:
+            self.log_result("FSSC Delete Protection", False, "No authentication token or FSSC ID available")
+            return False
+            
+        response = self.make_request("DELETE", f"/questionnaires/{fssc_id}")
+        if isinstance(response, tuple):
+            self.log_result("FSSC Delete Protection", False, "Connection failed", response[1])
+            return False
+            
+        # Should return 400 (Bad Request) for protected questionnaire
+        if response.status_code == 400:
+            response_data = response.json() if response.headers.get('content-type') == 'application/json' else response.text
+            self.log_result("FSSC Delete Protection", True, "FSSC questionnaire properly protected from deletion", 
+                          {"status_code": 400, "response": response_data})
+            return True
+        elif response.status_code == 200:
+            self.log_result("FSSC Delete Protection", False, "FSSC questionnaire was deleted (should be protected!)")
+            return False
+        else:
+            self.log_result("FSSC Delete Protection", False, f"Unexpected response: {response.status_code}", response.text)
+            return False
+    
     def test_registration_with_qualifications(self):
         """Test user registration with qualification fields"""
         response = self.make_request("POST", "/auth/register", TEST_USER_WITH_QUALIFICATIONS)
