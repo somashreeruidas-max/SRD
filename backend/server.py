@@ -800,7 +800,8 @@ def init_default_questionnaire():
 
 # Auth Endpoints
 @app.post("/api/auth/register")
-async def register(user: UserRegister):
+async def register(user: UserRegister, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to register new users"""
     if users_collection.find_one({"username": user.username}):
         raise HTTPException(status_code=400, detail="Username already exists")
     
@@ -812,18 +813,19 @@ async def register(user: UserRegister):
         "qualifications": user.qualifications,
         "certifications": user.certifications,
         "years_of_experience": user.years_of_experience,
+        "is_active": True,  # New users are active by default
+        "is_admin": False,  # Regular users are not admins
         "created_at": datetime.utcnow().isoformat()
     }
     result = users_collection.insert_one(user_doc)
-    token = create_token(user.username)
     
     return {
         "message": "User registered successfully",
-        "token": token,
         "user": {
             "id": str(result.inserted_id),
             "username": user.username,
-            "full_name": user_doc["full_name"]
+            "full_name": user_doc["full_name"],
+            "is_active": user_doc["is_active"]
         }
     }
 
@@ -833,6 +835,10 @@ async def login(user: UserLogin):
     if not user_doc or not verify_password(user.password, user_doc["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Check if user account is active
+    if not user_doc.get("is_active", True):
+        raise HTTPException(status_code=403, detail="Account is disabled. Contact administrator.")
+    
     token = create_token(user.username)
     return {
         "message": "Login successful",
@@ -840,7 +846,8 @@ async def login(user: UserLogin):
         "user": {
             "id": str(user_doc["_id"]),
             "username": user_doc["username"],
-            "full_name": user_doc.get("full_name", user_doc["username"])
+            "full_name": user_doc.get("full_name", user_doc["username"]),
+            "is_admin": user_doc.get("is_admin", False)
         }
     }
 
@@ -856,7 +863,9 @@ async def get_current_user(username: str = Depends(verify_token)):
         "qualifications": user_doc.get("qualifications", None),
         "certifications": user_doc.get("certifications", None),
         "years_of_experience": user_doc.get("years_of_experience", None),
-        "profile_picture": user_doc.get("profile_picture", None)
+        "profile_picture": user_doc.get("profile_picture", None),
+        "is_admin": user_doc.get("is_admin", False),
+        "is_active": user_doc.get("is_active", True)
     }
 
 @app.put("/api/auth/profile-picture")
