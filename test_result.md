@@ -351,15 +351,18 @@ frontend:
   
   - task: "Default Questionnaire - FSSC 22000 V6.0"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created new default questionnaire for FSSC 22000 V6.0 (Food Safety System Certification) including three major sections: 1) ISO 22000:2018 (Food Safety Management System) with 25 clauses, 2) ISO/TS 22002-1:2009 (Prerequisite Programs) with 15 clauses covering facility, utilities, hygiene, maintenance, etc., and 3) FSSC 22000 V6 Additional Requirements with 10 clauses covering food defense, fraud prevention, allergen management, environmental monitoring, and food safety culture. Total 50 audit questions structured for packaged drinking water plant operations."
+      - working: true
+        agent: "testing"
+        comment: "FSSC 22000 V6.0 questionnaire fully tested and working correctly. Comprehensive testing performed with 4/4 FSSC-specific tests passing (100% success rate). Key findings: 1) FSSC questionnaire appears correctly in GET /api/questionnaires list with proper name and description mentioning Food Safety System Certification. 2) Questionnaire structure verified with exactly 50 questions across 3 main sections (ISO 22000:2018, ISO/TS 22002-1:2009, FSSC 22000 V6). 3) Successfully created audit from FSSC questionnaire via POST /api/audits with correct questionnaire_name linkage. 4) Delete protection working - FSSC questionnaire properly protected from deletion as default questionnaire (returns 400 status). All clauses have proper numbers/titles, all questions have unique IDs and text, and is_default flag correctly set to true. Backend implementation is fully functional and ready for production use."
 
 metadata:
   created_by: "testing_agent"
