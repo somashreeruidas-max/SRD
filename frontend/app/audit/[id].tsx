@@ -1055,6 +1055,8 @@ export default function AuditScreen() {
       } else {
         Alert.alert('Error', 'Failed to generate text report');
       }
+    } finally {
+      setDownloading(false);
     }
   };
 
