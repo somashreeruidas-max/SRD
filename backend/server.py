@@ -695,6 +695,9 @@ async def register(user: UserRegister):
         "username": user.username,
         "password": hashed_pw,
         "full_name": user.full_name or user.username,
+        "qualifications": user.qualifications,
+        "certifications": user.certifications,
+        "years_of_experience": user.years_of_experience,
         "created_at": datetime.utcnow().isoformat()
     }
     result = users_collection.insert_one(user_doc)
