@@ -22,6 +22,9 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [qualifications, setQualifications] = useState<string>('');
+  const [certifications, setCertifications] = useState<string>('');
+  const [yearsExperience, setYearsExperience] = useState<string>('');
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
