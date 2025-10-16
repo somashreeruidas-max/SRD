@@ -1054,16 +1054,8 @@ async def delete_questionnaire(questionnaire_id: str, username: str = Depends(ve
 # Audit Endpoints
 @app.get("/api/audits")
 async def get_audits(username: str = Depends(verify_token)):
-    # Check if user is admin
-    user = users_collection.find_one({"username": username})
-    is_admin = user.get("is_admin", False) if user else False
-    
-    # Admin sees all audits, regular users see only their own
-    if is_admin:
-        audits = list(audits_collection.find().sort("created_at", -1))
-    else:
-        audits = list(audits_collection.find({"auditor": username}).sort("created_at", -1))
-    
+    # All users (including admin) see only their own audits on the Audits tab
+    audits = list(audits_collection.find({"auditor": username}).sort("created_at", -1))
     for audit in audits:
         audit["id"] = str(audit["_id"])
         del audit["_id"]
