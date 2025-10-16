@@ -728,4 +728,73 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.6,
   },
+  auditsToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+    gap: 6,
+  },
+  auditsToggleText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3B82F6',
+    flex: 1,
+  },
+  auditsContainer: {
+    marginTop: 8,
+    padding: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+  },
+  auditItem: {
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  auditItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  auditTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+    flex: 1,
+    marginRight: 8,
+  },
+  auditStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  auditStatusText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  auditQuestionnaire: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 4,
+  },
+  auditDate: {
+    fontSize: 12,
+    color: '#9CA3AF',
+  },
+  noAuditsText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    padding: 12,
+  },
 });
