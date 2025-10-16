@@ -56,6 +56,13 @@ export default function AdminScreen() {
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [userAudits, setUserAudits] = useState<{ [key: string]: Audit[] }>({});
   const [loadingAudits, setLoadingAudits] = useState<{ [key: string]: boolean }>({});
+  const [editingQualifications, setEditingQualifications] = useState<string | null>(null);
+  const [editQualData, setEditQualData] = useState({
+    qualifications: '',
+    certifications: '',
+    years_of_experience: '',
+  });
+  const [savingQual, setSavingQual] = useState(false);
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
 
