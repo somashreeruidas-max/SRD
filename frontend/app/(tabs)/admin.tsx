@@ -39,6 +39,7 @@ interface Audit {
 
 export default function AdminScreen() {
   const { token, user: currentUser } = useAuth();
+  const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
