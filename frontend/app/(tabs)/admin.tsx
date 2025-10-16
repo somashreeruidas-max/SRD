@@ -209,6 +209,42 @@ export default function AdminScreen() {
     }
   };
 
+  const handleEditQualifications = (user: User) => {
+    setEditingQualifications(user.id);
+    setEditQualData({
+      qualifications: user.qualifications || '',
+      certifications: user.certifications || '',
+      years_of_experience: user.years_of_experience || '',
+    });
+  };
+
+  const handleSaveQualifications = async (userId: string) => {
+    try {
+      setSavingQual(true);
+      await axios.put(
+        `${API_URL}/api/admin/users/${userId}/qualifications`,
+        editQualData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Alert.alert('Success', 'Qualifications updated successfully');
+      setEditingQualifications(null);
+      fetchUsers();
+    } catch (error: any) {
+      Alert.alert('Error', error.response?.data?.detail || 'Failed to update qualifications');
+    } finally {
+      setSavingQual(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingQualifications(null);
+    setEditQualData({
+      qualifications: '',
+      certifications: '',
+      years_of_experience: '',
+    });
+  };
+
   const toggleUserAudits = async (userId: string) => {
     // If already expanded, collapse it
     if (expandedUserId === userId) {
