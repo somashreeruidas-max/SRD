@@ -350,22 +350,32 @@ export default function AdminScreen() {
             )}
 
             {user.username !== currentUser?.username && (
-              <TouchableOpacity
-                style={[
-                  styles.toggleButton,
-                  user.is_active ? styles.disableButton : styles.enableButton,
-                ]}
-                onPress={() => handleToggleStatus(user.id, user.is_active)}
-              >
-                <Ionicons
-                  name={user.is_active ? 'close-circle' : 'checkmark-circle'}
-                  size={18}
-                  color="#FFFFFF"
-                />
-                <Text style={styles.toggleButtonText}>
-                  {user.is_active ? 'Disable Account' : 'Enable Account'}
-                </Text>
-              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.actionButton,
+                    user.is_active ? styles.disableButton : styles.enableButton,
+                  ]}
+                  onPress={() => handleToggleStatus(user.id, user.is_active)}
+                >
+                  <Ionicons
+                    name={user.is_active ? 'close-circle' : 'checkmark-circle'}
+                    size={18}
+                    color="#FFFFFF"
+                  />
+                  <Text style={styles.actionButtonText}>
+                    {user.is_active ? 'Disable' : 'Enable'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.deleteButton]}
+                  onPress={() => handleDeleteUser(user.id, user.username)}
+                >
+                  <Ionicons name="trash" size={18} color="#FFFFFF" />
+                  <Text style={styles.actionButtonText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
             )}
           </View>
         ))}
