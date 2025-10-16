@@ -471,7 +471,11 @@ export default function AdminScreen() {
                   <ActivityIndicator size="small" color="#3B82F6" />
                 ) : userAudits[user.id]?.length > 0 ? (
                   userAudits[user.id].map((audit) => (
-                    <View key={audit.id} style={styles.auditItem}>
+                    <TouchableOpacity
+                      key={audit.id}
+                      style={styles.auditItem}
+                      onPress={() => router.push(`/audit/${audit.id}`)}
+                    >
                       <View style={styles.auditItemHeader}>
                         <Text style={styles.auditTitle} numberOfLines={1}>
                           {audit.title}
@@ -493,7 +497,7 @@ export default function AdminScreen() {
                       <Text style={styles.auditDate}>
                         {formatDate(audit.created_at)}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                   ))
                 ) : (
                   <Text style={styles.noAuditsText}>No audits found</Text>
