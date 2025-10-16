@@ -445,6 +445,59 @@ export default function AdminScreen() {
                 </TouchableOpacity>
               </View>
             )}
+
+            {/* Audits Dropdown */}
+            <TouchableOpacity
+              style={styles.auditsToggle}
+              onPress={() => toggleUserAudits(user.id)}
+            >
+              <Ionicons name="document-text-outline" size={18} color="#3B82F6" />
+              <Text style={styles.auditsToggleText}>
+                View Audits ({userAudits[user.id]?.length || '...'})
+              </Text>
+              <Ionicons
+                name={expandedUserId === user.id ? 'chevron-up' : 'chevron-down'}
+                size={18}
+                color="#3B82F6"
+              />
+            </TouchableOpacity>
+
+            {/* Expanded Audits List */}
+            {expandedUserId === user.id && (
+              <View style={styles.auditsContainer}>
+                {loadingAudits[user.id] ? (
+                  <ActivityIndicator size="small" color="#3B82F6" />
+                ) : userAudits[user.id]?.length > 0 ? (
+                  userAudits[user.id].map((audit) => (
+                    <View key={audit.id} style={styles.auditItem}>
+                      <View style={styles.auditItemHeader}>
+                        <Text style={styles.auditTitle} numberOfLines={1}>
+                          {audit.title}
+                        </Text>
+                        <View
+                          style={[
+                            styles.auditStatus,
+                            { backgroundColor: getStatusColor(audit.status) },
+                          ]}
+                        >
+                          <Text style={styles.auditStatusText}>
+                            {getStatusLabel(audit.status)}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={styles.auditQuestionnaire} numberOfLines={1}>
+                        {audit.questionnaire_name}
+                      </Text>
+                      <Text style={styles.auditDate}>
+                        {formatDate(audit.created_at)}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.noAuditsText}>No audits found</Text>
+                )}
+              </View>
+            )}
           </View>
         ))}
       </ScrollView>
