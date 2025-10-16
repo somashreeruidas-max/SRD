@@ -515,6 +515,34 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#374151',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    gap: 6,
+  },
+  disableButton: {
+    backgroundColor: '#EF4444',
+  },
+  enableButton: {
+    backgroundColor: '#10B981',
+  },
+  deleteButton: {
+    backgroundColor: '#DC2626',
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   toggleButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -523,12 +551,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     gap: 8,
-  },
-  disableButton: {
-    backgroundColor: '#EF4444',
-  },
-  enableButton: {
-    backgroundColor: '#10B981',
   },
   toggleButtonText: {
     color: '#FFFFFF',
