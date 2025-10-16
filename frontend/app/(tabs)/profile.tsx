@@ -279,6 +279,7 @@ export default function ProfileScreen() {
               <Text style={styles.infoValue}>ISO 45001:2018 (OHSMS)</Text>
               <Text style={styles.infoValue}>ISO 9001:2015 (QMS)</Text>
               <Text style={styles.infoValue}>ISO 14001:2015 (EMS)</Text>
+              <Text style={styles.infoValue}>FSSC 22000 V6.0</Text>
             </View>
           </View>
           <View style={styles.infoRow}>
