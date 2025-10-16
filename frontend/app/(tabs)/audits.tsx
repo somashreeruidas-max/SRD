@@ -21,6 +21,8 @@ interface Audit {
   status: string;
   created_at: string;
   updated_at: string;
+  auditor?: string;  // Username of the auditor
+  auditor_name?: string;  // Display name of the auditor
 }
 
 export default function AuditsScreen() {
