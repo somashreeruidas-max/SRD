@@ -200,6 +200,63 @@ export default function AdminScreen() {
     }
   };
 
+  const toggleUserAudits = async (userId: string) => {
+    // If already expanded, collapse it
+    if (expandedUserId === userId) {
+      setExpandedUserId(null);
+      return;
+    }
+
+    // Expand and load audits if not already loaded
+    setExpandedUserId(userId);
+    if (!userAudits[userId]) {
+      setLoadingAudits({ ...loadingAudits, [userId]: true });
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/admin/users/${userId}/audits`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUserAudits({ ...userAudits, [userId]: response.data.audits });
+      } catch (error) {
+        console.error('Error fetching user audits:', error);
+        Alert.alert('Error', 'Failed to load user audits');
+      } finally {
+        setLoadingAudits({ ...loadingAudits, [userId]: false });
+      }
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return '#10B981';
+      case 'in_progress':
+        return '#F59E0B';
+      default:
+        return '#6B7280';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'Completed';
+      case 'in_progress':
+        return 'In Progress';
+      default:
+        return 'Draft';
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
