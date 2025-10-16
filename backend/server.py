@@ -892,6 +892,84 @@ async def update_profile_picture(data: ProfilePictureUpdate, username: str = Dep
     
     return {"message": message, "profile_picture": data.profile_picture}
 
+# Admin Endpoints
+@app.post("/api/admin/users")
+async def admin_create_user(user_data: AdminCreateUser, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to create new users"""
+    if users_collection.find_one({"username": user_data.username}):
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    hashed_pw = hash_password(user_data.password)
+    user_doc = {
+        "username": user_data.username,
+        "password": hashed_pw,
+        "full_name": user_data.full_name or user_data.username,
+        "qualifications": user_data.qualifications,
+        "certifications": user_data.certifications,
+        "years_of_experience": user_data.years_of_experience,
+        "is_active": True,
+        "is_admin": user_data.is_admin,
+        "created_at": datetime.utcnow().isoformat(),
+        "created_by": admin
+    }
+    result = users_collection.insert_one(user_doc)
+    
+    return {
+        "message": "User created successfully",
+        "user": {
+            "id": str(result.inserted_id),
+            "username": user_data.username,
+            "full_name": user_doc["full_name"],
+            "is_active": True,
+            "is_admin": user_data.is_admin
+        }
+    }
+
+@app.get("/api/admin/users")
+async def admin_get_users(admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to get all users"""
+    users = list(users_collection.find())
+    users_list = []
+    for user in users:
+        users_list.append({
+            "id": str(user["_id"]),
+            "username": user["username"],
+            "full_name": user.get("full_name", user["username"]),
+            "qualifications": user.get("qualifications"),
+            "certifications": user.get("certifications"),
+            "years_of_experience": user.get("years_of_experience"),
+            "is_active": user.get("is_active", True),
+            "is_admin": user.get("is_admin", False),
+            "created_at": user.get("created_at")
+        })
+    return {"users": users_list}
+
+@app.put("/api/admin/users/{user_id}/toggle-status")
+async def admin_toggle_user_status(user_id: str, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to enable/disable user accounts"""
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from disabling themselves
+    if user["username"] == admin:
+        raise HTTPException(status_code=400, detail="Cannot disable your own account")
+    
+    new_status = not user.get("is_active", True)
+    users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"is_active": new_status}}
+    )
+    
+    return {
+        "message": f"User {'enabled' if new_status else 'disabled'} successfully",
+        "user": {
+            "id": user_id,
+            "username": user["username"],
+            "is_active": new_status
+        }
+    }
+
 # Questionnaire Endpoints
 @app.get("/api/questionnaires")
 async def get_questionnaires(username: str = Depends(verify_token)):
