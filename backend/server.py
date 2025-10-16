@@ -970,6 +970,29 @@ async def admin_toggle_user_status(user_id: str, admin: str = Depends(verify_adm
         }
     }
 
+@app.delete("/api/admin/users/{user_id}")
+async def admin_delete_user(user_id: str, admin: str = Depends(verify_admin)):
+    """Admin-only endpoint to permanently delete user accounts"""
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent admin from deleting themselves
+    if user["username"] == admin:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    # Prevent deleting admin accounts
+    if user.get("is_admin", False):
+        raise HTTPException(status_code=400, detail="Cannot delete admin accounts")
+    
+    # Delete the user
+    users_collection.delete_one({"_id": ObjectId(user_id)})
+    
+    return {
+        "message": "User deleted successfully",
+        "username": user["username"]
+    }
+
 # Questionnaire Endpoints
 @app.get("/api/questionnaires")
 async def get_questionnaires(username: str = Depends(verify_token)):
