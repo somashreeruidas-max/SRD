@@ -78,6 +78,7 @@ export default function NewAuditScreen() {
         {
           questionnaire_id: selectedQuestionnaire,
           title: title.trim(),
+          audit_id: auditId.trim() || null,
           description: description.trim(),
           plant_name: plantName.trim(),
           auditor_name: auditorName.trim(),
