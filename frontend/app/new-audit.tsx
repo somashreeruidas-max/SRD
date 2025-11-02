@@ -125,6 +125,17 @@ export default function NewAuditScreen() {
 
       <ScrollView style={styles.content}>
         <View style={styles.section}>
+          <Text style={styles.label}>Audit ID (Optional)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter audit ID (e.g., AUDIT-2024-001)"
+            value={auditId}
+            onChangeText={setAuditId}
+            editable={!creating}
+          />
+        </View>
+
+        <View style={styles.section}>
           <Text style={styles.label}>Audit Title *</Text>
           <TextInput
             style={styles.input}
