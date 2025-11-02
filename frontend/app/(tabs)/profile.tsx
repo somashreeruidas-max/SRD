@@ -173,6 +173,9 @@ export default function ProfileScreen() {
       );
 
       setIsEditingQualifications(false);
+      // Reload profile data to reflect changes
+      await fetchProfilePicture();
+      
       if (Platform.OS === 'web') {
         alert('Qualifications updated successfully!');
       } else {
