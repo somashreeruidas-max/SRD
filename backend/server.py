@@ -1174,6 +1174,7 @@ async def create_audit(audit: AuditCreate, username: str = Depends(verify_token)
         "questionnaire_id": audit.questionnaire_id,
         "questionnaire_name": questionnaire["name"],
         "title": audit.title,
+        "audit_id": audit.audit_id,  # Custom audit identifier
         "description": audit.description,
         "plant_name": audit.plant_name,
         "auditor_name": audit.auditor_name,
