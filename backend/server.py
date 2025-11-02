@@ -111,6 +111,7 @@ class ResponseModel(BaseModel):
 class AuditCreate(BaseModel):
     questionnaire_id: str
     title: str
+    audit_id: Optional[str] = None  # Custom audit identifier
     description: Optional[str] = None
     plant_name: Optional[str] = None
     auditor_name: Optional[str] = None
