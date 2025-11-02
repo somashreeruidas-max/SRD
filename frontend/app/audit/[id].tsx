@@ -66,6 +66,7 @@ interface Questionnaire {
 interface Audit {
   id: string;
   title: string;
+  audit_id?: string;
   questionnaire_id: string;
   questionnaire_name: string;
   status: string;
