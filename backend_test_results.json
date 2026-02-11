@@ -1,0 +1,102 @@
+{
+  "timestamp": "2026-02-11T17:29:34.468611",
+  "endpoint": "https://aquacompliance.preview.emergentagent.com",
+  "summary": {
+    "total_tests": 18,
+    "passed_tests": 17,
+    "failed_tests": 1,
+    "success_rate": 94.4
+  },
+  "test_results": [
+    {
+      "test": "Seed Sample Data",
+      "success": true,
+      "details": "Response: Data already exists"
+    },
+    {
+      "test": "Admin Login",
+      "success": true,
+      "details": "Token received, Role: admin"
+    },
+    {
+      "test": "QA Manager Login",
+      "success": true,
+      "details": "Token received, Role: qa_manager"
+    },
+    {
+      "test": "Get Current User",
+      "success": true,
+      "details": "User: Sarah Chen (qa_manager)"
+    },
+    {
+      "test": "Get Findings",
+      "success": true,
+      "details": "Retrieved 16 findings"
+    },
+    {
+      "test": "Create Finding",
+      "success": false,
+      "details": "Status: 422"
+    },
+    {
+      "test": "Update Finding",
+      "success": true,
+      "details": "Status updated to: In Progress"
+    },
+    {
+      "test": "Create RCA",
+      "success": true,
+      "details": "RCA created with ID: c5d21ab7-4f20-4d62-86b5-a631d87e970e"
+    },
+    {
+      "test": "Get RCAs",
+      "success": true,
+      "details": "Retrieved 3 RCAs"
+    },
+    {
+      "test": "Create CAPA",
+      "success": true,
+      "details": "CAPA created with ID: 010bfd37-7fa5-4c3a-9d18-ac30119092e1"
+    },
+    {
+      "test": "Update CAPA",
+      "success": true,
+      "details": "CAPA status updated to In Progress"
+    },
+    {
+      "test": "Get CAPAs",
+      "success": true,
+      "details": "Retrieved 3 CAPAs"
+    },
+    {
+      "test": "Get Evidence",
+      "success": true,
+      "details": "Retrieved 0 evidence items"
+    },
+    {
+      "test": "Risk Matrix",
+      "success": true,
+      "details": "Matrix loaded with 5 rows"
+    },
+    {
+      "test": "Dashboard Analytics",
+      "success": true,
+      "details": "Analytics loaded - 16 total findings"
+    },
+    {
+      "test": "Compliance Analytics",
+      "success": true,
+      "details": "Compliance data loaded - 16 findings analyzed"
+    },
+    {
+      "test": "Management Report",
+      "success": true,
+      "details": "Report generated for 2026-02-11T17:29:34.424602+00:00"
+    },
+    {
+      "test": "User Management",
+      "success": true,
+      "details": "Retrieved 5 users"
+    }
+  ]
+}
