@@ -21,7 +21,9 @@ import {
   ThumbsUp,
   Calendar,
   User,
-  FileCheck
+  FileCheck,
+  Mail,
+  Bell
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -123,6 +125,24 @@ export const CAPA = () => {
       fetchData();
     } catch (error) {
       toast.error('Failed to record verification');
+    }
+  };
+
+  const handleSendReminder = async (capaId) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/notifications/send-reminder?capa_id=${capaId}`);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send reminder');
+    }
+  };
+
+  const handleCheckAllReminders = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/api/notifications/check-due-capas`);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to check reminders');
     }
   };
 
