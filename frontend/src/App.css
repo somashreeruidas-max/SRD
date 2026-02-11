@@ -1,34 +1,251 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* AquaGuard RCA System - Custom Styles */
+
+/* Layout */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* KPI Cards */
+.kpi-card {
+  @apply bg-white rounded-xl border border-slate-200 p-6 transition-all duration-200;
 }
 
-.App-link {
-    color: #61dafb;
+.kpi-card:hover {
+  @apply shadow-lg border-blue-200;
+  transform: translateY(-2px);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.kpi-value {
+  @apply text-3xl font-bold text-slate-900;
+  font-family: 'Manrope', sans-serif;
+}
+
+.kpi-label {
+  @apply text-sm text-slate-500 mt-1;
+}
+
+.kpi-trend {
+  @apply text-xs font-medium px-2 py-0.5 rounded-full;
+}
+
+.kpi-trend.positive {
+  @apply bg-emerald-100 text-emerald-700;
+}
+
+.kpi-trend.negative {
+  @apply bg-red-100 text-red-700;
+}
+
+/* Charts */
+.chart-container {
+  @apply bg-white rounded-xl border border-slate-200 p-6;
+}
+
+.chart-title {
+  @apply text-lg font-semibold text-slate-900 mb-4;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Data Table */
+.data-table {
+  @apply w-full;
+}
+
+.data-table th {
+  @apply px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider bg-slate-50;
+}
+
+.data-table td {
+  @apply px-4 py-4 text-sm text-slate-700 border-b border-slate-100;
+}
+
+.data-table tr:hover td {
+  @apply bg-slate-50;
+}
+
+/* Wizard Steps */
+.wizard-container {
+  @apply bg-white rounded-xl border border-slate-200 overflow-hidden;
+}
+
+.wizard-header {
+  @apply px-6 py-4 bg-slate-50 border-b border-slate-200;
+}
+
+.wizard-steps {
+  @apply flex items-center justify-between;
+}
+
+.wizard-step {
+  @apply flex items-center;
+}
+
+.wizard-step-number {
+  @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors duration-200;
+}
+
+.wizard-step-label {
+  @apply ml-2 text-sm font-medium;
+}
+
+.wizard-step-connector {
+  @apply flex-1 h-0.5 mx-4 bg-slate-200;
+}
+
+.wizard-step-connector.active {
+  @apply bg-blue-500;
+}
+
+.wizard-content {
+  @apply p-6;
+}
+
+/* Fishbone Diagram */
+.fishbone-container {
+  @apply relative py-8;
+}
+
+.fishbone-spine {
+  @apply absolute top-1/2 left-0 right-0 h-1 bg-slate-300 transform -translate-y-1/2;
+}
+
+.fishbone-head {
+  @apply absolute right-0 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center;
+}
+
+.fishbone-category {
+  @apply absolute transform;
+}
+
+.fishbone-category-label {
+  @apply text-sm font-semibold text-slate-700 mb-2;
+}
+
+.fishbone-items {
+  @apply space-y-1;
+}
+
+.fishbone-item {
+  @apply text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded;
+}
+
+/* Risk Matrix */
+.risk-matrix {
+  @apply grid gap-1;
+  grid-template-columns: auto repeat(5, 1fr);
+  grid-template-rows: repeat(6, auto);
+}
+
+.risk-matrix-cell {
+  @apply p-2 text-center text-xs rounded transition-colors duration-200 cursor-pointer min-h-[60px] flex flex-col items-center justify-center;
+}
+
+.risk-matrix-header {
+  @apply font-semibold text-slate-600 bg-slate-50;
+}
+
+.risk-matrix-label {
+  @apply font-medium text-slate-700 bg-slate-50 flex items-center justify-center;
+}
+
+/* Modal/Dialog improvements */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-auto;
+}
+
+/* Action buttons */
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-white text-slate-700 px-4 py-2 rounded-lg font-medium border border-slate-300 hover:bg-slate-50 transition-colors duration-200;
+}
+
+.btn-ghost {
+  @apply text-slate-600 px-4 py-2 rounded-lg font-medium hover:bg-slate-100 transition-colors duration-200;
+}
+
+/* Filter bar */
+.filter-bar {
+  @apply flex flex-wrap gap-3 p-4 bg-slate-50 rounded-lg;
+}
+
+/* Empty state */
+.empty-state {
+  @apply flex flex-col items-center justify-center py-12 text-center;
+}
+
+.empty-state-icon {
+  @apply w-16 h-16 text-slate-300 mb-4;
+}
+
+.empty-state-title {
+  @apply text-lg font-semibold text-slate-700 mb-2;
+}
+
+.empty-state-description {
+  @apply text-sm text-slate-500 max-w-sm;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-slate-200 rounded;
+}
+
+/* Tooltip */
+.tooltip {
+  @apply absolute z-50 px-2 py-1 text-xs text-white bg-slate-900 rounded shadow-lg;
+}
+
+/* Badge variants */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+}
+
+.badge-success {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+.badge-warning {
+  @apply bg-amber-100 text-amber-800;
+}
+
+.badge-error {
+  @apply bg-red-100 text-red-800;
+}
+
+.badge-info {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.badge-neutral {
+  @apply bg-slate-100 text-slate-800;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .kpi-value {
+    @apply text-2xl;
+  }
+  
+  .wizard-step-label {
+    @apply hidden;
+  }
+  
+  .filter-bar {
+    @apply flex-col;
+  }
 }
