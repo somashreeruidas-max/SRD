@@ -522,6 +522,19 @@ export const CAPA = () => {
                     >
                       <Edit className="w-3 h-3" />
                     </Button>
+
+                    {capa.responsible_email && capa.status !== 'Completed' && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleSendReminder(capa.id)}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        title="Send email reminder"
+                        data-testid={`remind-capa-${capa.id}`}
+                      >
+                        <Mail className="w-3 h-3" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>
