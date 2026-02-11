@@ -135,7 +135,7 @@ export const Login = () => {
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="admin@aquaguard.com"
+                      placeholder="admin@globalacqua.com"
                       value={loginData.email}
                       onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       required
