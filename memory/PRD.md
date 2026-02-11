@@ -37,6 +37,11 @@ Create a professional, modern, and visually beautiful web-based Root Cause Analy
 - [x] 4 demo user accounts (admin, QA manager, dept head, auditor)
 - [x] Professional Navy/Blue theme with Manrope/Inter fonts
 - [x] Collapsible sidebar navigation
+- [x] **Email notifications for CAPA deadlines** (Resend via Emergent key)
+  - Auto-send reminders 3 days before due date
+  - Manual reminder buttons per CAPA
+  - Bulk "Send Due Reminders" for admin/QA manager
+  - Notification logging
 
 ### Architecture
 - **Frontend**: React 19, TailwindCSS, Shadcn UI, Recharts
@@ -49,9 +54,9 @@ Create a professional, modern, and visually beautiful web-based Root Cause Analy
 - None - Core functionality complete
 
 **P1 (High Priority)**
-- Email notifications for overdue CAPAs
 - Dashboard date range filters
 - Bulk finding import (CSV/Excel)
+- Scheduled automatic reminder emails (cron job)
 
 **P2 (Nice to Have)**
 - Audit schedule calendar
@@ -60,7 +65,7 @@ Create a professional, modern, and visually beautiful web-based Root Cause Analy
 - Dark mode theme option
 
 ### Next Tasks
-1. Add email notifications for CAPA deadlines
+1. Add scheduled cron job for automatic daily email checks
 2. Implement audit trail/history logging
 3. Add dashboard date filters
 4. Create CSV/Excel export functionality
