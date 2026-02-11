@@ -886,7 +886,7 @@ def generate_capa_reminder_html(capa: dict, finding: dict, days_until_due: int) 
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
             <tr>
                 <td style="background-color: #0f172a; padding: 24px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">AquaGuard RCA System</h1>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Global Acqua RCA Tool</h1>
                     <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">CAPA Deadline Reminder</p>
                 </td>
             </tr>
@@ -937,14 +937,14 @@ def generate_capa_reminder_html(capa: dict, finding: dict, days_until_due: int) 
                     </table>
                     
                     <p style="color: #64748b; margin: 0; font-size: 14px; line-height: 1.6;">
-                        Please log in to AquaGuard to update the status or complete the action.
+                        Please log in to Global Acqua RCA Tool to update the status or complete the action.
                     </p>
                 </td>
             </tr>
             <tr>
                 <td style="background-color: #f1f5f9; padding: 24px; text-align: center;">
                     <p style="color: #64748b; margin: 0; font-size: 12px;">
-                        This is an automated message from AquaGuard RCA System.<br>
+                        This is an automated message from Global Acqua RCA Tool.<br>
                         ISO 9001 • ISO 14001 • ISO 45001 • FSSC 22000 Compliant
                     </p>
                 </td>
@@ -977,7 +977,7 @@ async def send_capa_reminder(
     days_until_due = (target_date - today).days
     
     html_content = generate_capa_reminder_html(capa, finding, days_until_due)
-    subject = f"[AquaGuard] CAPA Reminder: Action due {capa['target_date']}"
+    subject = f"[Global Acqua] CAPA Reminder: Action due {capa['target_date']}"
     
     # Send email in background
     background_tasks.add_task(send_email_async, capa['responsible_email'], subject, html_content)
@@ -1033,7 +1033,7 @@ async def check_and_send_due_reminders(
                         finding = {"audit_type": "N/A", "department": "N/A", "finding_description": "N/A"}
                     
                     html_content = generate_capa_reminder_html(capa, finding, days_until_due)
-                    subject = f"[AquaGuard] {'OVERDUE' if days_until_due < 0 else 'REMINDER'}: CAPA due {capa['target_date']}"
+                    subject = f"[Global Acqua] {'OVERDUE' if days_until_due < 0 else 'REMINDER'}: CAPA due {capa['target_date']}"
                     
                     background_tasks.add_task(send_email_async, capa['responsible_email'], subject, html_content)
                     
