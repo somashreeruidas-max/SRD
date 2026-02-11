@@ -69,7 +69,6 @@ class AuditFindingCreate(BaseModel):
     department: str
     finding_description: str
     objective_evidence: str
-    risk_rating: str  # Low, Medium, High, Critical
     severity: int = 3  # 1-5
     likelihood: int = 3  # 1-5
     auditor_name: str
