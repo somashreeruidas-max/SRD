@@ -1,0 +1,199 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "AquaGuard Audit",
+      "archetype": "The Swiss Professional",
+      "vibe": "Authoritative, Precise, Compliant, Efficient",
+      "emotional_tone": "Trustworthy, Industrial Clarity, Executive Control"
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Manrope, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-4xl font-bold tracking-tight lg:text-5xl",
+        "h2": "text-3xl font-semibold tracking-tight",
+        "h3": "text-2xl font-semibold tracking-tight",
+        "h4": "text-xl font-medium tracking-tight",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-relaxed",
+        "body_sm": "text-sm leading-normal",
+        "caption": "text-xs font-medium uppercase tracking-wider text-muted-foreground"
+      },
+      "weights": {
+        "regular": "400",
+        "medium": "500",
+        "semibold": "600",
+        "bold": "700"
+      }
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#0F172A",
+          "foreground": "#F8FAFC",
+          "hover": "#1E293B"
+        },
+        "secondary": {
+          "DEFAULT": "#F1F5F9",
+          "foreground": "#0F172A",
+          "hover": "#E2E8F0"
+        },
+        "accent": {
+          "DEFAULT": "#3B82F6",
+          "foreground": "#FFFFFF",
+          "hover": "#2563EB"
+        },
+        "background": {
+          "DEFAULT": "#F8FAFC",
+          "paper": "#FFFFFF",
+          "sidebar": "#0F172A"
+        },
+        "status": {
+          "success": "#10B981",
+          "warning": "#F59E0B",
+          "error": "#EF4444",
+          "info": "#3B82F6"
+        },
+        "border": {
+          "DEFAULT": "#E2E8F0",
+          "subtle": "#F1F5F9"
+        },
+        "text": {
+          "primary": "#0F172A",
+          "secondary": "#64748B",
+          "muted": "#94A3B8"
+        }
+      },
+      "gradients": {
+        "login_overlay": "linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%)",
+        "active_step": "linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)"
+      }
+    },
+    "spacing": {
+      "container_padding": "p-6 md:p-8 lg:p-12",
+      "section_gap": "gap-8",
+      "component_gap": "gap-4",
+      "radius": {
+        "default": "rounded-lg",
+        "card": "rounded-xl",
+        "button": "rounded-md"
+      }
+    },
+    "shadows": {
+      "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+      "card_hover": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      "dropdown": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+    },
+    "layout": {
+      "grid_system": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "dashboard_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6",
+      "sidebar_width": "w-64",
+      "max_width": "max-w-7xl mx-auto"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium transition-all duration-200 shadow-sm",
+      "secondary": "bg-white text-primary border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 rounded-md font-medium transition-all duration-200",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 rounded-md font-medium transition-colors",
+      "destructive": "bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2 rounded-md font-medium shadow-sm"
+    },
+    "cards": {
+      "base": "bg-white rounded-xl border border-border shadow-sm p-6 transition-all duration-200 hover:shadow-md",
+      "metric": "flex flex-col justify-between space-y-2",
+      "interactive": "cursor-pointer hover:border-accent/50 hover:ring-1 hover:ring-accent/50"
+    },
+    "inputs": {
+      "base": "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "label": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block"
+    },
+    "tables": {
+      "container": "w-full overflow-auto rounded-lg border border-border bg-white shadow-sm",
+      "header": "bg-muted/50 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider",
+      "row": "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "cell": "p-4 align-middle [&:has([role=checkbox])]:pr-0"
+    },
+    "badges": {
+      "base": "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      "success": "border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
+      "warning": "border-transparent bg-amber-100 text-amber-800 hover:bg-amber-200",
+      "error": "border-transparent bg-red-100 text-red-800 hover:bg-red-200",
+      "neutral": "border-transparent bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-md bg-white/70 border border-white/20 shadow-lg",
+    "gradients": {
+      "subtle_fade": "bg-gradient-to-b from-white to-slate-50"
+    },
+    "micro_interactions": {
+      "hover_lift": "hover:-translate-y-1 transition-transform duration-200 ease-out",
+      "active_scale": "active:scale-95 transition-transform duration-100"
+    }
+  },
+  "assets": {
+    "images": {
+      "login_bg": {
+        "url": "https://images.unsplash.com/photo-1564605504543-1833fef7c1c9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzZ8MHwxfHNlYXJjaHwyfHxpbmR1c3RyaWFsJTIwd2F0ZXIlMjBib3R0bGluZyUyMHBsYW50JTIwaW50ZXJpb3IlMjBjbGVhbnxlbnwwfHx8fDE3NzA4Mjk5OTd8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Clean industrial water bottling plant interior",
+        "category": "background"
+      },
+      "avatars": [
+        {
+          "url": "https://images.unsplash.com/photo-1758691736975-9f7f643d178e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBjb3Jwb3JhdGUlMjB0ZWFtJTIwbWVldGluZyUyMGRpdmVyc2V8ZW58MHx8fHwxNzcwODMwMDAzfDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Diverse professional team",
+          "category": "user"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1758518731468-98e90ffd7430?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBjb3Jwb3JhdGUlMjB0ZWFtJTIwbWVldGluZyUyMGRpdmVyc2V8ZW58MHx8fHwxNzcwODMwMDAzfDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Professional team standing",
+          "category": "user"
+        }
+      ]
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "stroke-width: 1.5px; size: 20px"
+    }
+  },
+  "instructions_to_main_agent": {
+    "general": [
+      "Use 'Manrope' for all headings and 'Inter' for body text.",
+      "Implement the 'Navy' theme strictly. Do not use Teal or Purple.",
+      "Use the 'Bento' grid layout for the dashboard.",
+      "Ensure all interactive elements have 'data-testid' attributes.",
+      "Use 'sonner' for toast notifications.",
+      "Use 'recharts' for all charts (Bar, Line, Pie).",
+      "Implement the RCA Wizard as a multi-step form with a progress indicator.",
+      "Use 'react-hook-form' with 'zod' for form validation.",
+      "Ensure the sidebar is collapsible and responsive."
+    ],
+    "pages": {
+      "login": "Use the industrial plant image as a full-screen background with a dark overlay. Center the login card with glassmorphism effect.",
+      "dashboard": "Create a high-density grid. Top row: 4 KPI cards. Middle row: 2 Charts (Audit Trends, Compliance by Dept). Bottom row: Recent Findings Table.",
+      "rca_wizard": "Use a horizontal stepper. Step 1: Problem Definition. Step 2: 5-Why Analysis (dynamic inputs). Step 3: Fishbone (visual selector). Step 4: Root Cause Confirmation.",
+      "audit_findings": "Use a data table with filters for Status, Risk Level, and Department. Add a 'New Finding' button that opens a slide-over or modal."
+    },
+    "accessibility": [
+      "Ensure all text meets WCAG AA contrast ratios.",
+      "Use semantic HTML (main, nav, aside, section).",
+      "Ensure keyboard navigation works for all interactive elements."
+    ]
+  },
+  "universal_guidelines": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) sparingly (only for overlays/toasts).",
+    "You MUST NOT apply universal transition. Eg: 'transition: all'. This results in breaking transforms.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER use AI assistant Emoji characters for icons.",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary."
+  ]
+}
