@@ -34,6 +34,10 @@ JWT_EXPIRATION_HOURS = 24
 UPLOAD_DIR = ROOT_DIR / 'uploads'
 UPLOAD_DIR.mkdir(exist_ok=True)
 
+# Resend Email Configuration
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
 # Create the main app
 app = FastAPI(title="AquaGuard RCA System")
 api_router = APIRouter(prefix="/api")
