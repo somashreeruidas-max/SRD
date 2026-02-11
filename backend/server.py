@@ -845,6 +845,227 @@ async def seed_sample_data():
     
     return {"message": "Sample data created", "findings_count": len(sample_findings)}
 
+# ==================== EMAIL NOTIFICATIONS ====================
+
+class EmailNotification(BaseModel):
+    recipient_email: EmailStr
+    recipient_name: str
+    subject: str
+    capa_id: Optional[str] = None
+    finding_id: Optional[str] = None
+
+async def send_email_async(to_email: str, subject: str, html_content: str):
+    """Send email using Resend API (non-blocking)"""
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [to_email],
+            "subject": subject,
+            "html": html_content
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Email sent to {to_email}: {result.get('id', 'N/A')}")
+        return result
+    except Exception as e:
+        logger.error(f"Failed to send email to {to_email}: {str(e)}")
+        return None
+
+def generate_capa_reminder_html(capa: dict, finding: dict, days_until_due: int) -> str:
+    """Generate HTML email for CAPA reminder"""
+    urgency_color = "#ef4444" if days_until_due <= 1 else "#f59e0b" if days_until_due <= 3 else "#3b82f6"
+    urgency_text = "URGENT" if days_until_due <= 1 else "REMINDER" if days_until_due <= 3 else "UPCOMING"
+    
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>CAPA Deadline Reminder</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f8fafc;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+            <tr>
+                <td style="background-color: #0f172a; padding: 24px; text-align: center;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 24px;">AquaGuard RCA System</h1>
+                    <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">CAPA Deadline Reminder</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 32px 24px;">
+                    <div style="background-color: {urgency_color}; color: #ffffff; padding: 12px 16px; border-radius: 8px; text-align: center; margin-bottom: 24px;">
+                        <span style="font-weight: bold; font-size: 18px;">{urgency_text}: {days_until_due} day(s) until deadline</span>
+                    </div>
+                    
+                    <h2 style="color: #0f172a; margin: 0 0 16px; font-size: 20px;">Action Required</h2>
+                    <p style="color: #64748b; margin: 0 0 24px; line-height: 1.6;">
+                        You have a CAPA action due on <strong style="color: #0f172a;">{capa.get('target_date', 'N/A')}</strong>. 
+                        Please review and complete the required action.
+                    </p>
+                    
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border-radius: 8px; margin-bottom: 24px;">
+                        <tr>
+                            <td style="padding: 20px;">
+                                <h3 style="color: #0f172a; margin: 0 0 12px; font-size: 16px;">CAPA Details</h3>
+                                <p style="color: #64748b; margin: 0 0 8px; font-size: 14px;">
+                                    <strong>Action Type:</strong> {capa.get('action_type', 'N/A').title()}
+                                </p>
+                                <p style="color: #64748b; margin: 0 0 8px; font-size: 14px;">
+                                    <strong>Action Plan:</strong> {capa.get('action_plan', 'N/A')[:200]}...
+                                </p>
+                                <p style="color: #64748b; margin: 0 0 8px; font-size: 14px;">
+                                    <strong>Status:</strong> {capa.get('status', 'N/A')}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fef3c7; border-radius: 8px; margin-bottom: 24px;">
+                        <tr>
+                            <td style="padding: 20px;">
+                                <h3 style="color: #92400e; margin: 0 0 12px; font-size: 16px;">Related Finding</h3>
+                                <p style="color: #78350f; margin: 0 0 8px; font-size: 14px;">
+                                    <strong>Standard:</strong> {finding.get('audit_type', 'N/A')}
+                                </p>
+                                <p style="color: #78350f; margin: 0 0 8px; font-size: 14px;">
+                                    <strong>Department:</strong> {finding.get('department', 'N/A')}
+                                </p>
+                                <p style="color: #78350f; margin: 0; font-size: 14px;">
+                                    <strong>Finding:</strong> {finding.get('finding_description', 'N/A')[:150]}...
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <p style="color: #64748b; margin: 0; font-size: 14px; line-height: 1.6;">
+                        Please log in to AquaGuard to update the status or complete the action.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="background-color: #f1f5f9; padding: 24px; text-align: center;">
+                    <p style="color: #64748b; margin: 0; font-size: 12px;">
+                        This is an automated message from AquaGuard RCA System.<br>
+                        ISO 9001 • ISO 14001 • ISO 45001 • FSSC 22000 Compliant
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+    """
+
+@api_router.post("/notifications/send-reminder")
+async def send_capa_reminder(
+    capa_id: str,
+    background_tasks: BackgroundTasks,
+    current_user: dict = Depends(get_current_user)
+):
+    """Send a manual reminder for a specific CAPA"""
+    capa = await db.capas.find_one({"id": capa_id}, {"_id": 0})
+    if not capa:
+        raise HTTPException(status_code=404, detail="CAPA not found")
+    
+    if not capa.get('responsible_email'):
+        raise HTTPException(status_code=400, detail="No email address for responsible person")
+    
+    finding = await db.findings.find_one({"id": capa.get('finding_id')}, {"_id": 0})
+    if not finding:
+        finding = {"audit_type": "N/A", "department": "N/A", "finding_description": "Finding not found"}
+    
+    target_date = datetime.strptime(capa['target_date'], '%Y-%m-%d').date()
+    today = datetime.now(timezone.utc).date()
+    days_until_due = (target_date - today).days
+    
+    html_content = generate_capa_reminder_html(capa, finding, days_until_due)
+    subject = f"[AquaGuard] CAPA Reminder: Action due {capa['target_date']}"
+    
+    # Send email in background
+    background_tasks.add_task(send_email_async, capa['responsible_email'], subject, html_content)
+    
+    # Log the notification
+    notification_log = {
+        "id": str(uuid.uuid4()),
+        "capa_id": capa_id,
+        "recipient_email": capa['responsible_email'],
+        "sent_at": datetime.now(timezone.utc).isoformat(),
+        "type": "manual_reminder",
+        "sent_by": current_user["id"]
+    }
+    await db.notification_logs.insert_one(notification_log)
+    
+    return {"message": f"Reminder sent to {capa['responsible_email']}", "days_until_due": days_until_due}
+
+@api_router.post("/notifications/check-due-capas")
+async def check_and_send_due_reminders(
+    background_tasks: BackgroundTasks,
+    current_user: dict = Depends(get_current_user)
+):
+    """Check all CAPAs and send reminders for those due within 3 days"""
+    if current_user["role"] not in ["admin", "qa_manager"]:
+        raise HTTPException(status_code=403, detail="Admin or QA Manager only")
+    
+    today = datetime.now(timezone.utc).date()
+    reminder_date = today + timedelta(days=3)
+    
+    # Find CAPAs due within 3 days that are not completed
+    capas = await db.capas.find({
+        "status": {"$ne": "Completed"},
+        "responsible_email": {"$exists": True, "$ne": None, "$ne": ""}
+    }, {"_id": 0}).to_list(1000)
+    
+    sent_count = 0
+    for capa in capas:
+        try:
+            target_date = datetime.strptime(capa['target_date'], '%Y-%m-%d').date()
+            days_until_due = (target_date - today).days
+            
+            # Send reminder if due within 3 days or overdue
+            if days_until_due <= 3:
+                # Check if we already sent a reminder today
+                existing = await db.notification_logs.find_one({
+                    "capa_id": capa['id'],
+                    "sent_at": {"$gte": today.isoformat()}
+                })
+                
+                if not existing:
+                    finding = await db.findings.find_one({"id": capa.get('finding_id')}, {"_id": 0})
+                    if not finding:
+                        finding = {"audit_type": "N/A", "department": "N/A", "finding_description": "N/A"}
+                    
+                    html_content = generate_capa_reminder_html(capa, finding, days_until_due)
+                    subject = f"[AquaGuard] {'OVERDUE' if days_until_due < 0 else 'REMINDER'}: CAPA due {capa['target_date']}"
+                    
+                    background_tasks.add_task(send_email_async, capa['responsible_email'], subject, html_content)
+                    
+                    # Log notification
+                    await db.notification_logs.insert_one({
+                        "id": str(uuid.uuid4()),
+                        "capa_id": capa['id'],
+                        "recipient_email": capa['responsible_email'],
+                        "sent_at": datetime.now(timezone.utc).isoformat(),
+                        "type": "auto_reminder",
+                        "days_until_due": days_until_due
+                    })
+                    sent_count += 1
+        except Exception as e:
+            logger.error(f"Error processing CAPA {capa.get('id')}: {str(e)}")
+            continue
+    
+    return {"message": f"Sent {sent_count} reminder(s)", "checked_capas": len(capas)}
+
+@api_router.get("/notifications/logs")
+async def get_notification_logs(
+    capa_id: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get notification logs"""
+    query = {}
+    if capa_id:
+        query["capa_id"] = capa_id
+    
+    logs = await db.notification_logs.find(query, {"_id": 0}).sort("sent_at", -1).to_list(100)
+    return logs
+
 # ==================== REPORT GENERATION ====================
 
 @api_router.get("/reports/management-review")
