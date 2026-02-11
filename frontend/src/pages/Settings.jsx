@@ -32,7 +32,7 @@ export const Settings = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-slate-500">Application</p>
-                <p className="text-lg font-semibold text-slate-900">AquaGuard RCA System</p>
+                <p className="text-lg font-semibold text-slate-900">Global Acqua RCA Tool</p>
               </div>
               <div>
                 <p className="text-sm text-slate-500">Version</p>
@@ -142,7 +142,7 @@ export const Settings = () => {
             <Shield className="w-8 h-8 text-blue-600" />
           </div>
           <h3 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>
-            AquaGuard RCA System
+            Global Acqua RCA Tool
           </h3>
           <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
             A comprehensive Root Cause Analysis and Audit Finding Management System 

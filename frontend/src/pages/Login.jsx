@@ -171,10 +171,10 @@ export const Login = () => {
                 <div className="mt-4 p-3 bg-slate-50 rounded-lg">
                   <p className="text-xs text-slate-500 mb-2">Demo Credentials:</p>
                   <p className="text-xs text-slate-600">
-                    <strong>Admin:</strong> admin@aquaguard.com / admin123
+                    <strong>Admin:</strong> admin@globalacqua.com / admin123
                   </p>
                   <p className="text-xs text-slate-600">
-                    <strong>QA Manager:</strong> qa.manager@aquaguard.com / password123
+                    <strong>QA Manager:</strong> qa.manager@globalacqua.com / password123
                   </p>
                 </div>
               </TabsContent>
