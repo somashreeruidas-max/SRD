@@ -345,6 +345,7 @@ export const CAPA = () => {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Filters */}
