@@ -614,12 +614,12 @@ async def seed_sample_data():
         return {"message": "Data already exists", "count": existing}
     
     # Create admin user
-    admin_exists = await db.users.find_one({"email": "admin@aquaguard.com"})
+    admin_exists = await db.users.find_one({"email": "admin@globalacqua.com"})
     if not admin_exists:
         admin_id = str(uuid.uuid4())
         await db.users.insert_one({
             "id": admin_id,
-            "email": "admin@aquaguard.com",
+            "email": "admin@globalacqua.com",
             "password": hash_password("admin123"),
             "name": "System Administrator",
             "role": "admin",
@@ -629,9 +629,9 @@ async def seed_sample_data():
     
     # Create sample users
     sample_users = [
-        {"email": "qa.manager@aquaguard.com", "name": "Sarah Chen", "role": "qa_manager", "department": "QA"},
-        {"email": "production.head@aquaguard.com", "name": "Michael Roberts", "role": "department_head", "department": "Production"},
-        {"email": "auditor@aquaguard.com", "name": "James Wilson", "role": "auditor", "department": None},
+        {"email": "qa.manager@globalacqua.com", "name": "Sarah Chen", "role": "qa_manager", "department": "QA"},
+        {"email": "production.head@globalacqua.com", "name": "Michael Roberts", "role": "department_head", "department": "Production"},
+        {"email": "auditor@globalacqua.com", "name": "James Wilson", "role": "auditor", "department": None},
     ]
     
     for u in sample_users:
@@ -827,7 +827,7 @@ async def seed_sample_data():
         "action_type": "corrective",
         "action_plan": "1. Immediate replacement of all filters in affected line. 2. Implement automated filter replacement alerts. 3. Review and update inventory management system for critical spares.",
         "responsible_person": "Michael Roberts",
-        "responsible_email": "production.head@aquaguard.com",
+        "responsible_email": "production.head@globalacqua.com",
         "target_date": "2024-02-15",
         "resources_required": "New filters, Inventory software module, Training materials",
         "verification_method": "Post-implementation water quality testing for 30 days, inventory audit",
