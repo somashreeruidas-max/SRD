@@ -60,8 +60,8 @@ export const Sidebar = () => {
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
-              <h1 className="text-lg font-bold tracking-tight">AquaGuard</h1>
-              <p className="text-[10px] text-slate-400 -mt-0.5">RCA System</p>
+              <h1 className="text-lg font-bold tracking-tight">Global Acqua</h1>
+              <p className="text-[10px] text-slate-400 -mt-0.5">RCA Tool</p>
             </div>
           )}
         </div>

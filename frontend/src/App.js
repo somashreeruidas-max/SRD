@@ -12,7 +12,6 @@ import { Evidence } from "./pages/Evidence";
 import { Analytics } from "./pages/Analytics";
 import { Users } from "./pages/Users";
 import { Settings } from "./pages/Settings";
-import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
@@ -34,7 +33,6 @@ function App() {
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-        <Toaster position="top-right" richColors />
       </BrowserRouter>
     </AuthProvider>
   );
