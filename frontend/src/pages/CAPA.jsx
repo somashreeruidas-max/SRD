@@ -205,7 +205,18 @@ export const CAPA = () => {
             Corrective and Preventive Actions with approval workflow
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+        <div className="flex gap-2">
+          {hasRole(['admin', 'qa_manager']) && (
+            <Button 
+              variant="outline" 
+              onClick={handleCheckAllReminders}
+              data-testid="check-reminders-btn"
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Send Due Reminders
+            </Button>
+          )}
+          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
           <DialogTrigger asChild>
             <Button className="bg-blue-600 hover:bg-blue-700" data-testid="new-capa-btn">
               <Plus className="w-4 h-4 mr-2" />
