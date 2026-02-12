@@ -83,11 +83,22 @@ export const Findings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Determine final audit type (use other_audit_name if "Other" is selected)
+      const finalAuditType = formData.audit_type === 'Other' 
+        ? formData.other_audit_name 
+        : formData.audit_type;
+      
+      const submitData = {
+        ...formData,
+        audit_type: finalAuditType
+      };
+      delete submitData.other_audit_name;
+
       if (selectedFinding) {
-        await axios.put(`${API_URL}/api/findings/${selectedFinding.id}`, formData);
+        await axios.put(`${API_URL}/api/findings/${selectedFinding.id}`, submitData);
         toast.success('Finding updated successfully');
       } else {
-        await axios.post(`${API_URL}/api/findings`, formData);
+        await axios.post(`${API_URL}/api/findings`, submitData);
         toast.success('Finding created successfully');
       }
       setIsDialogOpen(false);
