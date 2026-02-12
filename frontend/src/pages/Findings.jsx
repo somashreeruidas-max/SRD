@@ -211,7 +211,7 @@ export const Findings = () => {
                   <Label>Audit Type *</Label>
                   <Select
                     value={formData.audit_type}
-                    onValueChange={(value) => setFormData({ ...formData, audit_type: value })}
+                    onValueChange={(value) => setFormData({ ...formData, audit_type: value, other_audit_name: value === 'Other' ? formData.other_audit_name : '' })}
                   >
                     <SelectTrigger data-testid="audit-type-select">
                       <SelectValue placeholder="Select standard" />
@@ -223,17 +223,42 @@ export const Findings = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                {formData.audit_type === 'Other' ? (
+                  <div>
+                    <Label>Specify Audit Name *</Label>
+                    <Input
+                      placeholder="Enter audit name"
+                      value={formData.other_audit_name}
+                      onChange={(e) => setFormData({ ...formData, other_audit_name: e.target.value })}
+                      required
+                      data-testid="other-audit-name-input"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <Label>Clause Reference *</Label>
+                    <Input
+                      placeholder="e.g., 8.5.1"
+                      value={formData.clause_reference}
+                      onChange={(e) => setFormData({ ...formData, clause_reference: e.target.value })}
+                      required
+                      data-testid="clause-reference-input"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {formData.audit_type === 'Other' && (
                 <div>
-                  <Label>Clause Reference *</Label>
+                  <Label>Clause/Section Reference</Label>
                   <Input
-                    placeholder="e.g., 8.5.1"
+                    placeholder="e.g., Section 4.2"
                     value={formData.clause_reference}
                     onChange={(e) => setFormData({ ...formData, clause_reference: e.target.value })}
-                    required
                     data-testid="clause-reference-input"
                   />
                 </div>
-              </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
