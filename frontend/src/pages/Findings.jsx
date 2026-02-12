@@ -48,6 +48,7 @@ export const Findings = () => {
   const [selectedFinding, setSelectedFinding] = useState(null);
   const [formData, setFormData] = useState({
     audit_type: '',
+    other_audit_name: '',
     clause_reference: '',
     department: '',
     finding_description: '',
