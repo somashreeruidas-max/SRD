@@ -29,7 +29,7 @@ import { cn } from '../lib/utils';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-const AUDIT_TYPES = ['ISO 9001', 'ISO 14001', 'ISO 45001', 'FSSC 22000'];
+const AUDIT_TYPES = ['ISO 9001', 'ISO 14001', 'ISO 45001', 'FSSC 22000', 'GAO', 'Corporate Audit', 'Other'];
 const DEPARTMENTS = ['Production', 'QA', 'Maintenance', 'Warehouse', 'HR', 'Utilities'];
 const RISK_LEVELS = ['Low', 'Medium', 'High', 'Critical'];
 const STATUSES = ['Open', 'In Progress', 'Closed'];

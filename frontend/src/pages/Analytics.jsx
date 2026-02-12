@@ -35,7 +35,7 @@ import {
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-const AUDIT_TYPES = ['ISO 9001', 'ISO 14001', 'ISO 45001', 'FSSC 22000'];
+const AUDIT_TYPES = ['ISO 9001', 'ISO 14001', 'ISO 45001', 'FSSC 22000', 'GAO', 'Corporate Audit', 'Other'];
 const DEPARTMENTS = ['Production', 'QA', 'Maintenance', 'Warehouse', 'HR', 'Utilities'];
 
 export const Analytics = () => {
