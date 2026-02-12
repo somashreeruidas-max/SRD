@@ -124,6 +124,7 @@ export const Findings = () => {
     setSelectedFinding(null);
     setFormData({
       audit_type: '',
+      other_audit_name: '',
       clause_reference: '',
       department: '',
       finding_description: '',
@@ -137,8 +138,11 @@ export const Findings = () => {
 
   const openEditDialog = (finding) => {
     setSelectedFinding(finding);
+    // Check if the audit_type is a standard one or custom
+    const isStandardType = AUDIT_TYPES.includes(finding.audit_type);
     setFormData({
-      audit_type: finding.audit_type,
+      audit_type: isStandardType ? finding.audit_type : 'Other',
+      other_audit_name: isStandardType ? '' : finding.audit_type,
       clause_reference: finding.clause_reference,
       department: finding.department,
       finding_description: finding.finding_description,
