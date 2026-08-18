@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
@@ -699,6 +699,7 @@ export default function AuditScreen() {
         
         <div class="header-info">
           <p><strong>Audit Title:</strong> ${audit.title}</p>
+          ${audit.audit_id ? `<p><strong>Audit ID:</strong> ${audit.audit_id}</p>` : ''}
           <p><strong>Standard:</strong> ${audit.questionnaire_name}</p>
           <p><strong>Status:</strong> ${audit.status.toUpperCase()}</p>
           <p><strong>Date:</strong> ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -831,6 +832,7 @@ export default function AuditScreen() {
     // Audit Information
     textContent += 'AUDIT INFORMATION\n';
     textContent += '─────────────────────────────────────────────────────────────────────────\n';
+    if (audit.audit_id) textContent += `Audit ID          : ${audit.audit_id}\n`;
     textContent += `Audit Title       : ${audit.title}\n`;
     textContent += `Standard          : ${audit.questionnaire_name}\n`;
     textContent += `Status            : ${audit.status.toUpperCase()}\n`;
@@ -1102,12 +1104,14 @@ export default function AuditScreen() {
     // Header
     csvContent += 'CORRECTIVE ACTION PLAN (CAP) REPORT\n';
     csvContent += `Audit: ${audit.title}\n`;
+    if (audit.audit_id) csvContent += `Audit ID: ${audit.audit_id}\n`;
     csvContent += `Standard: ${audit.questionnaire_name}\n`;
     csvContent += `Date: ${new Date(audit.created_at).toLocaleDateString()}\n`;
     csvContent += '\n';
     
     // Column headers
     const headers = [
+      'Audit ID',
       'Site Name',
       'Audit Date',
       'Auditor Name',
@@ -1127,6 +1131,7 @@ export default function AuditScreen() {
       const category = isMajor ? 'Major NC' : 'Minor NC';
       
       const row = [
+        audit.audit_id || '',  // Audit ID (auto-filled)
         audit.plant_name || '',  // Site Name (auto-filled)
         new Date(audit.created_at).toLocaleDateString(),  // Audit Date (auto-filled)
         audit.auditor_name || '',  // Auditor Name (auto-filled)
@@ -1204,6 +1209,7 @@ export default function AuditScreen() {
         
         <div class="header-info">
           <p><strong>Audit Title:</strong> ${audit.title}</p>
+          ${audit.audit_id ? `<p><strong>Audit ID:</strong> ${audit.audit_id}</p>` : ''}
           <p><strong>Questionnaire:</strong> ${audit.questionnaire_name}</p>
           <p><strong>Status:</strong> ${audit.status.toUpperCase()}</p>
           <p><strong>Date:</strong> ${new Date(audit.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -1400,6 +1406,13 @@ export default function AuditScreen() {
 
       {/* Audit Information Header */}
       <View style={styles.auditInfoHeader}>
+        {audit.audit_id && (
+          <View style={styles.auditIdRow}>
+            <Ionicons name="barcode-outline" size={18} color="#3B82F6" />
+            <Text style={styles.auditIdLabel}>Audit ID:</Text>
+            <Text style={styles.auditIdValue}>{audit.audit_id}</Text>
+          </View>
+        )}
         <View style={styles.auditInfoRow}>
           <View style={styles.auditInfoItem}>
             <Ionicons name="business-outline" size={16} color="#6B7280" />
@@ -1430,6 +1443,24 @@ export default function AuditScreen() {
             <Text style={styles.auditInfoValue}>{audit.auditee_name || 'Not specified'}</Text>
           </View>
         </View>
+      </View>
+
+      {/* Presentable Report Actions */}
+      <View style={styles.reportActionsRow}>
+        <TouchableOpacity
+          style={styles.viewReportBtn}
+          onPress={() => router.push(`/audit/report/${id}`)}
+        >
+          <Ionicons name="easel-outline" size={18} color="#fff" />
+          <Text style={styles.reportActionText}>View Report</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.capaActionBtn}
+          onPress={() => router.push(`/audit/capa/${id}`)}
+        >
+          <Ionicons name="construct-outline" size={18} color="#fff" />
+          <Text style={styles.reportActionText}>CAPA Report</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.progressBar}>
@@ -1903,6 +1934,36 @@ export default function AuditScreen() {
 }
 
 const styles = StyleSheet.create({
+  reportActionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  viewReportBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3B82F6',
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 6,
+  },
+  capaActionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#8B5CF6',
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 6,
+  },
+  reportActionText: { color: '#fff', fontSize: 14, fontWeight: '700' },
   container: {
     flex: 1,
     backgroundColor: '#F3F4F6',
@@ -1949,6 +2010,29 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
+  },
+  auditIdRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DBEAFE',
+  },
+  auditIdLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#3B82F6',
+  },
+  auditIdValue: {
+    fontSize: 13,
+    color: '#1F2937',
+    fontWeight: '600',
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
   auditInfoRow: {
     flexDirection: 'row',

@@ -364,6 +364,30 @@ frontend:
         agent: "testing"
         comment: "FSSC 22000 V6.0 questionnaire fully tested and working correctly. Comprehensive testing performed with 4/4 FSSC-specific tests passing (100% success rate). Key findings: 1) FSSC questionnaire appears correctly in GET /api/questionnaires list with proper name and description mentioning Food Safety System Certification. 2) Questionnaire structure verified with exactly 50 questions across 3 main sections (ISO 22000:2018, ISO/TS 22002-1:2009, FSSC 22000 V6). 3) Successfully created audit from FSSC questionnaire via POST /api/audits with correct questionnaire_name linkage. 4) Delete protection working - FSSC questionnaire properly protected from deletion as default questionnaire (returns 400 status). All clauses have proper numbers/titles, all questions have unique IDs and text, and is_default flag correctly set to true. Backend implementation is fully functional and ready for production use."
 
+  - task: "Audit ID Display in UI and Reports"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/audit/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "FORK JOB - Implemented Audit ID display across all UI and reports. Changes: 1) Added prominent Audit ID display in audit details page header with blue badge styling and barcode icon. 2) Added Audit ID to Text Report (first line of AUDIT INFORMATION section). 3) Added Audit ID to Full PDF Report (header section after Audit Title). 4) Added Audit ID to Findings PDF Report (header section after Audit Title). 5) Added Audit ID as the FIRST COLUMN in CAPA CSV Report with proper header and data rows. Backend already stores audit_id field from audit creation form. All changes are conditional (only shown if audit_id exists). Styles added: auditIdRow, auditIdLabel, auditIdValue."
+
+  - task: "Admin Panel - Editable Qualifications"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/(tabs)/admin.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "FORK JOB - Completed Admin Panel qualification editing feature by adding missing CSS styles. Feature was already fully implemented but missing styles causing UI issues. Added styles: qualSection (container), qualHeader (header row), qualTitle (title text), qualEditButtons (save/cancel button container), qualEditForm (form container), qualInputLabel (label styling), qualInput (text input fields). Functionality already present: Edit button on each user card, inline form with 3 editable fields (Qualifications, Certifications, Years of Experience), Save/Cancel buttons with loading states, backend endpoint PUT /api/admin/users/{user_id}/qualifications working. Admin can now edit any user's qualifications from the admin panel."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
@@ -371,7 +395,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Audit ID Display in UI and Reports"
+    - "Admin Panel - Editable Qualifications"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -391,3 +417,13 @@ agent_communication:
     message: "Auditor qualification fields feature testing completed successfully. Comprehensive backend testing performed with 18/18 tests passing (100% success rate). Key findings: 1) POST /api/auth/register correctly accepts and stores optional qualifications, certifications, and years_of_experience fields. 2) GET /api/auth/me properly returns qualification data for users who provided it and null/empty values for users who didn't. 3) Data persistence in MongoDB working correctly. 4) Authentication requirements properly enforced. 5) Both registration scenarios tested: with full qualifications and without qualifications. Backend implementation is fully functional and ready for production use."
   - agent: "testing"
     message: "FSSC 22000 V6.0 questionnaire testing completed successfully. Comprehensive backend testing performed with 22/22 tests passing (100% success rate). FSSC-specific testing results: 1) FSSC questionnaire correctly appears in GET /api/questionnaires list with proper name 'FSSC 22000 V6.0' and description mentioning Food Safety System Certification. 2) Questionnaire structure fully verified - exactly 50 questions across 3 main sections: ISO 22000:2018 (25 questions), ISO/TS 22002-1:2009 (15 questions), FSSC 22000 V6 (10 questions). 3) Successfully created audit from FSSC questionnaire via POST /api/audits with correct questionnaire linkage. 4) Delete protection working correctly - FSSC questionnaire properly protected from deletion as default questionnaire. All clauses have proper numbers/titles, all questions have unique IDs and text, and is_default flag correctly set. Backend implementation is fully functional and ready for production use."
+  - agent: "main"
+    message: "FORK JOB - Completed two pending implementation tasks from handoff: 1) Audit ID Display: Implemented comprehensive Audit ID display across the entire app. Added prominent badge-style display on audit details page with barcode icon, and included Audit ID in all download reports (Text Report, Full PDF, Findings PDF, CAPA CSV). The CAPA CSV now has Audit ID as the first column. All display is conditional (only if audit_id exists). 2) Admin Panel Qualifications: Completed the feature by adding all missing CSS styles (qualSection, qualHeader, qualTitle, qualEditButtons, qualEditForm, qualInputLabel, qualInput). The functionality was already fully implemented, just needed styling. Admin can now edit qualifications, certifications, and years of experience for any user from the admin panel with inline form and save/cancel actions. Both features ready for testing."
+## Session Update (June 2026) - Presentable Reports & Online CAPA
+- Fixed forked-env startup failure: installed missing `react-native-worklets` (required by reanimated 4.x).
+- NEW: `/app/frontend/app/audit/report/[id].tsx` — presentable in-app Internal Audit Report (Audit ID badge, meta, compliance summary, Full/Findings-only toggle, openable evidence attachments incl. fullscreen photo viewer, PDF download with embedded photos).
+- NEW: `/app/frontend/app/audit/capa/[id].tsx` — online CAPA preparation by auditee (correction, root cause, corrective action, responsible person, target date, status chips, closure evidence photos) + presentable CAPA report view + PDF download.
+- Backend: added `GET/PUT /api/audits/{id}/capa-entries` (stored as `capa_entries` on audit doc; auditor or admin access).
+- Audit details page now has "View Report" and "CAPA Report" buttons below the info header.
+- Switched expo-file-system imports to `expo-file-system/legacy` (SDK 54 API).
+- Smoke-tested via screenshots: audit page buttons, report screen (Audit ID visible), CAPA prepare form (data persistence verified via API), CAPA report view. Test audit deleted after verification.

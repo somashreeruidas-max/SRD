@@ -169,6 +169,23 @@ class CAPAUpdate(BaseModel):
     status: Optional[str] = None
     closure_evidence: Optional[List[ClosureEvidence]] = None
 
+class CAPAEntry(BaseModel):
+    question_id: str
+    standard_clause: Optional[str] = None
+    category: Optional[str] = None  # Major NC, Minor NC
+    finding_description: Optional[str] = None
+    question_text: Optional[str] = None
+    correction: Optional[str] = None
+    root_cause: Optional[str] = None
+    corrective_action: Optional[str] = None
+    responsible_person: Optional[str] = None
+    target_date: Optional[str] = None
+    status: str = "Open"  # Open, In Progress, Closed
+    closure_evidence: List[EvidenceModel] = []
+
+class CAPAEntriesPayload(BaseModel):
+    entries: List[CAPAEntry]
+
 # Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -1234,6 +1251,35 @@ async def delete_capa_file(audit_id: str, username: str = Depends(verify_token))
         raise HTTPException(status_code=404, detail="Audit not found")
     
     return {"message": "CAPA report deleted successfully"}
+
+@app.get("/api/audits/{audit_id}/capa-entries")
+async def get_capa_entries(audit_id: str, username: str = Depends(verify_token)):
+    """Get CAPA entries prepared for this audit"""
+    user = users_collection.find_one({"username": username})
+    is_admin = user.get("is_admin", False) if user else False
+    query = {"_id": ObjectId(audit_id)} if is_admin else {"_id": ObjectId(audit_id), "auditor": username}
+    audit = audits_collection.find_one(query)
+    if not audit:
+        raise HTTPException(status_code=404, detail="Audit not found")
+    return {"capa_entries": audit.get("capa_entries", []), "capa_updated_by": audit.get("capa_updated_by"), "capa_updated_at": audit.get("capa_updated_at")}
+
+@app.put("/api/audits/{audit_id}/capa-entries")
+async def save_capa_entries(audit_id: str, payload: CAPAEntriesPayload, username: str = Depends(verify_token)):
+    """Save CAPA entries (prepared online by auditee/auditor) for this audit"""
+    user = users_collection.find_one({"username": username})
+    is_admin = user.get("is_admin", False) if user else False
+    query = {"_id": ObjectId(audit_id)} if is_admin else {"_id": ObjectId(audit_id), "auditor": username}
+    result = audits_collection.update_one(
+        query,
+        {"$set": {
+            "capa_entries": [e.dict() for e in payload.entries],
+            "capa_updated_by": username,
+            "capa_updated_at": datetime.utcnow().isoformat(),
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Audit not found")
+    return {"message": "CAPA entries saved successfully", "count": len(payload.entries)}
 
 @app.delete("/api/audits/{audit_id}")
 async def delete_audit(audit_id: str, username: str = Depends(verify_token)):
