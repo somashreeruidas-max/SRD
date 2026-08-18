@@ -427,3 +427,11 @@ agent_communication:
 - Audit details page now has "View Report" and "CAPA Report" buttons below the info header.
 - Switched expo-file-system imports to `expo-file-system/legacy` (SDK 54 API).
 - Smoke-tested via screenshots: audit page buttons, report screen (Audit ID visible), CAPA prepare form (data persistence verified via API), CAPA report view. Test audit deleted after verification.
+
+## Bug Fix (June 2026) - Multi-page PDF export
+- Root cause: expo-print printToFileAsync on web just calls window.print() on the app screen -> one-page viewport PDF.
+- Fix: /app/frontend/utils/exportPdf.ts - web renders full report HTML in hidden iframe (waits for images) then prints it (browser paginates; user saves as PDF). Native unchanged (expo-print + Sharing).
+- All 4 PDF handlers migrated: Full Report, Findings Only (audit/[id].tsx), Audit Report screen, CAPA screen.
+- testing_agent verified 4/4 exports contain FULL multi-clause report HTML + print invoked; backend capa-entries regression passed.
+- Also fixed: moved /app/frontend/app/questionnaire/[id]_backup.tsx out of routes dir (was causing router warning + text-node errors). Verified report screen now mounts with zero console errors.
+- Known deferred item: expo-av is deprecated (migrate to expo-audio later).

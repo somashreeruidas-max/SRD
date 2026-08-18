@@ -21,8 +21,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system/legacy';
-import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { exportHtmlAsPdf } from '../../utils/exportPdf';
 
 interface Evidence {
   type: string;
@@ -779,27 +779,11 @@ export default function AuditScreen() {
     `;
 
     try {
-      const { uri } = await Print.printToFileAsync({ html: htmlContent });
-      
-      if (Platform.OS === 'web') {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Findings_Summary_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert(`✅ Findings Summary downloaded!\n\nTotal Findings: ${findings.length}\nMinor: ${findings.filter(f => f.conformance === 'Mi').length}\nMajor: ${findings.filter(f => f.conformance === 'Ma' || f.conformance === 'MA').length}`);
-      } else {
-        await Sharing.shareAsync(uri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Save or Share Findings Summary',
-          UTI: 'com.adobe.pdf',
-        });
-      }
+      await exportHtmlAsPdf(
+        htmlContent,
+        `Findings_Summary_${audit.title.replace(/[^a-z0-9]/gi, '_')}`,
+        'Save or Share Findings Summary'
+      );
     } catch (error) {
       console.error('Error generating findings summary:', error);
       if (Platform.OS === 'web') {
@@ -1299,30 +1283,11 @@ export default function AuditScreen() {
     `;
 
     try {
-      // Use expo-print for PDF generation
-      const { uri } = await Print.printToFileAsync({ html: htmlContent });
-      
-      if (Platform.OS === 'web') {
-        // For web, download the PDF
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert('✅ PDF audit report downloaded!');
-      } else {
-        // For mobile, share the PDF
-        await Sharing.shareAsync(uri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Save or Share Audit Report',
-          UTI: 'com.adobe.pdf',
-        });
-      }
+      await exportHtmlAsPdf(
+        htmlContent,
+        `Audit_${audit.title.replace(/[^a-z0-9]/gi, '_')}`,
+        'Save or Share Audit Report'
+      );
     } catch (error) {
       console.error('Error generating PDF:', error);
       if (Platform.OS === 'web') {

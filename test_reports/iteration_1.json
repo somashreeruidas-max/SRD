@@ -1,0 +1,43 @@
+{
+  "summary": "Verified the multi-page PDF export bug fix on all 4 handlers. On web, exportHtmlAsPdf() now injects a hidden iframe with the FULL report HTML and calls iframe.contentWindow.print(), so the browser print dialog paginates the entire report (bug fix confirmed working). Playwright stubbed iframe.contentWindow.print to inspect body HTML len/content. Backend regression on GET/PUT /api/audits/{id}/capa-entries all pass. Deprecated packages detected: expo-av (SDK 54 removal).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "expo-av", "issue": "Console warning: 'Expo AV has been deprecated and will be removed in SDK 54. Use expo-audio and expo-video instead.' Detected on every page load via metro warnings."},
+      {"component": "app/questionnaire/[id]_backup.tsx", "issue": "Router warning: 'Route \"./questionnaire/[id]_backup.tsx\" is missing the required default export.' Backup file should be removed or moved out of /app so Expo Router does not treat it as a route."},
+      {"component": "audit/report/[id].tsx View", "issue": "Console error: 'Unexpected text node: . A text node cannot be a child of a <View>.' fires ~8 times on audit report screen render. Reference: /app/frontend/app/audit/report/[id].tsx (likely a stray whitespace/string between View children in a conditional block)."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_capa_regression.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Remove or rename /app/frontend/app/questionnaire/[id]_backup.tsx so Expo Router stops complaining about missing default export.",
+    "Locate stray whitespace/text-node inside a <View> on /app/frontend/app/audit/report/[id].tsx and wrap it in <Text> or remove it (produces 8 red console errors per screen mount).",
+    "Migrate expo-av to expo-audio / expo-video before Expo SDK 54 upgrade."
+  ],
+  "critical_code_review_comments": [
+    "exportHtmlAsPdf cleanup timeout is 60s — if the user cancels/prints quickly and triggers many exports, several hidden iframes will stack in DOM temporarily. Not blocking, but consider removing on afterprint event as well.",
+    "app/audit/[id].tsx is >2300 lines; recommend splitting HTML report generation helpers (Findings, Full Report, CSV) into dedicated files for maintainability.",
+    "TouchableOpacity `title` prop is not rendered as accessible label on RN Web. Add `accessibilityLabel` / testID so PDF-export icons are discoverable for automated testing."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_capa_regression.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (3/3)",
+    "frontend": "100% (4/4 PDF flows verified — Full Report, Findings Only, Audit Report screen, CAPA screen)"
+  },
+  "seed_data_creation": "None. Reused existing audits (QMS AUDIT Completed for findings/CAPA, Fork Job Test Audit - Audit ID Feature for Full Report).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Playwright cannot interact with the native window.print dialog. Approach that worked: install a monkey-patch on Node.prototype.appendChild BEFORE clicking the export icon; when an <iframe> is appended, override its contentWindow.print (retried at 0/100/500/1500 ms because expo-print-fix writes the doc synchronously). Then read window.__printCalls and window.__printedIframes[0] to inspect body HTML. Header icons (TouchableOpacity) render without testID/aria-label on web, so we selected them positionally: header row (top<80, width<60), sorted left→right = [CAPA CSV, Text, Findings PDF, Full Report PDF, Delete].",
+  "rca_of_issue": "Original bug: exports produced only 1 page. RCA — expo-print's printToFileAsync on web simply calls window.print() of the current app page, which only prints the visible viewport. FIX (already applied in /app/frontend/utils/exportPdf.ts) — on web, write the full pre-rendered report HTML into a hidden iframe, wait for document+images to load, then call iframe.contentWindow.print(). Verified by intercepting the stubbed print call and asserting the iframe body HTML contains the full report (32.5KB / 7 clauses / 32 question rows for Full Report; 25.5KB for Findings; 17.6KB for Audit Report screen; 7.9KB for CAPA with all 7 NC entries)."
+}

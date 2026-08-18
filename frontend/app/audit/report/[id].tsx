@@ -17,8 +17,8 @@ import axios from 'axios';
 import { useAuth, API_URL } from '../../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as FileSystem from 'expo-file-system/legacy';
-import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import { exportHtmlAsPdf } from '../../../utils/exportPdf';
 
 interface Evidence {
   type: string;
@@ -188,6 +188,7 @@ export default function AuditReportScreen() {
 
     let html = `
       <!DOCTYPE html><html><head><meta charset="utf-8"><style>
+        @page { size: A4; margin: 12mm; }
         body { font-family: Arial, sans-serif; padding: 24px; color: #1F2937; }
         h1 { text-align: center; color: #111827; border-bottom: 3px solid #3B82F6; padding-bottom: 12px; letter-spacing: 1px; }
         .meta { background: #F3F4F6; padding: 16px; border-radius: 8px; margin: 16px 0; }
@@ -262,25 +263,11 @@ export default function AuditReportScreen() {
     html += `<div class="footer"><p>End of Internal Audit Report — Generated on ${new Date().toLocaleString('en-US')}</p><p>${audit.questionnaire_name}</p></div></body></html>`;
 
     try {
-      const { uri } = await Print.printToFileAsync({ html });
-      if (Platform.OS === 'web') {
-        const res = await fetch(uri);
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Audit_Report_${(audit.audit_id || audit.title).replace(/[^a-z0-9]/gi, '_')}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } else {
-        await Sharing.shareAsync(uri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Save or Share Audit Report',
-          UTI: 'com.adobe.pdf',
-        });
-      }
+      await exportHtmlAsPdf(
+        html,
+        `Audit_Report_${(audit.audit_id || audit.title).replace(/[^a-z0-9]/gi, '_')}`,
+        'Save or Share Audit Report'
+      );
     } catch (error) {
       console.error('Error generating PDF:', error);
       Alert.alert('Error', 'Failed to generate PDF report');
