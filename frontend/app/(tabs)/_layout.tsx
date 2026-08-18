@@ -50,6 +50,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text" size={size} color={color} />
           ),
+          href: isDeveloper ? '/(tabs)/questionnaires' : null, // Admin only
         }}
       />
       <Tabs.Screen

@@ -11,3 +11,8 @@
 - Admin can create, enable/disable, and delete other users
 - Admin can view all users' audits
 - Admin can edit qualifications for any user
+
+## Regular (Non-Admin) Test Account
+- **Username**: testuser1
+- **Password**: test123
+- **Role**: Regular auditor (sees only Audits and Profile tabs; no Questionnaires/Admin tab)
