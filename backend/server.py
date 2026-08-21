@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
@@ -185,6 +186,10 @@ class CAPAEntry(BaseModel):
 
 class CAPAEntriesPayload(BaseModel):
     entries: List[CAPAEntry]
+
+class PDFRequest(BaseModel):
+    html: str
+    filename: Optional[str] = "report"
 
 # Helper Functions
 def hash_password(password: str) -> str:
@@ -1251,6 +1256,21 @@ async def delete_capa_file(audit_id: str, username: str = Depends(verify_token))
         raise HTTPException(status_code=404, detail="Audit not found")
     
     return {"message": "CAPA report deleted successfully"}
+
+@app.post("/api/reports/pdf")
+def generate_report_pdf(req: PDFRequest, username: str = Depends(verify_token)):
+    """Convert report HTML (with embedded base64 images) into a real multi-page PDF"""
+    try:
+        from weasyprint import HTML as WeasyHTML
+        pdf_bytes = WeasyHTML(string=req.html).write_pdf()
+        safe_name = "".join(c if c.isalnum() or c in "-_" else "_" for c in (req.filename or "report"))
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{safe_name}.pdf"'},
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
 @app.get("/api/audits/{audit_id}/capa-entries")
 async def get_capa_entries(audit_id: str, username: str = Depends(verify_token)):
